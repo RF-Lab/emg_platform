@@ -1,6 +1,13 @@
-## Welcome to GitHub Pages
+## EMG signal processing platform
 
-You can use the [editor on GitHub](https://github.com/estel1/emg_platform/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+Платформа состоит из:
+1. Тренировочные наборы данных и функции для работы с ними. 
+2. Функции для предобработки, обнаружения и классификации сигналов EMG, реализующие различные алгоритмы.
+3. Скрипты для **сравнения** различных алгоритмов.
+4. Документация: описание алгоритов, ссылки на статьи, описание функций, отчеты с результатами.
+
+
+You can use the [editor on GitHub](https://github.com/estel2/emg/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
@@ -30,7 +37,7 @@ For more details see [GitHub Flavored Markdown](https://guides.github.com/featur
 
 ### Jekyll Themes
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/estel1/emg_platform/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/estel2/emg/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
 ### Support or Contact
 
