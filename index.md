@@ -5,6 +5,7 @@
 2. Функции для предобработки, обнаружения и классификации сигналов EMG, реализующие различные алгоритмы.
 3. Скрипты для **сравнения** различных алгоритмов.
 4. Документация: описание алгоритов, ссылки на статьи, описание функций, отчеты с результатами.
+5. [Аппаратная платформа](https://github.com/estel1/emg_platform/blob/master/emghw_platform.md)
 
 
 You can use the [editor on GitHub](https://github.com/estel2/emg/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
