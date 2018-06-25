@@ -9,8 +9,8 @@
 
 ## Начало работы
 1. Установите [Git](https://git-scm.com/downloads)
-2. Получите свою локальную копию 
-```git
+2. Получите свою локальную копию платформы:
+```bash
 $ git clone https://github.com/estel1/emg_platform
 ```
 3. Запустите пример emg_platform/source/...
