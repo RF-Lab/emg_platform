@@ -1,4 +1,4 @@
-## EMG signal processing platform
+# EMG signal processing platform
 
 Платформа состоит из:
 1. Тренировочные наборы данных и функции для работы с ними. 
@@ -7,6 +7,10 @@
 4. Документация: описание алгоритов, ссылки на статьи, описание функций, отчеты с результатами.
 5. [Аппаратная платформа](https://github.com/estel1/emg_platform/blob/master/hw_platform/readme.md)
 
+## Начало работы
+1. Установите [Git](https://git-scm.com/downloads)
+2. Получите свою локальную копию $ git clone https://github.com/estel1/emg_platform
+3. Запустите пример emg_platform/source/...
 
 You can use the [editor on GitHub](https://github.com/estel2/emg/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
