@@ -1,6 +1,6 @@
 # EMG hardware platform
 ## Arduino + EMG Shield
-В этом случае используется [Arduino UNO](https://store.arduino.cc/arduino-uno-rev3) либо [Arduino Leonardo] (https://store.arduino.cc/arduino-leonardo-with-headers) совместно с мезонином на основе [Olimex SHIELD-EKG-EMG](https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/open-source-hardware).
+В этом случае используется [Arduino UNO](https://store.arduino.cc/arduino-uno-rev3) либо [Arduino Leonardo](https://store.arduino.cc/arduino-leonardo-with-headers) совместно с мезонином на основе [Olimex SHIELD-EKG-EMG](https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/open-source-hardware).
 ## Wireless EMG hardware platform
 1. Датчики должны использовать автономное питание (аккумулятор или батарея) для предотвращения помех сети питания. 
 2. Данные должны передаваться беспроводным способом (BLE, WIFI, [TBD]).
