@@ -14,6 +14,7 @@
 $ git clone https://github.com/estel1/emg_platform
 ```
 3. Запустите пример emg_platform/source/...
+4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
 You can use the [editor on GitHub](https://github.com/estel2/emg/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
