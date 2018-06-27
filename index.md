@@ -13,7 +13,7 @@
 ```bash
 $ git clone https://github.com/estel1/emg_platform
 ```
-3. Запустите пример emg_platform/source/matlab/EMGClassific_SVMmetod_10mov/EMGClassific_SVMmetod_10mov.m.
+3. Запустите пример [EMGClassific_SVMmetod_10mov.m](https://github.com/estel1/emg_platform/blob/master/source/matlab/EMGClassific_SVMmetod_10mov/EMGClassific_SVMmetod_10mov.m)
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
 You can use the [editor on GitHub](https://github.com/estel2/emg/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
