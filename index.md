@@ -16,6 +16,10 @@ $ git clone https://github.com/estel1/emg_platform
 3. Запустите пример [EMGClassific_SVMmetod_10mov.m](https://github.com/estel1/emg_platform/blob/master/source/matlab/EMGClassific_SVMmetod_10mov/EMGClassific_SVMmetod_10mov.m)
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
+## Возможные темы 
+1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/)
+2. Разработка программных средств для анализа сигналов EMG на основе адаптивных (рекалибруемых без повторного обучения) моделей. [28744189](https://www.ncbi.nlm.nih.gov/pubmed/28744189)
+
 You can use the [editor on GitHub](https://github.com/estel2/emg/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
