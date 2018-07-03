@@ -20,8 +20,11 @@ $ git clone https://github.com/estel1/emg_platform
 1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/)
 2. Разработка программных средств для анализа сигналов EMG на основе адаптивных (рекалибруемых без повторного обучения) моделей. [28744189](https://www.ncbi.nlm.nih.gov/pubmed/28744189)
 
-## Ссылки
+## Статьи
 1. [Techniques of EMG signal analysis: detection, processing, classification and applications](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1455479/)
+
+## Книги
+1. SURFACE ELECTROMYOGRAPHY Physiology,Engineering,andApplications. 
 
 You can use the [editor on GitHub](https://github.com/estel2/emg/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
