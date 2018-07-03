@@ -5,10 +5,10 @@
 2. Функции для предобработки, обнаружения и классификации сигналов EMG, реализующие различные алгоритмы.
 3. Скрипты для **сравнения** различных алгоритмов.
 4. Документация: описание алгоритов, ссылки на статьи, описание функций, отчеты с результатами.
-5. [Аппаратная платформа](https://github.com/estel1/emg_platform/blob/master/hw_platform/readme.md)
+5. [Аппаратная платформа](https://github.com/estel1/emg_platform/blob/master/hw_platform/readme.md).
 
 ## Начало работы
-1. Установите [Git](https://git-scm.com/downloads)
+1. Установите [Git](https://git-scm.com/downloads).
 2. Получите свою локальную копию платформы:
 ```bash
 $ git clone https://github.com/estel1/emg_platform
@@ -17,16 +17,16 @@ $ git clone https://github.com/estel1/emg_platform
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
 ## Возможные темы 
-1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/)
-2. Разработка программных средств для анализа сигналов EMG на основе адаптивных (рекалибруемых без повторного обучения) моделей. [28744189](https://www.ncbi.nlm.nih.gov/pubmed/28744189)
+1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/).
+2. Разработка программных средств для анализа сигналов EMG на основе адаптивных (рекалибруемых без повторного обучения) моделей. [28744189](https://www.ncbi.nlm.nih.gov/pubmed/28744189).
 
 ## Коммерческие продукты
-1. [Myo Armband](https://www.myo.com/)
+1. [Myo Armband](https://www.myo.com/).
 
 ## Статьи
 1. [Hand Gesture Recognition Using Machine Learning
-and the Myo Armband](https://www.eurasip.org/Proceedings/Eusipco/Eusipco2017/papers/1570347665.pdf)
-1. [Techniques of EMG signal analysis: detection, processing, classification and applications](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1455479/)
+and the Myo Armband](https://www.eurasip.org/Proceedings/Eusipco/Eusipco2017/papers/1570347665.pdf).
+1. [Techniques of EMG signal analysis: detection, processing, classification and applications](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1455479/).
 
 ## Книги
 1. SURFACE ELECTROMYOGRAPHY Physiology,Engineering,andApplications. 
