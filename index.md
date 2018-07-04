@@ -30,6 +30,7 @@ and the Myo Armband](https://www.eurasip.org/Proceedings/Eusipco/Eusipco2017/pap
 
 ## Книги
 1. SURFACE ELECTROMYOGRAPHY Physiology,Engineering,andApplications. 
+2. Bita Mokhlesabadifarahani Vinit Kumar Gunjan EMG Signals Characterization in Three States of Contraction by Fuzzy Network and Feature Extraction.
 
 You can use the [editor on GitHub](https://github.com/estel2/emg/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
