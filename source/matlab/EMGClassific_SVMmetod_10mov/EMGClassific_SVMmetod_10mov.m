@@ -1,9 +1,11 @@
+% Task: EMG SVM classifier example
+% Create: Lukyanchikov Andrey, xx-xx-2018
 rng(123);
 close all;
 clear all; 
-load('data10mov_no_abs.mat'); %без фильтров
+load('data10mov_no_abs.mat'); %ГЎГҐГ§ ГґГЁГ«ГјГІГ°Г®Гў
 All_data=data;
-% перемешивание
+% ГЇГҐГ°ГҐГ¬ГҐГёГЁГўГ Г­ГЁГҐ
 [str,col]=size(data);
 [str_ind,col_ind]=size(data{1,1});
 All_data_new=[];
@@ -16,7 +18,7 @@ for j=1:str
 end
 p=[];
  All_data=All_data_new; 
-%конец перемешивания
+%ГЄГ®Г­ГҐГ¶ ГЇГҐГ°ГҐГ¬ГҐГёГЁГўГ Г­ГЁГї
 
 data=[];
 data{1,1}=All_data{1,1}(1:50,:); %50
@@ -29,16 +31,16 @@ data{7,1}=All_data{7,1}(1:50,:);
 data{8,1}=All_data{8,1}(1:50,:);
 data{9,1}=All_data{9,1}(1:50,:);
 data{10,1}=All_data{10,1}(1:50,:);
-%признаки
+%ГЇГ°ГЁГ§Г­Г ГЄГЁ
 IEMG=[];MV=[];MAV=[];MAV1=[];MAV2=[];TM4=[];RMS=[];V=[];LOG=[];DASDV=[];MYOP=[];WAMP=[];
 MAVSLP=[];SSI=[];VAR=[];STD=[];WL=[];AAC=[];X=[];ff=[];PKF=[];MNF=[];MDF=[];MNP=[];FR=[];SM1=[];SM0=[]; VCF=[];SSC=[];
 FMD_vec=[]; FMN_vec=[]; FR_vec=[]; MFMD_vec=[]; MFMN_vec=[]; LPC=[]; ZC=[];histog=[];
 t=[];
-T=[]; %Вектор классов
+T=[]; %Г‚ГҐГЄГІГ®Г° ГЄГ«Г Г±Г±Г®Гў
 p=[];
-P=[]; %Вектор признаков
+P=[]; %Г‚ГҐГЄГІГ®Г° ГЇГ°ГЁГ§Г­Г ГЄГ®Гў
 k=1;
-v=2; %константа v-order 2.1.9
+v=2; %ГЄГ®Г­Г±ГІГ Г­ГІГ  v-order 2.1.9
 [str,col]=size(data);
 collor{1}='.b';
 collor{2}='.r';
@@ -57,7 +59,7 @@ for f=1:str
     PW=[];
     for c=1:col
         MAV_tmp=0;
-         [n_traning,N]=size(data{f,c}); %получаю количество тренировочных последовательностей и их длинну
+         [n_traning,N]=size(data{f,c}); %ГЇГ®Г«ГіГ·Г Гѕ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГІГ°ГҐГ­ГЁГ°Г®ГўГ®Г·Г­Г»Гµ ГЇГ®Г±Г«ГҐГ¤Г®ГўГ ГІГҐГ«ГјГ­Г®Г±ГІГҐГ© ГЁ ГЁГµ Г¤Г«ГЁГ­Г­Гі
          
         for i=1:n_traning
      IEMG(i) = sum(abs(data{f,c}(i,:)));
@@ -146,7 +148,7 @@ for f=1:str
       MFMD_vec(i)=MFMD(data{f,c}(i,:));
       MFMN_vec(i)=MFMN(data{f,c}(i,:));
       LPC=[LPC; lpc(data{f,c}(i,:),9)];
-    t(i) = f; %присвоение класса
+    t(i) = f; %ГЇГ°ГЁГ±ГўГ®ГҐГ­ГЁГҐ ГЄГ«Г Г±Г±Г 
     histog=[histog hist(data{f,c}(i,:),-300:300)'];
         end
         P=[P [IEMG;MV;
@@ -189,7 +191,7 @@ P=[];
 for i=1:str
 P{i}=P_tmp;
 end
- for j=1:str % 10 линейных классификаторов SVM "один против всехc"
+ for j=1:str % 10 Г«ГЁГ­ГҐГ©Г­Г»Гµ ГЄГ«Г Г±Г±ГЁГґГЁГЄГ ГІГ®Г°Г®Гў SVM "Г®Г¤ГЁГ­ ГЇГ°Г®ГІГЁГў ГўГ±ГҐГµc"
  tmpT=T;
  tmpT(tmpT~=j) = -1;
  tmpT(tmpT==j) = 1;
@@ -198,7 +200,7 @@ SVMModel{j} = fitcsvm(P{j}',tmpT','Standardize',true,'KernelFunction' , 'linear'
 [Y,prob] = predict(SVMModel{j},P{j}');
 test_errClassSVM(j,1)=sum(spones(Y-tmpT'));
  end
- %% Тестовая выборка:
+ %% Г’ГҐГ±ГІГ®ГўГ Гї ГўГ»ГЎГ®Г°ГЄГ :
  data=[];
  data{1,1}=All_data{1,1}(51:79,:); %51
  data{2,1}=All_data{2,1}(51:79,:);
@@ -210,16 +212,16 @@ test_errClassSVM(j,1)=sum(spones(Y-tmpT'));
  data{8,1}=All_data{8,1}(51:79,:);
  data{9,1}=All_data{9,1}(51:79,:);
  data{10,1}=All_data{10,1}(51:79,:);
- %признаки
+ %ГЇГ°ГЁГ§Г­Г ГЄГЁ
 IEMG=[];MV=[];MAV=[];MAV1=[];MAV2=[];TM4=[];RMS=[];V=[];LOG=[];DASDV=[];MYOP=[];WAMP=[];
 MAVSLP=[];SSI=[];VAR=[];STD=[];WL=[];AAC=[];X=[];ff=[];PKF=[];MNF=[];MDF=[];MNP=[];FR=[];SM1=[];SM0=[]; VCF=[];SSC=[];
 FMD_vec=[]; FMN_vec=[]; FR_vec=[]; MFMD_vec=[]; MFMN_vec=[]; LPC=[];ZC=[];    histog=[];
 t=[];
-T=[]; %Вектор классов
+T=[]; %Г‚ГҐГЄГІГ®Г° ГЄГ«Г Г±Г±Г®Гў
 p=[];
-P=[]; %Вектор признаков
+P=[]; %Г‚ГҐГЄГІГ®Г° ГЇГ°ГЁГ§Г­Г ГЄГ®Гў
 k=1;
-v=2; %константа v-order 2.1.9
+v=2; %ГЄГ®Г­Г±ГІГ Г­ГІГ  v-order 2.1.9
 [str,col]=size(data);
 collor{1}='.b';
 collor{2}='.r';
@@ -238,7 +240,7 @@ for f=1:str
     PW=[];
     for c=1:col
         MAV_tmp=0;
-         [n_traning,N]=size(data{f,c}); %получаю количество тренировочных последовательностей и их длинну
+         [n_traning,N]=size(data{f,c}); %ГЇГ®Г«ГіГ·Г Гѕ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГІГ°ГҐГ­ГЁГ°Г®ГўГ®Г·Г­Г»Гµ ГЇГ®Г±Г«ГҐГ¤Г®ГўГ ГІГҐГ«ГјГ­Г®Г±ГІГҐГ© ГЁ ГЁГµ Г¤Г«ГЁГ­Г­Гі
          
         for i=1:n_traning
      IEMG(i) = sum(abs(data{f,c}(i,:)));
@@ -328,7 +330,7 @@ for f=1:str
       LPC=[LPC; lpc(data{f,c}(i,:),9)];
            histog=[histog hist(data{f,c}(i,:),-300:300)'];
      % PW=[PW; pwelch(data{f,c}(i,:))'];
-    t(i) = f; %присвоение класса
+    t(i) = f; %ГЇГ°ГЁГ±ГўГ®ГҐГ­ГЁГҐ ГЄГ«Г Г±Г±Г 
         end
         P=[P [IEMG;MV;
             MAV;MAV1;
@@ -387,10 +389,10 @@ end
 if length(ind)==1
     ClassSVM(i) = ind;
 else
-    if (length(ind)>1) %если больше 1 класса
+    if (length(ind)>1) %ГҐГ±Г«ГЁ ГЎГ®Г«ГјГёГҐ 1 ГЄГ«Г Г±Г±Г 
       [~,ind]=max(prob(:,2));
       ClassSVM(i) = ind;
-    else %если все -1
+    else %ГҐГ±Г«ГЁ ГўГ±ГҐ -1
         [~,ind]=min(abs(prob(:,1)));
         ClassSVM(i) = ind;
     end   
