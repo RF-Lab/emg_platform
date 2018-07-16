@@ -7,12 +7,13 @@
 2. Датчики должны использовать автономное питание (аккумулятор или батарея) для предотвращения помех сети питания. 
 3. Возможные кандидаты для построения беспроводного интерфейса [cypress](http://www.cypress.com/) и [espressif](https://www.espressif.com/)
 4. [CY8CKIT-042-BLE-A Bluetooth®](http://www.cypress.com/documentation/development-kitsboards/cy8ckit-042-ble-bluetooth-low-energy-ble-pioneer-kit)
-5. [ESP8266](https://www.aliexpress.com/item/New-Wireless-module-NodeMcu-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266-with-pcb-Antenna/32656775273.html?spm=2114.search0104.3.1.16b23b6b5KotLp&ws_ab_test=searchweb0_0,searchweb201602_3_5723113_10152_5722813_10151_10065_10344_10068_10130_10324_10342_5722613_10547_10343_5722913_10340_10341_10696_10190_10084_10083_5722713_10618_10307_10820_10301_10303_10059_100031_10103_10624_10623_10622_10621_10620_5722513-10620,searchweb201603_2,ppcSwitch_5&algo_expid=b4e1bbbd-f9d8-4101-aac9-ad06925e94fa-0&algo_pvid=b4e1bbbd-f9d8-4101-aac9-ad06925e94fa&transAbTest=ae803_1&priceBeautifyAB=0)
+5. [ESP8266](https://www.aliexpress.com/item/New-Wireless-module-NodeMcu-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266-with-pcb-Antenna/32656775273.html?spm=2114.search0104.3.1.16b23b6b5KotLp&ws_ab_test=searchweb0_0,searchweb201602_3_5723113_10152_5722813_10151_10065_10344_10068_10130_10324_10342_5722613_10547_10343_5722913_10340_10341_10696_10190_10084_10083_5722713_10618_10307_10820_10301_10303_10059_100031_10103_10624_10623_10622_10621_10620_5722513-10620,searchweb201603_2,ppcSwitch_5&algo_expid=b4e1bbbd-f9d8-4101-aac9-ad06925e94fa-0&algo_pvid=b4e1bbbd-f9d8-4101-aac9-ad06925e94fa&transAbTest=ae803_1&priceBeautifyAB=0) [ESP8266 Overview](https://www.espressif.com/en/products/hardware/esp8266ex/overview)
 6. [ESP-WROOM-32](https://www.aliexpress.com/item/ESP32-development-board-WIFI-Bluetooth-IoT-smart-home-ESP-WROOM-32-ESP-32-ESP-32S/32849567377.html?spm=2114.search0104.3.1.7af31fd4LFhYKD&ws_ab_test=searchweb0_0,searchweb201602_3_10152_5722813_10151_10065_10344_10068_10130_10324_10342_5722613_10547_10343_5722913_10340_10341_10696_10190_10084_10083_5722713_10618_10307_10820_10301_10303_10059_306_100031_10103_10624_10623_10622_10621_10620_5722513,searchweb201603_50,ppcSwitch_5&algo_expid=84a51245-efb1-4965-8f15-d1261b17490a-0&algo_pvid=84a51245-efb1-4965-8f15-d1261b17490a&transAbTest=ae803_1&priceBeautifyAB=0)
 
 За основу аналоговой части можно на первом этапе взять уже использованную в этом году [схему](https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/resources/SHIELD-EKG-EMG-REV-B-SCHEMATIC.pdf)
 
 Главный вопрос сколько надо каналов и как они будут организованы: каждый канал со своим отдельным беспроводным интерфейсом или же несколько каналов будут агрегированы в один беспроводной модуль.
+
 
 Примеры коммерческих модулей: [biometrics](http://www.biometricsltd.com/wireless-sensors.htm)
 
