@@ -26,7 +26,9 @@ $ git clone https://github.com/estel1/emg_platform
 ## Статьи
 1. [Hand Gesture Recognition Using Machine Learning
 and the Myo Armband](https://www.eurasip.org/Proceedings/Eusipco/Eusipco2017/papers/1570347665.pdf).
-1. [Techniques of EMG signal analysis: detection, processing, classification and applications](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1455479/).
+2. [Techniques of EMG signal analysis: detection, processing, classification and applications](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1455479/).
+3. [A compendium of blog posts on op amp design topics
+by Bruce Trump](http://www.ti.com/lit/ml/slyt701/slyt701.pdf).
 
 ## Книги
 1. SURFACE ELECTROMYOGRAPHY Physiology,Engineering,andApplications. 
