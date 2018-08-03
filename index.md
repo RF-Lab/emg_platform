@@ -19,6 +19,8 @@ $ git clone https://github.com/estel1/emg_platform
 ## Возможные темы 
 1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/).
 2. Разработка программных средств для анализа сигналов EMG на основе адаптивных (рекалибруемых без повторного обучения) моделей. [28744189](https://www.ncbi.nlm.nih.gov/pubmed/28744189).
+3. [V.T.GAIKWAD, 2M.M.SARDESHMUKH SIGN LANGUAGE RECOGNITION BASED ON ELECTROMYOGRAPHY (EMG) SIGNAL USING ARTIFICIAL NEURAL NETWORK (ANN). ](http://pep.ijieee.org.in/journal_pdf/11-66-140326324973-76.pdf)
+4. [Machine Learning for Gesture Recognition with Electromyography](https://brage.bibsys.no/xmlui/bitstream/handle/11250/2459262/16780_FULLTEXT.pdf?sequence=1&isAllowed=y)
 
 ## Коммерческие продукты
 1. [Myo Armband](https://www.myo.com/).
@@ -27,12 +29,16 @@ $ git clone https://github.com/estel1/emg_platform
 1. [Hand Gesture Recognition Using Machine Learning
 and the Myo Armband](https://www.eurasip.org/Proceedings/Eusipco/Eusipco2017/papers/1570347665.pdf).
 2. [Techniques of EMG signal analysis: detection, processing, classification and applications](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1455479/).
-3. [A compendium of blog posts on op amp design topics
-by Bruce Trump](http://www.ti.com/lit/ml/slyt701/slyt701.pdf).
 
 ## Книги
 1. SURFACE ELECTROMYOGRAPHY Physiology,Engineering,andApplications. 
 2. Bita Mokhlesabadifarahani Vinit Kumar Gunjan EMG Signals Characterization in Three States of Contraction by Fuzzy Network and Feature Extraction.
+
+## Ссылки
+1. [ESP8266 Tutorial](https://tttapa.github.io/ESP8266/Chap01%20-%20ESP8266.html)
+2. [A compendium of blog posts on op amp design topics
+by Bruce Trump](http://www.ti.com/lit/ml/slyt701/slyt701.pdf).
+
 
 You can use the [editor on GitHub](https://github.com/estel2/emg/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
 
