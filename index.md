@@ -21,6 +21,7 @@ $ git clone https://github.com/estel1/emg_platform
 2. Разработка программных средств для анализа сигналов EMG на основе адаптивных (рекалибруемых без повторного обучения) моделей. [28744189](https://www.ncbi.nlm.nih.gov/pubmed/28744189).
 3. [V.T.GAIKWAD, 2M.M.SARDESHMUKH SIGN LANGUAGE RECOGNITION BASED ON ELECTROMYOGRAPHY (EMG) SIGNAL USING ARTIFICIAL NEURAL NETWORK (ANN). ](http://pep.ijieee.org.in/journal_pdf/11-66-140326324973-76.pdf)
 4. [Machine Learning for Gesture Recognition with Electromyography](https://brage.bibsys.no/xmlui/bitstream/handle/11250/2459262/16780_FULLTEXT.pdf?sequence=1&isAllowed=y)
+5. Исследование канала управления: подаем воздействие, например, сжимаем кисть, при этом контролируем силу сжатия с помощью прибора. Измеряем сигнал EMG. Строим прямую мат. модель импульс--сжатие с использованием Вольтерровского описания. (возможно учитывая усталость и т.п.). Цель - извлечение новых классификационных признаков из модели.
 
 ## Коммерческие продукты
 1. [Myo Armband](https://www.myo.com/).
