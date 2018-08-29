@@ -5,6 +5,7 @@
 // http://esp32.net/images/Ai-Thinker/NodeMCU-32S/Ai-Thinker_NodeMCU-32S_DiagramSchematic.png
 // http://esp32.net/images/Ai-Thinker/NodeMCU-32S/Ai-Thinker_NodeMCU-32S_DiagramPinout.png
 // https://einstronic.com/wp-content/uploads/2017/06/NodeMCU-32S-Catalogue.pdf
+// Add interrupt: https://techtutorialsx.com/2017/10/07/esp32-arduino-timer-interrupts/
 
 #define NUMCHANNELS 6
 #define HEADERLEN 4
