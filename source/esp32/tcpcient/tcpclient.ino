@@ -88,7 +88,7 @@ void loop()
         {
             client.write(TXBuf,PACKETLEN) ;
             TXBuf[3] = TXBuf[3] + 1 ; // update packet counter
-            delayMicroseconds( 50 ) ; // 20kHz sampling rate
+            delayMicroseconds( 3906 ) ; //  256Hz sampling rate
         }
     }       
     // Handle HTTP requests
