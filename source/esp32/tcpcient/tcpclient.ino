@@ -1,6 +1,9 @@
 #include <WiFi.h>
 #include <WebServer.h>   // Include the WebServer library
 
+// https://github.com/espressif/arduino-esp32/blob/master/docs/arduino-ide/windows.md
+// http://esp32.net/images/Ai-Thinker/NodeMCU-32S/Ai-Thinker_NodeMCU-32S_DiagramSchematic.png
+// http://esp32.net/images/Ai-Thinker/NodeMCU-32S/Ai-Thinker_NodeMCU-32S_DiagramPinout.png
 // https://einstronic.com/wp-content/uploads/2017/06/NodeMCU-32S-Catalogue.pdf
 
 #define NUMCHANNELS 6
@@ -86,6 +89,12 @@ void loop()
         // transmit continously up to disconnection
         while (client.connected()) 
         {
+            // read ADC
+            int ch0 = analogRead(ADC0) ;
+            unsigned char* pCh0 = (unsigned char*)&ch0 ;
+            TXBuf[4] = pCh[0] ; // maybe change msb,lsb          
+            TXBuf[5] = pCh[1] ;            
+                        
             client.write(TXBuf,PACKETLEN) ;
             TXBuf[3] = TXBuf[3] + 1 ; // update packet counter
             delayMicroseconds( 3906 ) ; //  256Hz sampling rate
