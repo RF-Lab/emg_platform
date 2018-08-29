@@ -79,32 +79,20 @@ void setup_wifi()
 
 void loop() 
 {  
-    
-    // Handle TCP server
-    long now = millis() ;
-    if ( now - lastMsg > 100 ) 
+    WiFiClient client = tcpServer.available() ;
+    if (client) 
     {
-        lastMsg = now ;
-        
-        WiFiClient client = tcpServer.available() ;
-        if (client) 
+        // absolute priority to tcp client
+        // transmit continously up to disconnection
+        while (client.connected()) 
         {
-            if (client.connected()) 
-            {
-                // Send 100 samples per 100 ms = 1kHz sampling
-                for (int i=0;i<100;i++)
-                {
-                    client.write(TXBuf,PACKETLEN) ;
-                    TXBuf[3] = TXBuf[3] + 1 ; // update packet counter
-                }
-            }
-        }       
-        
-    }
-    
+            client.write(TXBuf,PACKETLEN) ;
+            TXBuf[3] = TXBuf[3] + 1 ; // update packet counter
+            delayMicroseconds( 50 ) ; // 20kHz sampling rate
+        }
+    }       
     // Handle HTTP requests
-    httpServer.handleClient() ;
-    
+    httpServer.handleClient() ;    
 }
 
 void handleRoot() 
