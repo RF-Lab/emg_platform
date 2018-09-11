@@ -1,4 +1,7 @@
 # EMG hardware platform
+## EMG Shields for Arduino
+1. [Analog EMG Sensor by OYMotion SKU:SEN0240](https://www.dfrobot.com/wiki/index.php/Analog_EMG_Sensor_by_OYMotion_SKU:SEN0240).
+2. [Olimex SHIELD-EKG-EMG](https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/open-source-hardware).
 ## Arduino + EMG Shield
 В этом случае используется [Arduino UNO](https://store.arduino.cc/arduino-uno-rev3) либо [Arduino Leonardo](https://store.arduino.cc/arduino-leonardo-with-headers) совместно с мезонином на основе [Olimex SHIELD-EKG-EMG](https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/open-source-hardware).
 ## Wireless EMG hardware platform
