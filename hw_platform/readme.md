@@ -5,7 +5,7 @@
 3. [Схема Grove - EMG Detector](https://static.chipdip.ru/lib/843/DOC003843068.pdf)
 ## Схемы EMG Shields 
 1. [Analog EMG Sensor by OYMotion SKU:SEN0240](https://www.dfrobot.com/wiki/index.php/Analog_EMG_Sensor_by_OYMotion_SKU:SEN0240).
-2. [Olimex SHIELD-EKG-EMG](https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/open-source-hardware).
+2. [Схема Olimex SHIELD-EKG-EMG](https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/resources/SHIELD-EKG-EMG-REV-B-SCHEMATIC.pdf).
 3. [Схема Grove - EMG Detector](https://static.chipdip.ru/lib/843/DOC003843068.pdf)
 ## ADC и передача данных в компьютер
 1. [Arduino UNO](https://store.arduino.cc/arduino-uno-rev3)
