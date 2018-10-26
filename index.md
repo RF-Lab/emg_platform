@@ -17,6 +17,7 @@ $ git clone https://github.com/estel1/emg_platform
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
 ## Возможные темы 
+### Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения.
 1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. 
   a. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/).
   b. [Deep Learning for Electromyographic Hand Gesture Signal Classification Using Transfer Learning](https://arxiv.org/pdf/1801.07756.pdf).
