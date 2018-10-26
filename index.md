@@ -17,7 +17,10 @@ $ git clone https://github.com/estel1/emg_platform
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
 ## Возможные темы 
-1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/).
+1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. 
+1.1. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/).
+1.2. [Deep Learning for Electromyographic Hand Gesture
+Signal Classification Using Transfer Learning](https://arxiv.org/pdf/1801.07756.pdf).
 2. Разработка программных средств для анализа сигналов EMG на основе адаптивных (рекалибруемых без повторного обучения) моделей. [28744189](https://www.ncbi.nlm.nih.gov/pubmed/28744189).
 3. [V.T.GAIKWAD, 2M.M.SARDESHMUKH SIGN LANGUAGE RECOGNITION BASED ON ELECTROMYOGRAPHY (EMG) SIGNAL USING ARTIFICIAL NEURAL NETWORK (ANN). ](http://pep.ijieee.org.in/journal_pdf/11-66-140326324973-76.pdf)
 4. [Machine Learning for Gesture Recognition with Electromyography](https://brage.bibsys.no/xmlui/bitstream/handle/11250/2459262/16780_FULLTEXT.pdf?sequence=1&isAllowed=y)
