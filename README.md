@@ -11,7 +11,7 @@
 1. Установите [Git](https://git-scm.com/downloads).
 2. Получите свою локальную копию платформы:
 ```bash
-$ git clone https://github.com/estel1/emg_platform
+$ git clone https://github.com/RF-Lab/emg_platform
 ```
 3. Запустите пример [EMGClassific_SVMmetod_10mov.m](https://github.com/estel1/emg_platform/blob/master/source/matlab/EMGClassific_SVMmetod_10mov/EMGClassific_SVMmetod_10mov.m)
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
