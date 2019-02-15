@@ -13,7 +13,8 @@
 ```bash
 $ git clone https://github.com/RF-Lab/emg_platform
 ```
-3. Запустите пример [EMGClassific_SVMmetod_10mov.m](https://github.com/estel1/emg_platform/blob/master/source/matlab/EMGClassific_SVMmetod_10mov/EMGClassific_SVMmetod_10mov.m)
+3. Запустите пример [SVM классификатор на 10 классов](https://github.com/estel1/emg_platform/blob/master/source/matlab/EMGClassific_SVMmetod_10mov/EMGClassific_SVMmetod_10mov.m)
+4. Используйте примеры [CNN классификатор на 2 класса](https://github.com/RF-Lab/emg_platform/blob/master/source/python/cnn1d/cnn1d_2.py) и [CNN классификатор на 3 класса](https://github.com/RF-Lab/emg_platform/blob/master/source/python/cnn1d/cnn1d_3.py).
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
 ## Возможные темы 
