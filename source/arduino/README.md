@@ -37,3 +37,11 @@ Your Pages site will use the layout and styles from the Jekyll theme you have se
 ### Support or Contact
 
 Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+
+EMG shield
+EMG shield: https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/open-source-hardware
+  documents:https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/resources/SHIELD-EKG-EMG.pdf (need perform page 12 and 13)
+  matlab script: Main_v2.m - real-time classification and 3dHand visualization:  unpack 3dHand and in script change paths on your :       https://yadi.sk/d/lEAcx24b9zndsQ
+  
+  
+  
