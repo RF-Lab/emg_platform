@@ -3,9 +3,9 @@
 rng(123);
 close all;
 clear all; 
-load('data10mov_no_abs.mat'); %áåç ôèëüòðîâ
+load('data10mov_no_abs.mat'); %без фильтров
 All_data=data;
-% ïåðåìåøèâàíèå
+% перемешивание
 [str,col]=size(data);
 [str_ind,col_ind]=size(data{1,1});
 All_data_new=[];
@@ -18,7 +18,7 @@ for j=1:str
 end
 p=[];
  All_data=All_data_new; 
-%êîíåö ïåðåìåøèâàíèÿ
+%конец перемешивания
 
 data=[];
 data{1,1}=All_data{1,1}(1:50,:); %50
@@ -31,16 +31,16 @@ data{7,1}=All_data{7,1}(1:50,:);
 data{8,1}=All_data{8,1}(1:50,:);
 data{9,1}=All_data{9,1}(1:50,:);
 data{10,1}=All_data{10,1}(1:50,:);
-%ïðèçíàêè
+%признаки
 IEMG=[];MV=[];MAV=[];MAV1=[];MAV2=[];TM4=[];RMS=[];V=[];LOG=[];DASDV=[];MYOP=[];WAMP=[];
 MAVSLP=[];SSI=[];VAR=[];STD=[];WL=[];AAC=[];X=[];ff=[];PKF=[];MNF=[];MDF=[];MNP=[];FR=[];SM1=[];SM0=[]; VCF=[];SSC=[];
 FMD_vec=[]; FMN_vec=[]; FR_vec=[]; MFMD_vec=[]; MFMN_vec=[]; LPC=[]; ZC=[];histog=[];
 t=[];
-T=[]; %Âåêòîð êëàññîâ
+T=[]; %Вектор классов
 p=[];
-P=[]; %Âåêòîð ïðèçíàêîâ
+P=[]; %Вектор признаков
 k=1;
-v=2; %êîíñòàíòà v-order 2.1.9
+v=2; %константа v-order 2.1.9
 [str,col]=size(data);
 collor{1}='.b';
 collor{2}='.r';
@@ -59,7 +59,7 @@ for f=1:str
     PW=[];
     for c=1:col
         MAV_tmp=0;
-         [n_traning,N]=size(data{f,c}); %ïîëó÷àþ êîëè÷åñòâî òðåíèðîâî÷íûõ ïîñëåäîâàòåëüíîñòåé è èõ äëèííó
+         [n_traning,N]=size(data{f,c}); %получаю количество тренировочных последовательностей и их длинну
          
         for i=1:n_traning
      IEMG(i) = sum(abs(data{f,c}(i,:)));
@@ -191,7 +191,7 @@ P=[];
 for i=1:str
 P{i}=P_tmp;
 end
- for j=1:str % 10 ëèíåéíûõ êëàññèôèêàòîðîâ SVM "îäèí ïðîòèâ âñåõc"
+ for j=1:str % 10 линейных классификаторов SVM "один против всех"
  tmpT=T;
  tmpT(tmpT~=j) = -1;
  tmpT(tmpT==j) = 1;
@@ -200,7 +200,7 @@ SVMModel{j} = fitcsvm(P{j}',tmpT','Standardize',true,'KernelFunction' , 'linear'
 [Y,prob] = predict(SVMModel{j},P{j}');
 test_errClassSVM(j,1)=sum(spones(Y-tmpT'));
  end
- %% Òåñòîâàÿ âûáîðêà:
+ %% Тестовая выборка:
  data=[];
  data{1,1}=All_data{1,1}(51:79,:); %51
  data{2,1}=All_data{2,1}(51:79,:);
@@ -212,16 +212,16 @@ test_errClassSVM(j,1)=sum(spones(Y-tmpT'));
  data{8,1}=All_data{8,1}(51:79,:);
  data{9,1}=All_data{9,1}(51:79,:);
  data{10,1}=All_data{10,1}(51:79,:);
- %ïðèçíàêè
+%признаки
 IEMG=[];MV=[];MAV=[];MAV1=[];MAV2=[];TM4=[];RMS=[];V=[];LOG=[];DASDV=[];MYOP=[];WAMP=[];
 MAVSLP=[];SSI=[];VAR=[];STD=[];WL=[];AAC=[];X=[];ff=[];PKF=[];MNF=[];MDF=[];MNP=[];FR=[];SM1=[];SM0=[]; VCF=[];SSC=[];
 FMD_vec=[]; FMN_vec=[]; FR_vec=[]; MFMD_vec=[]; MFMN_vec=[]; LPC=[];ZC=[];    histog=[];
 t=[];
-T=[]; %Âåêòîð êëàññîâ
+T=[]; %Вектор классов
 p=[];
-P=[]; %Âåêòîð ïðèçíàêîâ
+P=[]; %Вектор признаков
 k=1;
-v=2; %êîíñòàíòà v-order 2.1.9
+v=2; %константа v-order 2.1.9
 [str,col]=size(data);
 collor{1}='.b';
 collor{2}='.r';
@@ -240,7 +240,7 @@ for f=1:str
     PW=[];
     for c=1:col
         MAV_tmp=0;
-         [n_traning,N]=size(data{f,c}); %ïîëó÷àþ êîëè÷åñòâî òðåíèðîâî÷íûõ ïîñëåäîâàòåëüíîñòåé è èõ äëèííó
+         [n_traning,N]=size(data{f,c}); %получаю количество тренировочных последовательностей и их длинну
          
         for i=1:n_traning
      IEMG(i) = sum(abs(data{f,c}(i,:)));
@@ -330,7 +330,7 @@ for f=1:str
       LPC=[LPC; lpc(data{f,c}(i,:),9)];
            histog=[histog hist(data{f,c}(i,:),-300:300)'];
      % PW=[PW; pwelch(data{f,c}(i,:))'];
-    t(i) = f; %ïðèñâîåíèå êëàññà
+    t(i) = f; %присвоение класса
         end
         P=[P [IEMG;MV;
             MAV;MAV1;
@@ -389,10 +389,10 @@ end
 if length(ind)==1
     ClassSVM(i) = ind;
 else
-    if (length(ind)>1) %åñëè áîëüøå 1 êëàññà
+    if (length(ind)>1) %если больше 1 класса
       [~,ind]=max(prob(:,2));
       ClassSVM(i) = ind;
-    else %åñëè âñå -1
+    else %если все -1
         [~,ind]=min(abs(prob(:,1)));
         ClassSVM(i) = ind;
     end   
