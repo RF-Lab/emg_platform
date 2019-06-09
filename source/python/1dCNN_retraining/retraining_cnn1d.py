@@ -40,8 +40,8 @@ def create_dataset(file_path, persons):
     sgn = np.asarray(sgn, dtype=np.float64)
     lbl = np.asarray(lbl, dtype=np.int64)
 
-    train_signals = sgn[0:int(0.8 * len(sgn))]
-    train_labels = lbl[0:int(0.8 * len(lbl))]
+    train_signals = sgn[0:int(0.6 * len(sgn))]
+    train_labels = lbl[0:int(0.6 * len(lbl))]
     val_signals = sgn[int(0.6*len(sgn)):int(0.8*len(sgn))]
     val_labels = lbl[int(0.6*len(lbl)):int(0.8*len(lbl))]
     test_signals = sgn[int(0.8*len(sgn)):]
