@@ -35,7 +35,7 @@ classes = '0, 1, 4, 5, 6, 7'
 
 svc = svm.SVC(kernel='poly')
 
-algorithms = {
+preprocessing_methods = {
     'Standard Scaler': StandardScaler(),
     'Min-Max Scaler': MinMaxScaler(),
     'Max-Abs Scaler': MaxAbsScaler(),
@@ -118,13 +118,13 @@ def main():
 
     results = list()
 
-    for kernel, params in parameters.items():
-        svc.kernel = kernel
+    for kernel_name, params in parameters.items():
+        svc.kernel = kernel_name
 
-        for name, algorithm in algorithms.items():
+        for method_name, method in preprocessing_methods.items():
             start_time = time.time()
 
-            new_X_train, new_X_test = preprocessing_data(algorithm, X_train, X_test)
+            new_X_train, new_X_test = preprocessing_data(method, X_train, X_test)
 
             train_results, tests_results = train_and_test(new_X_train, y_train, new_X_test, y_test)
 
@@ -133,11 +133,14 @@ def main():
 
             results.append(
                 {
-                    'Kernel': kernel,
-                    'Preprocessing method': name,
+                    'Kernel': kernel_name,
+                    'Preprocessing method': method_name,
                     'Train result': f"{train_results:.3%}",
                     'Test result': f"{tests_results:.3%}",
-                    'Params': dict(pd.Series(df_params[0]).loc[params.keys()]),
+                    'Params': {
+                        {'C': 'C', 'gamma': 'γ', 'degree': 'd', 'coef0': 'r'}[key]: float(f'{value:.2f}')
+                        for key, value in df_params[0].items() if key in params
+                    },
                     'Time': time.time() - start_time,
                 }
             )
