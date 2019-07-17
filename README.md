@@ -18,8 +18,9 @@ $ git clone https://github.com/RF-Lab/emg_platform
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
 ## Установка Python+TensorFlow
-install anaconda: https://www.anaconda.com/distribution/
-Run "Anaconda Prompt"
+- install anaconda: https://www.anaconda.com/distribution/
+- Run "Anaconda Prompt"
+```
 conda create --name tensorflow python=3.5
 activate tensorflow
 conda install tensorflow
@@ -29,6 +30,7 @@ conda install keras
 conda install matplotlib
 conda install spyder
 spyder
+```
 
 ## Возможные темы 
 1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/).
