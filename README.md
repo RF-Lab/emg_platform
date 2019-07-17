@@ -17,6 +17,19 @@ $ git clone https://github.com/RF-Lab/emg_platform
 4. Используйте примеры [CNN классификатор на 2 класса (Python, Keras)](https://github.com/RF-Lab/emg_platform/blob/master/source/python/cnn1d/cnn1d_2.py) и [CNN классификатор на 3 класса](https://github.com/RF-Lab/emg_platform/blob/master/source/python/cnn1d/cnn1d_3.py) (Перед запуском примеров на Python необходимо сформировать тренировочный набор данных в формате CSV с помощью [mat2csv.m](https://github.com/RF-Lab/emg_platform/blob/master/source/python/cnn1d/mat2csv.m)).
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
+## Установка Python+TensorFlow
+install anaconda: https://www.anaconda.com/distribution/
+Run "Anaconda Prompt"
+conda create --name tensorflow python=3.5
+activate tensorflow
+conda install tensorflow
+conda install -c anaconda scikit-learn
+conda install -c anaconda pandas
+conda install keras
+conda install matplotlib
+conda install spyder
+spyder
+
 ## Возможные темы 
 1. Разработка программных средств для анализа сигналов EMG с использованием моделей глубокого обучения. [PMC5013051](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013051/).
 2. Разработка программных средств для анализа сигналов EMG на основе адаптивных (рекалибруемых без повторного обучения) моделей. [28744189](https://www.ncbi.nlm.nih.gov/pubmed/28744189).
