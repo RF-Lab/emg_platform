@@ -17,7 +17,7 @@ $ git clone https://github.com/RF-Lab/emg_platform
 4. Используйте примеры [CNN классификатор на 2 класса (Python, Keras)](https://github.com/RF-Lab/emg_platform/blob/master/source/python/cnn1d/cnn1d_2.py) и [CNN классификатор на 3 класса](https://github.com/RF-Lab/emg_platform/blob/master/source/python/cnn1d/cnn1d_3.py) (Перед запуском примеров на Python необходимо сформировать тренировочный набор данных в формате CSV с помощью [mat2csv.m](https://github.com/RF-Lab/emg_platform/blob/master/source/python/cnn1d/mat2csv.m)).
 4. Пришлите мне свой username для включения в список collaborators (если у вас нет аккаунта - зарегистрируйтесь на [GitHub](https://github.com)
 
-## Установка Python+TensorFlow
+## Установка Python+TensorFlow под Windows &trade; &reg; 
 - install anaconda: https://www.anaconda.com/distribution/
 - Run "Anaconda Prompt"
 ```
