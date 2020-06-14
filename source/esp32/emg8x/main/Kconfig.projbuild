@@ -1,0 +1,121 @@
+menu "WiFi Configuration"
+
+    config WIFI_SSID
+        string "WiFi SSID"
+        default "Keenetic-0079"
+        help
+            SSID (network name) for the example to connect to.
+
+    config WIFI_PASSWORD
+        string "WiFi Password"
+        default "yoHwLp6B"
+        help
+            WiFi password (WPA or WPA2) for the example to use.
+
+    config HOST_IP_ADDRESS
+        string "Broker URL"
+        default "192.168.1.38"
+        help
+            Host IP address to connect to
+
+endmenu
+
+menu "Homie3 Configuration"
+
+    config HOMIE3_DEV_NAME
+        string "Homie3 device name"
+        default "homie3Node"
+        help
+            Homie3 device name
+
+    config HOMIE3_RELAY
+        bool "Relay node"
+        default "y"
+        help
+            Use Relay Node
+
+    config HOMIE3_RELAY_GPIO_NUM
+        int "Relay gpio num" if HOMIE3_RELAY
+        default 4
+        help
+            Relay GPIO num
+
+    config HOMIE3_THERMOMETER
+        bool "Thermometer node"
+        default "y"
+        help
+            Use Thermometer node
+
+    config HOMIE3_THERMOMETER_GPIO_NUM
+        int "Thermometer gpio num" if HOMIE3_THERMOMETER
+        default 0
+        help
+            Thermometer GPIO num
+
+    config HOMIE3_KEYBOARD
+        bool "Keyboard node"
+        default "y"
+        help
+            Use Keyboard driver (On/Off buttons)
+
+    config HOMIE3_BTN_ON_GPIO_NUM
+        int "Keyboard Button ON gpio num" if HOMIE3_KEYBOARD
+        default 33
+        help
+            Keyboard Button ON gpio num
+
+    config HOMIE3_BTN_ON_ACTIVE_LEVEL
+        int "Btn On active level 0/1" if HOMIE3_KEYBOARD
+        default 0
+        help
+            Btn On active level 0/1
+
+    config HOMIE3_BTN_OFF_GPIO_NUM
+        int "Keyboard Button OFF gpio num" if HOMIE3_KEYBOARD
+        default 32
+        help
+            Keyboard Button OFF gpio num
+
+    config HOMIE3_BTN_OFF_ACTIVE_LEVEL
+        int "Btn Off active level 0/1" if HOMIE3_KEYBOARD
+        default 1
+        help
+            Btn Off active level 0/1
+
+    config HOMIE3_KEYBOARD_RELAY_ADDRESS
+        string "Keyboard relay address" if HOMIE3_KEYBOARD
+        default "homie/relayNode/relay/power/set"
+        help
+            Homie3 address to send command from keyboard ON/Off buttons 
+
+    config HOMIE3_WATERTANK_SENSORS
+        bool "Watertank sensors"
+        default "y"
+        help
+            Use Watertank driver (Level Sensors)
+
+    config HOMIE3_FLOAT_LEVEL_GPIO_NUM
+        int "Float level gpio num" if HOMIE3_WATERTANK_SENSORS
+        default 12
+        help
+            Watertank float level gpio num
+
+    config HOMIE3_UP_LEVEL_GPIO_NUM
+        int "Up-level gpio num" if HOMIE3_WATERTANK_SENSORS
+        default 14
+        help
+            Watertank up-level gpio num
+
+    config HOMIE3_USONIC_TRIGGER_GPIO_NUM
+        int "Ultra sonic sensor trigger gpio num" if HOMIE3_WATERTANK_SENSORS
+        default 27
+        help
+            Ultra sonic sensor trigger gpio num
+
+    config HOMIE3_USONIC_ECHO_GPIO_NUM
+        int "Ultra sonic sensor echo gpio num" if HOMIE3_WATERTANK_SENSORS
+        default 26
+        help
+            Ultra sonic sensor echo gpio num
+
+endmenu
