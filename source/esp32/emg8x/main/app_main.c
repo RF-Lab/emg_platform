@@ -138,7 +138,7 @@ void ad1299_wreg(spi_device_handle_t spi, const uint8_t addr, const uint8_t valu
 
 static void emg8x_app_start(void)
 {
-    int dmaChan             = 2 ;
+    int dmaChan             = 0 ;
     spi_device_handle_t spi_dev ;
     esp_err_t ret           = 0 ;
     uint8_t cmd             = 0 ;
@@ -175,7 +175,7 @@ static void emg8x_app_start(void)
         .sclk_io_num        = GPIO_NUM_18,
         .quadwp_io_num      = -1,
         .quadhd_io_num      = -1,
-        .max_transfer_sz    = 256
+        .max_transfer_sz    = 64
     } ;
     spi_device_interface_config_t devcfg={
         .clock_speed_hz     = 100*1000,                 // Clock out at 100 KHz
@@ -197,11 +197,11 @@ static void emg8x_app_start(void)
     
     ad1299_cmd( spi_dev, AD1299_CMD_SDATAC ) ;
 
-    // RREG CONFIG3
-    ad1299_rreg( spi_dev, AD1299_ADDR_CONFIG3 ) ;
-
     // WREG CONFIG3 E0h
     ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG3, 0xE0 ) ;
+
+    // RREG CONFIG3
+    ad1299_rreg( spi_dev, AD1299_ADDR_CONFIG3 ) ;
 
 }
 
