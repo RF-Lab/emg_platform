@@ -76,17 +76,48 @@ static void wifi_init(void)
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY) ;
 }
 
-void ad1299_cmd(spi_device_handle_t spi, const uint8_t cmd)
+// send 8bit command
+void ad1299_send_cmd8(spi_device_handle_t spi, const uint8_t cmd)
 {
     esp_err_t ret ;
     spi_transaction_t t ;
-    memset(&t, 0, sizeof(spi_transaction_t));       //Zero out the transaction
-    t.length=8;                     //Command is 8 bits
-    t.tx_buffer=&cmd;               //The data is the cmd itself
-    t.user=(void*)0;                //D/C needs to be set to 0
+    memset(&t, 0, sizeof(spi_transaction_t)) ;      //Zero out the transaction
+    t.flags         = 0 ;                           //Bitwise OR of SPI_TRANS_* flags
+    t.length        = 8 ;                           //Total data length, in bits
+    t.user          = (void*)0 ;                    //User-defined variable. Can be used to store eg transaction ID.
+    t.tx_buffer     = &cmd ;                        //Pointer to transmit buffer, or NULL for no MOSI phase
+    t.rx_buffer     = NULL ;                        //Pointer to receive buffer, or NULL for no MISO phase. Written by 4 bytes-unit if DMA is used.
+
     int icmd = cmd ;
-    ESP_LOGI( TAG, "Send command:0x%02X", icmd ) ;
-    ret = spi_device_polling_transmit(spi, &t);  //Transmit!
+    ESP_LOGI( TAG, "ad1299_cmd8: send command:0x%02X", icmd ) ;
+
+    ret = spi_device_polling_transmit( spi, &t ) ;  // send command
+    if (ret==ESP_OK)
+    {
+        ESP_LOGI( TAG, "Sent successfuly" ) ;
+    }
+    ESP_ERROR_CHECK(ret) ;            //Should have had no issues.
+}
+
+// Write to ad1299 register
+void ad1299_wreg(spi_device_handle_t spi, const uint8_t addr, const uint8_t value)
+{
+    esp_err_t ret ;
+    spi_transaction_t t ;
+    uint8_t tx_buf[3] = {
+        AD1299_CMD_WREG | addr,
+        0,
+        value
+    } ;
+    memset(&t, 0, sizeof(spi_transaction_t)) ;       //Zero out the transaction
+    t.flags         = 0 ;                           //Bitwise OR of SPI_TRANS_* flags
+    t.length        = 8*3 ;                         //Total data length, in bits
+    t.user          = (void*)0 ;                    //User-defined variable. Can be used to store eg transaction ID.
+    t.tx_buffer     = tx_buf ;                      //Pointer to transmit buffer, or NULL for no MOSI phase
+    t.rx_buffer     = NULL ;                        //Pointer to receive buffer, or NULL for no MISO phase. Written by 4 bytes-unit if DMA is used.
+
+    ESP_LOGI( TAG, "ad1299_wreg :0x%02X to REG:0x%02X", value, addr ) ;
+    ret = spi_device_polling_transmit(spi, &t) ;    //Transmit!
     if (ret==ESP_OK)
     {
         ESP_LOGI( TAG, "Sent successfuly" ) ;
@@ -98,50 +129,38 @@ uint8_t ad1299_rreg(spi_device_handle_t spi, const uint8_t addr)
 {
     esp_err_t ret ;
     spi_transaction_t t ;
+    memset( &t, 0, sizeof(spi_transaction_t) ) ;    //Zero out the transaction
+    t.flags         = SPI_TRANS_USE_RXDATA|
+                      SPI_TRANS_USE_TXDATA ;        //Bitwise OR of SPI_TRANS_* flags
+    t.length        = 8*3 ;                         //Total data length, in bits
+    t.rxlength      = 8*3 ;                         //Total data length received, should be not greater than ``length`` in full-duplex mode (0 defaults this to the value of ``length``)
+    t.user          = (void*)0 ;                    //User-defined variable. Can be used to store eg transaction ID.
 
-    ad1299_cmd(spi, AD1299_CMD_RREG|addr ) ;
+    t.tx_data[0]    = AD1299_CMD_RREG|addr ;
+    t.tx_data[1]    = 0 ;                           // 1 register to read
+    t.tx_data[2]    = 0 ;                           // NOP
+    t.tx_data[3]    = 0 ;                           // NOP
 
-    memset(&t, 0, sizeof(spi_transaction_t)) ;       //Zero out the transaction
-    t.flags = SPI_TRANS_USE_RXDATA ;
-    t.user = (void*)1 ;
-    ESP_LOGI( TAG, "Read from REG:0x%02X", addr ) ;
+    ESP_LOGI( TAG, "ad1299_rreg: read from REG:0x%02X", addr ) ;
     ret = spi_device_polling_transmit(spi, &t) ;
     if (ret==ESP_OK)
     {
-        ESP_LOGI( TAG, "Read successfuly: 0x%02X", *(uint8_t*)t.rx_data ) ;
+        ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[0] ) ;
+        ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[1] ) ;
+        ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[2] ) ;
+        ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[3] ) ;
     }
-    ESP_ERROR_CHECK(ret) ;            //Should have had no issues.
-    return ( *(uint8_t*)t.rx_data ) ;
-}
+    ESP_ERROR_CHECK(ret) ;                          //Should have had no issues.
 
+    return (t.rx_data[0]) ;
 
-void ad1299_wreg(spi_device_handle_t spi, const uint8_t addr, const uint8_t value)
-{
-    esp_err_t ret ;
-    spi_transaction_t t ;
-    uint8_t tx_buf[3] ;
-    memset(&t, 0, sizeof(spi_transaction_t));       //Zero out the transaction
-    t.length=8*3;                     //Command is 8 bits
-    tx_buf[0] = AD1299_CMD_WREG | addr ;
-    tx_buf[1] = 0x00 ; // single register
-    tx_buf[2] = value ;
-    t.tx_buffer=tx_buf ;               //The data is the cmd itself
-    t.user=(void*)0;                //D/C needs to be set to 0
-    ESP_LOGI( TAG, "Write :0x%02X to REG:0x%02X", value, addr ) ;
-    ret = spi_device_polling_transmit(spi, &t);  //Transmit!
-    if (ret==ESP_OK)
-    {
-        ESP_LOGI( TAG, "Sent successfuly" ) ;
-    }
-    ESP_ERROR_CHECK(ret) ;            //Should have had no issues.
 }
 
 static void emg8x_app_start(void)
 {
-    int dmaChan             = 0 ;
+    int dmaChan             = 0 ;  // disable dma
     spi_device_handle_t spi_dev ;
     esp_err_t ret           = 0 ;
-    uint8_t cmd             = 0 ;
 
     ESP_LOGI(TAG, "Initialize GPIO lines") ;
 
@@ -160,28 +179,40 @@ static void emg8x_app_start(void)
     ESP_LOGI(TAG, "Wait for 20 tclk") ;
 
     //vTaskDelay( 10 / portTICK_RATE_MS ) ;
-    ets_delay_us( 10 ) ; //~20 clock periods @2MHz
+    ets_delay_us( 15 ) ; //~30 clock periods @2MHz
 
     // Reset pulse
     ESP_LOGI(TAG, "Reset ad1299") ;
     gpio_set_level(AD1299_RESET_PIN, 0 ) ;
-    ets_delay_us( 10 ) ;  //~20 clock periods @2MHz
+    ets_delay_us( 15 ) ;  //~20 clock periods @2MHz
     gpio_set_level(AD1299_RESET_PIN, 1 ) ;
 
     ESP_LOGI(TAG, "Initialize SPI driver...") ;
+    // SEE esp-idf/components/driver/include/driver/spi_common.h
     spi_bus_config_t buscfg = {
         .miso_io_num        = GPIO_NUM_19,
         .mosi_io_num        = GPIO_NUM_23,
         .sclk_io_num        = GPIO_NUM_18,
         .quadwp_io_num      = -1,
         .quadhd_io_num      = -1,
-        .max_transfer_sz    = 64
+        .flags              = 0,                        // Abilities of bus to be checked by the driver. Or-ed value of ``SPICOMMON_BUSFLAG_*`` flags.
+        .intr_flags         = 0,
+        .max_transfer_sz    = 0                         // maximum data size in bytes, 0 means 4094
     } ;
-    spi_device_interface_config_t devcfg={
-        .clock_speed_hz     = 100*1000,                 // Clock out at 100 KHz
+
+    // see esp-idf/components/driver/include/driver/spi_master.h
+    spi_device_interface_config_t devcfg = {
+        .command_bits       = 0,                        // 0-16
+        .address_bits       = 0,                        // 0-64
+        .dummy_bits         = 0,                        // Amount of dummy bits to insert between address and data phase 
+        .clock_speed_hz     = 100000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
         .mode               = 0,                        // SPI mode 0
+        .flags              = 0, //SPI_DEVICE_HALFDUPLEX,    // Bitwise OR of SPI_DEVICE_* flags
+        .input_delay_ns     = 50,                        // The time required between SCLK and MISO
         .spics_io_num       = GPIO_NUM_5,               // CS pin
-        .queue_size         = 2,                        // We want to be able to queue 2 transactions at a time
+        .queue_size         = 1,                        // No queued transactions
+        .cs_ena_pretrans    = 0,                        // 0 not used
+        .cs_ena_posttrans   = 0,                        // 0 not used                        
     } ;
     
     //Initialize the SPI bus
@@ -195,13 +226,31 @@ static void emg8x_app_start(void)
     // Send SDATAC / Stop Read Data Continuously Mode
     ESP_LOGI(TAG, "Send SDATAC") ;
     
-    ad1299_cmd( spi_dev, AD1299_CMD_SDATAC ) ;
+    ad1299_send_cmd8( spi_dev, AD1299_CMD_SDATAC ) ;
 
     // WREG CONFIG3 E0h
     ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG3, 0xE0 ) ;
 
     // RREG CONFIG3
-    ad1299_rreg( spi_dev, AD1299_ADDR_CONFIG3 ) ;
+    uint8_t  valueu8        = ad1299_rreg( spi_dev, AD1299_ADDR_CONFIG3 ) ;
+
+    for (int i=0;i<5;i++)
+    {
+    // RREG id
+    ESP_LOGI(TAG, "Read chip Id from Reg#0:") ;
+    valueu8 = ad1299_rreg( spi_dev, 0 ) ;
+
+    uint8_t ad1299_rev_id   = valueu8>>5 ;
+    uint8_t ad1299_check_bit= (valueu8>>4) & 0x01 ;
+    uint8_t ad1299_dev_id   = (valueu8>>2) & 0x03 ;
+    uint8_t ad1299_num_ch   = (valueu8) & 0x03 ;
+    
+    ESP_LOGI(TAG, "ad1299_rev_id:       0x%02X",  ad1299_rev_id ) ;
+    ESP_LOGI(TAG, "ad1299_check_bit:    %1d (should be 1)",  ad1299_check_bit ) ;
+    ESP_LOGI(TAG, "ad1299_dev_id:       0x%02X",  ad1299_dev_id ) ;
+    ESP_LOGI(TAG, "ad1299_num_ch:       0x%02X",  ad1299_num_ch ) ;
+    vTaskDelay( 500 / portTICK_RATE_MS ) ;
+    }
 
 }
 
