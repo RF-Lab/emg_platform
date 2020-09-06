@@ -22,14 +22,34 @@
 #include "driver/gpio.h"
 
 static const char *TAG                          = "EMG8x" ;
-static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_19 ;
-static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_1 ;
 
+// Pinout mapping
+// Use pinout rules from here! (https://randomnerdtutorials.com/esp32-pinout-reference-gpios/)
+static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_19 ;
+static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;
+static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;
+
+// SPI comands
 static const uint8_t        AD1299_CMD_RREG     = 0x20 ;
 static const uint8_t        AD1299_CMD_WREG     = 0x40 ;
 static const uint8_t        AD1299_CMD_SDATAC   = 0x11 ;
 
+// Register addresses available through SPI
+static const uint8_t        AD1299_ADDR_ID      = 0x00 ;
+static const uint8_t        AD1299_ADDR_CONFIG1 = 0x01 ;
+static const uint8_t        AD1299_ADDR_CONFIG2 = 0x02 ;
 static const uint8_t        AD1299_ADDR_CONFIG3 = 0x03 ;
+//static const uint8_t        AD1299_ADDR_LOFF    = 0x04 ;
+static const uint8_t        AD1299_ADDR_CH1SET  = 0x05 ;
+/*
+static const uint8_t        AD1299_ADDR_CH2SET  = 0x06 ;
+static const uint8_t        AD1299_ADDR_CH3SET  = 0x07 ;
+static const uint8_t        AD1299_ADDR_CH4SET  = 0x08 ;
+static const uint8_t        AD1299_ADDR_CH5SET  = 0x09 ;
+static const uint8_t        AD1299_ADDR_CH6SET  = 0x0a ;
+static const uint8_t        AD1299_ADDR_CH7SET  = 0x0b ;
+static const uint8_t        AD1299_ADDR_CH8SET  = 0x0c ;
+*/
 
 static EventGroupHandle_t wifi_event_group;
 const static int CONNECTED_BIT  = BIT0;
@@ -104,16 +124,14 @@ void ad1299_wreg(spi_device_handle_t spi, const uint8_t addr, const uint8_t valu
 {
     esp_err_t ret ;
     spi_transaction_t t ;
-    uint8_t tx_buf[3] = {
-        AD1299_CMD_WREG | addr,
-        0,
-        value
-    } ;
-    memset(&t, 0, sizeof(spi_transaction_t)) ;       //Zero out the transaction
-    t.flags         = 0 ;                           //Bitwise OR of SPI_TRANS_* flags
+    memset(&t, 0, sizeof(spi_transaction_t)) ;      //Zero out the transaction
+    t.flags         = SPI_TRANS_USE_TXDATA ;        //Bitwise OR of SPI_TRANS_* flags
     t.length        = 8*3 ;                         //Total data length, in bits
     t.user          = (void*)0 ;                    //User-defined variable. Can be used to store eg transaction ID.
-    t.tx_buffer     = tx_buf ;                      //Pointer to transmit buffer, or NULL for no MOSI phase
+    t.tx_data[0]    = AD1299_CMD_WREG|addr ;
+    t.tx_data[1]    = 0 ;                           // 1 register to read
+    t.tx_data[2]    = value ;                       // value to write
+    t.tx_data[3]    = 0 ;                           // NOP
     t.rx_buffer     = NULL ;                        //Pointer to receive buffer, or NULL for no MISO phase. Written by 4 bytes-unit if DMA is used.
 
     ESP_LOGI( TAG, "ad1299_wreg :0x%02X to REG:0x%02X", value, addr ) ;
@@ -132,8 +150,8 @@ uint8_t ad1299_rreg(spi_device_handle_t spi, const uint8_t addr)
     memset( &t, 0, sizeof(spi_transaction_t) ) ;    //Zero out the transaction
     t.flags         = SPI_TRANS_USE_RXDATA|
                       SPI_TRANS_USE_TXDATA ;        //Bitwise OR of SPI_TRANS_* flags
-    t.length        = 8*3 ;                         //Total data length, in bits
-    t.rxlength      = 8*3 ;                         //Total data length received, should be not greater than ``length`` in full-duplex mode (0 defaults this to the value of ``length``)
+    t.length        = 8*2 ;                         //Total data length, in bits
+    t.rxlength      = 8 ;                           //Total data length received, should be not greater than ``length`` in full-duplex mode (0 defaults this to the value of ``length``)
     t.user          = (void*)0 ;                    //User-defined variable. Can be used to store eg transaction ID.
 
     t.tx_data[0]    = AD1299_CMD_RREG|addr ;
@@ -168,13 +186,17 @@ static void emg8x_app_start(void)
     gpio_reset_pin( AD1299_PWDN_PIN ) ;
     gpio_set_direction( AD1299_PWDN_PIN, GPIO_MODE_OUTPUT ) ;
 
-    //gpio_reset_pin( AD1299_RESET_PIN ) ; // Do not reset this pin!!! (https://randomnerdtutorials.com/esp32-pinout-reference-gpios/)
+    gpio_reset_pin( AD1299_RESET_PIN ) ; 
     gpio_set_direction( AD1299_RESET_PIN, GPIO_MODE_OUTPUT ) ;
+
+    gpio_reset_pin( AD1299_START_PIN ) ;
+    gpio_set_direction( AD1299_START_PIN, GPIO_MODE_OUTPUT ) ;
 
     // See 10.1.2 Setting the Device for Basic Data Capture (ADS1299 Datasheet)
     ESP_LOGI(TAG, "Set PWDN & RESET to 1") ;
     gpio_set_level(AD1299_PWDN_PIN, 1 ) ;
     gpio_set_level(AD1299_RESET_PIN, 1 ) ;
+    gpio_set_level(AD1299_START_PIN, 0 ) ;
     
     ESP_LOGI(TAG, "Wait for 20 tclk") ;
 
@@ -186,6 +208,8 @@ static void emg8x_app_start(void)
     gpio_set_level(AD1299_RESET_PIN, 0 ) ;
     ets_delay_us( 15 ) ;  //~20 clock periods @2MHz
     gpio_set_level(AD1299_RESET_PIN, 1 ) ;
+
+    vTaskDelay( 500 / portTICK_RATE_MS ) ;
 
     ESP_LOGI(TAG, "Initialize SPI driver...") ;
     // SEE esp-idf/components/driver/include/driver/spi_common.h
@@ -205,13 +229,13 @@ static void emg8x_app_start(void)
         .command_bits       = 0,                        // 0-16
         .address_bits       = 0,                        // 0-64
         .dummy_bits         = 0,                        // Amount of dummy bits to insert between address and data phase 
-        .clock_speed_hz     = 100000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
-        .mode               = 0,                        // SPI mode 0
-        .flags              = 0, //SPI_DEVICE_HALFDUPLEX,    // Bitwise OR of SPI_DEVICE_* flags
-        .input_delay_ns     = 50,                        // The time required between SCLK and MISO
+        .clock_speed_hz     = 200000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
+        .mode               = 1,                        // SPI mode 0
+        .flags              = SPI_DEVICE_HALFDUPLEX,    // Bitwise OR of SPI_DEVICE_* flags
+        .input_delay_ns     = 0,                        // The time required between SCLK and MISO
         .spics_io_num       = GPIO_NUM_5,               // CS pin
         .queue_size         = 1,                        // No queued transactions
-        .cs_ena_pretrans    = 0,                        // 0 not used
+        .cs_ena_pretrans    = 1,                        // 0 not used
         .cs_ena_posttrans   = 0,                        // 0 not used                        
     } ;
     
@@ -227,18 +251,33 @@ static void emg8x_app_start(void)
     ESP_LOGI(TAG, "Send SDATAC") ;
     
     ad1299_send_cmd8( spi_dev, AD1299_CMD_SDATAC ) ;
+    vTaskDelay( 500 / portTICK_RATE_MS ) ;
 
+    // Set internal reference
     // WREG CONFIG3 E0h
     ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG3, 0xE0 ) ;
 
-    // RREG CONFIG3
-    uint8_t  valueu8        = ad1299_rreg( spi_dev, AD1299_ADDR_CONFIG3 ) ;
+    //Set device for DR=fmod/4096
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0x96 ) ;
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG2, 0xc0 ) ;
 
-    for (int i=0;i<5;i++)
+    // Set All Channels to Input Short
+    for (int i=0;i<8;i++)
+    {
+        ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET+i, 0x01 ) ;
+    }
+
+    // Activate Conversion
+    // After This Point DRDY Toggles at
+    // fCLK / 8192
+    gpio_set_level(AD1299_START_PIN, 1 ) ;
+
+
+    while(1)
     {
     // RREG id
     ESP_LOGI(TAG, "Read chip Id from Reg#0:") ;
-    valueu8 = ad1299_rreg( spi_dev, 0 ) ;
+    uint8_t valueu8 = ad1299_rreg( spi_dev, AD1299_ADDR_ID ) ;
 
     uint8_t ad1299_rev_id   = valueu8>>5 ;
     uint8_t ad1299_check_bit= (valueu8>>4) & 0x01 ;
