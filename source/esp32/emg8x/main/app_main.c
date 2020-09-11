@@ -25,7 +25,7 @@ static const char *TAG                          = "EMG8x" ;
 
 // Pinout mapping
 // Use pinout rules from here! (https://randomnerdtutorials.com/esp32-pinout-reference-gpios/)
-static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_19 ;
+static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;
 static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;
 static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;
 
@@ -102,10 +102,10 @@ void ad1299_send_cmd8(spi_device_handle_t spi, const uint8_t cmd)
     esp_err_t ret ;
     spi_transaction_t t ;
     memset(&t, 0, sizeof(spi_transaction_t)) ;      //Zero out the transaction
-    t.flags         = 0 ;                           //Bitwise OR of SPI_TRANS_* flags
+    t.flags         = SPI_TRANS_USE_TXDATA ;        //Bitwise OR of SPI_TRANS_* flags
     t.length        = 8 ;                           //Total data length, in bits
     t.user          = (void*)0 ;                    //User-defined variable. Can be used to store eg transaction ID.
-    t.tx_buffer     = &cmd ;                        //Pointer to transmit buffer, or NULL for no MOSI phase
+    t.tx_data[0]    = cmd ;                         //Pointer to transmit buffer, or NULL for no MOSI phase
     t.rx_buffer     = NULL ;                        //Pointer to receive buffer, or NULL for no MISO phase. Written by 4 bytes-unit if DMA is used.
 
     int icmd = cmd ;
@@ -194,19 +194,19 @@ static void emg8x_app_start(void)
 
     // See 10.1.2 Setting the Device for Basic Data Capture (ADS1299 Datasheet)
     ESP_LOGI(TAG, "Set PWDN & RESET to 1") ;
-    gpio_set_level(AD1299_PWDN_PIN, 1 ) ;
-    gpio_set_level(AD1299_RESET_PIN, 1 ) ;
-    gpio_set_level(AD1299_START_PIN, 0 ) ;
+    gpio_set_level(AD1299_PWDN_PIN,     1 ) ;
+    gpio_set_level(AD1299_RESET_PIN,    1 ) ;
+    gpio_set_level(AD1299_START_PIN,    0 ) ;
     
     ESP_LOGI(TAG, "Wait for 20 tclk") ;
 
     //vTaskDelay( 10 / portTICK_RATE_MS ) ;
-    ets_delay_us( 15 ) ; //~30 clock periods @2MHz
+    ets_delay_us( 15*10 ) ; //~30 clock periods @2MHz
 
     // Reset pulse
     ESP_LOGI(TAG, "Reset ad1299") ;
     gpio_set_level(AD1299_RESET_PIN, 0 ) ;
-    ets_delay_us( 15 ) ;  //~20 clock periods @2MHz
+    ets_delay_us( 15*10 ) ;  //~20 clock periods @2MHz
     gpio_set_level(AD1299_RESET_PIN, 1 ) ;
 
     vTaskDelay( 500 / portTICK_RATE_MS ) ;
@@ -229,7 +229,7 @@ static void emg8x_app_start(void)
         .command_bits       = 0,                        // 0-16
         .address_bits       = 0,                        // 0-64
         .dummy_bits         = 0,                        // Amount of dummy bits to insert between address and data phase 
-        .clock_speed_hz     = 200000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
+        .clock_speed_hz     = 100000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
         .mode               = 1,                        // SPI mode 0
         .flags              = SPI_DEVICE_HALFDUPLEX,    // Bitwise OR of SPI_DEVICE_* flags
         .input_delay_ns     = 0,                        // The time required between SCLK and MISO
@@ -253,26 +253,6 @@ static void emg8x_app_start(void)
     ad1299_send_cmd8( spi_dev, AD1299_CMD_SDATAC ) ;
     vTaskDelay( 500 / portTICK_RATE_MS ) ;
 
-    // Set internal reference
-    // WREG CONFIG3 E0h
-    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG3, 0xE0 ) ;
-
-    //Set device for DR=fmod/4096
-    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0x96 ) ;
-    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG2, 0xc0 ) ;
-
-    // Set All Channels to Input Short
-    for (int i=0;i<8;i++)
-    {
-        ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET+i, 0x01 ) ;
-    }
-
-    // Activate Conversion
-    // After This Point DRDY Toggles at
-    // fCLK / 8192
-    gpio_set_level(AD1299_START_PIN, 1 ) ;
-
-
     while(1)
     {
     // RREG id
@@ -289,7 +269,47 @@ static void emg8x_app_start(void)
     ESP_LOGI(TAG, "ad1299_dev_id:       0x%02X",  ad1299_dev_id ) ;
     ESP_LOGI(TAG, "ad1299_num_ch:       0x%02X",  ad1299_num_ch ) ;
     vTaskDelay( 500 / portTICK_RATE_MS ) ;
+
+    if (!ad1299_check_bit)
+    {
+        ESP_LOGI(TAG, "error: ad1299 not found!" ) ;
+        //break ;
     }
+    }
+
+
+
+    // Set internal reference
+    // WREG CONFIG3 E0h
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG3, 0xE0 ) ;
+    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+
+ /*   while(1)
+    {
+        uint8_t reg_value = ad1299_rreg( spi_dev, AD1299_ADDR_CONFIG3 ) ;
+        ESP_LOGI(TAG, "check CONF3:       0x%02X",  reg_value ) ;
+        vTaskDelay( 500 / portTICK_RATE_MS ) ;
+    }*/
+
+    //Set device for DR=fmod/4096
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0x96 ) ;     // Default 0x96 (see power up sequence)
+    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG2, 0xc0 ) ;
+    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+
+    // Set All Channels to Input Short
+    for (int i=0;i<8;i++)
+    {
+        ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET+i, 0x01 ) ;
+        vTaskDelay( 50 / portTICK_RATE_MS ) ;
+    }
+
+    // Activate Conversion
+    // After This Point DRDY Toggles at
+    // fCLK / 8192
+    gpio_set_level(AD1299_START_PIN, 1 ) ;
+    vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
 }
 
