@@ -24,23 +24,28 @@
 static const char *TAG                          = "EMG8x" ;
 
 // Pinout mapping
-// Use pinout rules from here! (https://randomnerdtutorials.com/esp32-pinout-reference-gpios/)
-static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;
-static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;
-static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;
+// Use pinout rules from here: (https://randomnerdtutorials.com/esp32-pinout-reference-gpios/)
+// NodeMCU 32-s2 pinout: (https://www.instructables.com/id/ESP32-Internal-Details-and-Pinout/)
 
-// SPI comands
-static const uint8_t        AD1299_CMD_RREG     = 0x20 ;
-static const uint8_t        AD1299_CMD_WREG     = 0x40 ;
-static const uint8_t        AD1299_CMD_SDATAC   = 0x11 ;
+static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;         // ADS<--ESP Power down pin (active low)
+static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<--ESP Reset pin (active low)
+static const gpio_num_t     AD1299_DRDY_PIN     = GPIO_NUM_33 ;         // ADS-->ESP DRDY pin (active low)
+static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<--ESP Start data conversion pint (active high)
 
-// Register addresses available through SPI
-static const uint8_t        AD1299_ADDR_ID      = 0x00 ;
-static const uint8_t        AD1299_ADDR_CONFIG1 = 0x01 ;
-static const uint8_t        AD1299_ADDR_CONFIG2 = 0x02 ;
-static const uint8_t        AD1299_ADDR_CONFIG3 = 0x03 ;
-//static const uint8_t        AD1299_ADDR_LOFF    = 0x04 ;
+// SPI comands (see https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1599826124971)
+static const uint8_t        AD1299_CMD_RREG     = 0x20 ;                // Read register
+static const uint8_t        AD1299_CMD_WREG     = 0x40 ;                // Write to register
+static const uint8_t        AD1299_CMD_RDATAC   = 0x10 ;                // Start continouous mode
+static const uint8_t        AD1299_CMD_SDATAC   = 0x11 ;                // Stop continuous mode
+
+// Register addresses available through SPI (see https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1599826124971)
+static const uint8_t        AD1299_ADDR_ID      = 0x00 ;                // ID register
+static const uint8_t        AD1299_ADDR_CONFIG1 = 0x01 ;                // CONFIG1 register
+static const uint8_t        AD1299_ADDR_CONFIG2 = 0x02 ;                // CONFIG2 register
+static const uint8_t        AD1299_ADDR_CONFIG3 = 0x03 ;                // CONFIG3 register
+//static const uint8_t        AD1299_ADDR_LOFF    = 0x04 ;              
 static const uint8_t        AD1299_ADDR_CH1SET  = 0x05 ;
+static const uint8_t        AD1299_ADDR_CH4SET  = 0x08 ;
 /*
 static const uint8_t        AD1299_ADDR_CH2SET  = 0x06 ;
 static const uint8_t        AD1299_ADDR_CH3SET  = 0x07 ;
@@ -50,6 +55,13 @@ static const uint8_t        AD1299_ADDR_CH6SET  = 0x0a ;
 static const uint8_t        AD1299_ADDR_CH7SET  = 0x0b ;
 static const uint8_t        AD1299_ADDR_CH8SET  = 0x0c ;
 */
+
+// AD1299 constants (see https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1599826124971)
+//static const int            AD1299_NUM_CH               = 8 ;           // Number of analog channels
+
+// Transport protocol constants
+static const int            SAMPLES_PER_TRANSPORT_BLOCK = 256 ;         // Number of 24bit samples per transport block 
+
 
 static EventGroupHandle_t wifi_event_group;
 const static int CONNECTED_BIT  = BIT0;
@@ -174,6 +186,34 @@ uint8_t ad1299_rreg(spi_device_handle_t spi, const uint8_t addr)
 
 }
 
+/*  
+    ad1299_read_data_block216(spi_device_handle_t spi, uint8_t* data216)
+    spi     - spi handle
+    data216 - pointer to array of 27 bytes length (216 bits=24bit * 9)
+*/
+void ad1299_read_data_block216(spi_device_handle_t spi, uint8_t* data216)
+{
+    esp_err_t ret ;
+    spi_transaction_t t ;
+    memset( &t, 0, sizeof(spi_transaction_t) ) ;    //Zero out the transaction
+    t.flags         = 0 ;                           //Bitwise OR of SPI_TRANS_* flags
+    t.length        = 216 ;                         //Total data length, in bits
+    t.rxlength      = 216 ;                         //Total data length received, should be not greater than ``length`` in full-duplex mode (0 defaults this to the value of ``length``)
+    t.user          = (void*)0 ;                    //User-defined variable. Can be used to store eg transaction ID.
+    t.tx_buffer     = NULL ;                        // There are No tx data to send
+    t.rx_buffer     = data216 ;                     // Pointer to Rx buffer
+
+    ret = spi_device_polling_transmit(spi, &t) ;
+    ESP_ERROR_CHECK(ret) ;                          //Should have had no issues.
+
+}
+
+// Rx data buffer for 1 transaction (9*24 bits)
+uint8_t rxDataBuf [27] ;
+
+// Rx data block for channels
+//uint8_t rxDataBlocks [AD1299_NUM_CH][SAMPLES_PER_TRANSPORT_BLOCK] ;
+
 static void emg8x_app_start(void)
 {
     int dmaChan             = 0 ;  // disable dma
@@ -191,6 +231,9 @@ static void emg8x_app_start(void)
 
     gpio_reset_pin( AD1299_START_PIN ) ;
     gpio_set_direction( AD1299_START_PIN, GPIO_MODE_OUTPUT ) ;
+
+    gpio_reset_pin( AD1299_DRDY_PIN ) ;
+    gpio_set_direction( AD1299_DRDY_PIN, GPIO_MODE_INPUT ) ;
 
     // See 10.1.2 Setting the Device for Basic Data Capture (ADS1299 Datasheet)
     ESP_LOGI(TAG, "Set PWDN & RESET to 1") ;
@@ -229,7 +272,7 @@ static void emg8x_app_start(void)
         .command_bits       = 0,                        // 0-16
         .address_bits       = 0,                        // 0-64
         .dummy_bits         = 0,                        // Amount of dummy bits to insert between address and data phase 
-        .clock_speed_hz     = 100000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
+        .clock_speed_hz     = 500000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
         .mode               = 1,                        // SPI mode 0
         .flags              = SPI_DEVICE_HALFDUPLEX,    // Bitwise OR of SPI_DEVICE_* flags
         .input_delay_ns     = 0,                        // The time required between SCLK and MISO
@@ -253,8 +296,6 @@ static void emg8x_app_start(void)
     ad1299_send_cmd8( spi_dev, AD1299_CMD_SDATAC ) ;
     vTaskDelay( 500 / portTICK_RATE_MS ) ;
 
-    while(1)
-    {
     // RREG id
     ESP_LOGI(TAG, "Read chip Id from Reg#0:") ;
     uint8_t valueu8 = ad1299_rreg( spi_dev, AD1299_ADDR_ID ) ;
@@ -274,7 +315,6 @@ static void emg8x_app_start(void)
     {
         ESP_LOGI(TAG, "error: ad1299 not found!" ) ;
         //break ;
-    }
     }
 
 
@@ -309,7 +349,75 @@ static void emg8x_app_start(void)
     // After This Point DRDY Toggles at
     // fCLK / 8192
     gpio_set_level(AD1299_START_PIN, 1 ) ;
+    vTaskDelay( 50 / portTICK_RATE_MS ) ;
+
+    // Put the Device Back in RDATAC Mode
+    // RDATAC
+    ad1299_send_cmd8( spi_dev, AD1299_CMD_RDATAC ) ;
+    vTaskDelay( 50 / portTICK_RATE_MS ) ;
+
+    // Capture data and check for noise level
+    for(int nSample=0;nSample<SAMPLES_PER_TRANSPORT_BLOCK;nSample++)
+    {
+
+    // Wait for DRDY
+    while( gpio_get_level(AD1299_DRDY_PIN)==1 ) { vTaskDelay( 1  ) ;}
+
+    // DRDY goes down - data ready to read
+    ad1299_read_data_block216( spi_dev, rxDataBuf ) ;
+
+    ESP_LOGI(TAG, "DATA: STAT:0x%02X%02X%02X DATA1:0x%02X%02X%02X",  rxDataBuf[0],rxDataBuf[1],rxDataBuf[2], rxDataBuf[3],rxDataBuf[4],rxDataBuf[5] ) ;
+
+    // Place here code to collect samples and analyse noise level for 
+    // shorted analog inputs
+
+    vTaskDelay( 1 ) ;
+
+    }
+
+    // Stop all the channels
+    ad1299_send_cmd8( spi_dev, AD1299_CMD_SDATAC ) ;
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
+
+    // Configure channel 4 in normal mode
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0 ) ;
+    vTaskDelay( 50 / portTICK_RATE_MS ) ;
+
+    // Put the Device Back in RDATAC Mode
+    // RDATAC
+    ad1299_send_cmd8( spi_dev, AD1299_CMD_RDATAC ) ;
+    vTaskDelay( 50 / portTICK_RATE_MS ) ;
+
+    // Continuous capture data from channel #4
+    while(1)
+    {
+
+    // Wait for DRDY
+    while( gpio_get_level(AD1299_DRDY_PIN)==1 ) { vTaskDelay( 1  ) ;}
+
+    // DRDY goes down - data ready to read
+    ad1299_read_data_block216( spi_dev, rxDataBuf ) ;
+
+    int32_t value_i32   = 0 ; 
+    if  (rxDataBuf[12]&0x80)
+    {
+        value_i32   = (int32_t) (((uint32_t)0xff000000) | ((uint32_t)(rxDataBuf[12]<<16)) | ((uint32_t)(rxDataBuf[13]<<8)) | ((uint32_t)rxDataBuf[14])) ;
+    }
+    else
+    {
+        /* code */
+        value_i32   = (int32_t) (((uint32_t)0x00000000) | ((uint32_t)(rxDataBuf[12]<<16)) | ((uint32_t)(rxDataBuf[13]<<8)) | ((uint32_t)rxDataBuf[14])) ;
+    }
+    
+
+    ESP_LOGI(TAG, "DATA: STAT:0x%02X%02X%02X DATA4:%10d",  rxDataBuf[0],rxDataBuf[1],rxDataBuf[2], value_i32 ) ;
+
+    // Place here code to collect samples and analyse noise level for 
+    // shorted analog inputs
+
+    vTaskDelay( 1 ) ;
+
+    }
 
 }
 
