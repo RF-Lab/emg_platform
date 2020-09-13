@@ -1,3 +1,32 @@
+//
+// Copyright 2019-2020 rf-lab.org 
+// (MIREA KB-2( frmly. MIREA KB-3, MGUPI IT-6 "Control and simulation in technical systems"))
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// EMG-8x/app_main.c - main source file for EMG-8x hardware platform
+// Please refer to:
+
+// EMG platform
+//      https://github.com/RF-Lab/emg_platform
+
+// How to install SDK for ESP32 under Windows(r)
+//      http://rf-lab.org/news/2020/04/04/esp-idf.html
+
+// List of modifications:
+//      https://github.com/RF-Lab/emg_platform/commits/master/source/esp32/emg8x/main/app_main.c
+//
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -57,14 +86,45 @@ static const uint8_t        AD1299_ADDR_CH8SET  = 0x0c ;
 */
 
 // AD1299 constants (see https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1599826124971)
-//static const int            AD1299_NUM_CH               = 8 ;           // Number of analog channels
+#define                     AD1299_NUM_CH                   8            // Number of analog channels
 
 // Transport protocol constants
-static const int            SAMPLES_PER_TRANSPORT_BLOCK = 256 ;         // Number of 24bit samples per transport block 
+#define                     SAMPLES_PER_TRANSPORT_BLOCK     64          // Number of 24bit samples per transport block
+
+// Device thread to transport queue size
+#define                     TRANSPORT_QUE_SIZE              2            // Number of transport blocks to queue             
 
 
-static EventGroupHandle_t wifi_event_group;
-const static int CONNECTED_BIT  = BIT0;
+static EventGroupHandle_t   wifi_event_group ;
+const static int            CONNECTED_BIT  =                BIT0 ;
+
+// DRDY signal interrupt context
+typedef struct
+{
+    SemaphoreHandle_t       xSemaphore ;
+} type_drdy_isr_context ; 
+type_drdy_isr_context       drdy_isr_context ;
+
+// ADC data variables combined into the structure
+typedef struct
+{
+
+    uint8_t                 spiReadBuffer [27] ;            // Buffer to receive raw data from ADS1299 th SPI transaction
+    
+    uint32_t                adcStat32 ;                     // STAT field of last transaction in 32bit form (only 24bits used)
+
+    // ISR to thread data queue
+    int                     head ;          // 0 to TRANSPORT_QUE_SIZE-1
+    int                     tail ;          // 0 to TRANSPORT_QUE_SIZE-1
+
+    int                     sampleCount ;   // 0 to SAMPLES_PER_TRANSPORT_BLOCK-1
+
+    // read by thread, written by isr
+    uint32_t                adcStatQue[TRANSPORT_QUE_SIZE][SAMPLES_PER_TRANSPORT_BLOCK] ;
+    int32_t                 adcDataQue[TRANSPORT_QUE_SIZE][AD1299_NUM_CH][SAMPLES_PER_TRANSPORT_BLOCK] ;
+
+} type_drdy_thread_context ;
+type_drdy_thread_context    drdy_thread_context ; 
 
 
 static esp_err_t wifi_event_handler(void *ctx, system_event_t *event)
@@ -214,6 +274,26 @@ uint8_t rxDataBuf [27] ;
 // Rx data block for channels
 //uint8_t rxDataBlocks [AD1299_NUM_CH][SAMPLES_PER_TRANSPORT_BLOCK] ;
 
+// DRDY signal ISR
+// DRDY becomes low when ADS1299 collect 8 samples (1 sample of 24bit for each channel )
+// and ready to transfer these data to ESP32 using 1 SPI transaction with 9*24 bits length
+static void drdy_gpio_isr_handler(void* arg)
+{
+    type_drdy_isr_context* pContext = (type_drdy_isr_context*) arg ;
+    static BaseType_t high_task_wakeup = pdFALSE ;
+    
+    xSemaphoreGiveFromISR( pContext->xSemaphore, &high_task_wakeup ) ;
+
+    /* If high_task_wakeup was set to true you
+    should yield.  The actual macro used here is
+    port specific. */
+    if ( high_task_wakeup!=pdFALSE )
+    {
+        portYIELD_FROM_ISR( ) ;
+    }
+
+}
+
 static void emg8x_app_start(void)
 {
     int dmaChan             = 0 ;  // disable dma
@@ -234,6 +314,8 @@ static void emg8x_app_start(void)
 
     gpio_reset_pin( AD1299_DRDY_PIN ) ;
     gpio_set_direction( AD1299_DRDY_PIN, GPIO_MODE_INPUT ) ;
+    gpio_set_intr_type( AD1299_DRDY_PIN, GPIO_INTR_NEGEDGE ) ;
+    gpio_intr_enable( AD1299_DRDY_PIN ) ;
 
     // See 10.1.2 Setting the Device for Basic Data Capture (ADS1299 Datasheet)
     ESP_LOGI(TAG, "Set PWDN & RESET to 1") ;
@@ -387,35 +469,79 @@ static void emg8x_app_start(void)
     // RDATAC
     ad1299_send_cmd8( spi_dev, AD1299_CMD_RDATAC ) ;
     vTaskDelay( 50 / portTICK_RATE_MS ) ;
+    
+    // Install ISR for all GPIOs
+    gpio_install_isr_service(0) ;
 
-    // Continuous capture data from channel #4
+    // Configure ISR for DRDY signal
+    drdy_isr_context.xSemaphore     = xSemaphoreCreateBinary() ;
+    gpio_isr_handler_add( AD1299_DRDY_PIN, drdy_gpio_isr_handler, &drdy_isr_context ) ;
+
+    // Initialize drdy_thread_context
+    drdy_thread_context.head        = 0 ;
+    drdy_thread_context.tail        = 0 ;
+    drdy_thread_context.sampleCount = 0 ;
+
+    // Continuous capture data
     while(1)
     {
 
-    // Wait for DRDY
-    while( gpio_get_level(AD1299_DRDY_PIN)==1 ) { vTaskDelay( 1  ) ;}
+        // Wait for DRDY
+        //while( gpio_get_level(AD1299_DRDY_PIN)==1 ) { vTaskDelay( 1  ) ;}
+        if( xSemaphoreTake( drdy_isr_context.xSemaphore, 0xffff ) == pdTRUE )
+        {
 
-    // DRDY goes down - data ready to read
-    ad1299_read_data_block216( spi_dev, rxDataBuf ) ;
+            // DRDY goes down - data ready to read
+            ad1299_read_data_block216( spi_dev, drdy_thread_context.spiReadBuffer ) ;
 
-    int32_t value_i32   = 0 ; 
-    if  (rxDataBuf[12]&0x80)
-    {
-        value_i32   = (int32_t) (((uint32_t)0xff000000) | ((uint32_t)(rxDataBuf[12]<<16)) | ((uint32_t)(rxDataBuf[13]<<8)) | ((uint32_t)rxDataBuf[14])) ;
-    }
-    else
-    {
-        /* code */
-        value_i32   = (int32_t) (((uint32_t)0x00000000) | ((uint32_t)(rxDataBuf[12]<<16)) | ((uint32_t)(rxDataBuf[13]<<8)) | ((uint32_t)rxDataBuf[14])) ;
-    }
-    
+            // get STAT field
+            // transform 24 bit field to 32 bit integer
+            drdy_thread_context.adcStat32   = (uint32_t) (
+                                                            ((uint32_t)(drdy_thread_context.spiReadBuffer[0]<<16)) | 
+                                                            ((uint32_t)(drdy_thread_context.spiReadBuffer[1]<<8)) | 
+                                                            ((uint32_t) drdy_thread_context.spiReadBuffer[2])
+                                                        ) ;
 
-    ESP_LOGI(TAG, "DATA: STAT:0x%02X%02X%02X DATA4:%10d",  rxDataBuf[0],rxDataBuf[1],rxDataBuf[2], value_i32 ) ;
+            // transform 24 bit twos-complement samples to 32 bit signed integers 
+            // save 32 bit samples into thread queue drdy_thread_context
+            for(int chNum=0;chNum<AD1299_NUM_CH;chNum++)
+            {
 
-    // Place here code to collect samples and analyse noise level for 
-    // shorted analog inputs
+                uint32_t signExtBits        = 0x00000000 ;
 
-    vTaskDelay( 1 ) ;
+                int byteOffsetCh            = (chNum+1)*3 ; // offset in raw data to first byte of 24 twos complement field
+
+                if (drdy_thread_context.spiReadBuffer[ byteOffsetCh ] & 0x80)
+                {
+                    // extend sign bit to 31..24
+                    signExtBits             = 0xff000000 ;
+                }
+
+                drdy_thread_context.adcDataQue[drdy_thread_context.head][chNum][drdy_thread_context.sampleCount]    = 
+                                            (int32_t) (
+                                                            signExtBits |
+                                                            ((uint32_t)(drdy_thread_context.spiReadBuffer[byteOffsetCh]<<16)) | 
+                                                            ((uint32_t)(drdy_thread_context.spiReadBuffer[byteOffsetCh+1]<<8)) | 
+                                                            ((uint32_t) drdy_thread_context.spiReadBuffer[byteOffsetCh+2])
+                                                        ) ;
+            }
+
+            drdy_thread_context.sampleCount++ ;
+
+            if (drdy_thread_context.sampleCount>=SAMPLES_PER_TRANSPORT_BLOCK)
+            {
+                // Transport block collection done
+
+                // reset sample counter of transport block
+                drdy_thread_context.sampleCount     = 0 ;
+
+                // move queue head forward 
+                drdy_thread_context.head            = (drdy_thread_context.head+1)%(TRANSPORT_QUE_SIZE) ;
+
+                //ESP_LOGI(TAG, "head: %d",  drdy_thread_context.head ) ;
+            }
+
+        }
 
     }
 
