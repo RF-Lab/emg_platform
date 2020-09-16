@@ -86,13 +86,26 @@ static const uint8_t        AD1299_ADDR_CH8SET  = 0x0c ;
 */
 
 // AD1299 constants (see https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1599826124971)
-#define                     AD1299_NUM_CH                   8            // Number of analog channels
+// Number of analog channels
+#define                     AD1299_NUM_CH                   8            
 
 // Transport protocol constants
-#define                     SAMPLES_PER_TRANSPORT_BLOCK     64          // Number of 24bit samples per transport block
 
-// Device thread to transport queue size
-#define                     TRANSPORT_QUE_SIZE              2            // Number of transport blocks to queue             
+// Transport header size (bytes), use 'idf.py menuconfig' to change this constant
+// CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE =               16          
+
+// Offset to packet counter in 32 bit words, use 'idf.py menuconfig' to change this constant
+// CONFIG_EMG8X_PKT_COUNT_OFFSET =                          2          
+
+// Number of 32bit samples per transport block, use 'idf.py menuconfig' to change this constant
+// CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK =               64          
+
+// Device thread to transport queue size, use 'idf.py menuconfig' to change this constant
+// Number of transport blocks to queue
+// CONFIG_EMG8X_TRANSPORT_QUE_SIZE =                        2                         
+
+// TCP server port to listen, use 'idf.py menuconfig' to change this constant
+// CONFIG_EMG8X_TCP_SERVER_PORT =                           3000
 
 
 static EventGroupHandle_t   wifi_event_group ;
@@ -114,18 +127,31 @@ typedef struct
     uint32_t                adcStat32 ;                     // STAT field of last transaction in 32bit form (only 24bits used)
 
     // ISR to thread data queue
-    int                     head ;          // 0 to TRANSPORT_QUE_SIZE-1
-    int                     tail ;          // 0 to TRANSPORT_QUE_SIZE-1
+    int                     head ;          // 0 to CONFIG_EMG8X_TRANSPORT_QUE_SIZE-1
+    int                     tail ;          // 0 to CONFIG_EMG8X_TRANSPORT_QUE_SIZE-1
 
-    int                     sampleCount ;   // 0 to SAMPLES_PER_TRANSPORT_BLOCK-1
+    int                     sampleCount ;   // 0 to CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK-1
 
     // read by thread, written by isr
-    uint32_t                adcStatQue[TRANSPORT_QUE_SIZE][SAMPLES_PER_TRANSPORT_BLOCK] ;
-    int32_t                 adcDataQue[TRANSPORT_QUE_SIZE][AD1299_NUM_CH][SAMPLES_PER_TRANSPORT_BLOCK] ;
+    int32_t                 adcDataQue[CONFIG_EMG8X_TRANSPORT_QUE_SIZE][(CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t)+(AD1299_NUM_CH+1)*(CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK)] ;
+
+    // Counting semaphore represents number of transport blocks queued for
+    // TCP delivery task
+    SemaphoreHandle_t       xDataQueueSemaphore ;
 
 } type_drdy_thread_context ;
-type_drdy_thread_context    drdy_thread_context ; 
+type_drdy_thread_context    drdy_thread_context ;
 
+// TCP Server context
+typedef struct
+{
+
+    // Pointer to ADC data
+    type_drdy_thread_context*   pDrdyThreadContext ;
+    char                        serverIpAddr[128] ;
+
+} type_tcp_server_thread_context ;
+type_tcp_server_thread_context tcp_server_thread_context ;
 
 static esp_err_t wifi_event_handler(void *ctx, system_event_t *event)
 {
@@ -135,6 +161,7 @@ static esp_err_t wifi_event_handler(void *ctx, system_event_t *event)
             break;
         case SYSTEM_EVENT_STA_GOT_IP:
             xEventGroupSetBits(wifi_event_group, CONNECTED_BIT) ;
+            strncpy(tcp_server_thread_context.serverIpAddr, ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip), 127) ;
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
             esp_wifi_connect();
@@ -271,9 +298,6 @@ void ad1299_read_data_block216(spi_device_handle_t spi, uint8_t* data216)
 // Rx data buffer for 1 transaction (9*24 bits)
 uint8_t rxDataBuf [27] ;
 
-// Rx data block for channels
-//uint8_t rxDataBlocks [AD1299_NUM_CH][SAMPLES_PER_TRANSPORT_BLOCK] ;
-
 // DRDY signal ISR
 // DRDY becomes low when ADS1299 collect 8 samples (1 sample of 24bit for each channel )
 // and ready to transfer these data to ESP32 using 1 SPI transaction with 9*24 bits length
@@ -290,6 +314,93 @@ static void drdy_gpio_isr_handler(void* arg)
     if ( high_task_wakeup!=pdFALSE )
     {
         portYIELD_FROM_ISR( ) ;
+    }
+
+}
+
+// 
+// TCP server task 
+// This routine is waiting for data appears in ADC queue and
+// then send to to connected tcp client(s)
+char addr_str[128] ;
+void tcp_server_task( void* pvParameter )
+{
+
+    // This routine is based on https://github.com/sankarcheppali/esp_idf_esp32_posts/blob/master/tcp_server/sta_mode/main/esp_sta_tcp_server.c
+
+    type_tcp_server_thread_context* pTcpServerContext   = (type_tcp_server_thread_context*) pvParameter ;
+
+    struct sockaddr_in tcpServerAddr ;
+    tcpServerAddr.sin_addr.s_addr                       = htonl( INADDR_ANY ) ;
+    tcpServerAddr.sin_family                            = AF_INET ;
+    tcpServerAddr.sin_port                              = htons( CONFIG_EMG8X_TCP_SERVER_PORT ) ;
+    int s ;
+    static struct sockaddr_in remote_addr ;
+    static unsigned int socklen ;
+    socklen = sizeof(remote_addr) ;
+    int cs ; //client socket
+    
+    //xEventGroupWaitBits(wifi_event_group,CONNECTED_BIT,false,true,portMAX_DELAY) ;
+
+    while(1)
+    {
+        s = socket( AF_INET, SOCK_STREAM, 0) ;
+        if(s < 0) 
+        {
+            ESP_LOGE(TAG, "TCP_SERVER: Failed to allocate socket.\n") ;
+            vTaskDelay(1000 / portTICK_PERIOD_MS) ;
+            continue ;
+        }
+
+        if(bind(s, (struct sockaddr *)&tcpServerAddr, sizeof(tcpServerAddr)) != 0) 
+        {
+            ESP_LOGE(TAG, "TCP_SERVER: socket bind failed errno=%d \n", errno) ;
+            close(s) ;
+            vTaskDelay(4000 / portTICK_PERIOD_MS) ;
+            continue ;
+        }
+
+        if(listen (s, 1024) != 0)
+        {
+            ESP_LOGE(TAG, "TCP_SERVER: socket listen failed errno=%d \n", errno) ;
+            close(s) ;
+            vTaskDelay(4000 / portTICK_PERIOD_MS) ;
+            continue ;
+        }
+
+        ESP_LOGI(TAG,"TCP server started at %s, listen on the port: %d\n", pTcpServerContext->serverIpAddr, CONFIG_EMG8X_TCP_SERVER_PORT ) ;
+
+        // data transfer cycle
+        while(1)
+        {
+            cs  =   accept(s,(struct sockaddr *)&remote_addr, &socklen) ;
+
+            inet_ntoa_r(remote_addr.sin_addr.s_addr, addr_str, sizeof(addr_str) - 1) ;
+            ESP_LOGI(TAG,"New incoming connection from: %s\n", addr_str ) ;
+
+            // Wait for data appears in the queue
+            if (xSemaphoreTake( drdy_thread_context.xDataQueueSemaphore, 0xFFFF ) == pdTRUE )
+            {
+                if( write(cs , drdy_thread_context.adcDataQue[drdy_thread_context.tail], 
+                    ((CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t)+(AD1299_NUM_CH+1)*(CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK))*sizeof(int32_t)) < 0)
+                {
+                    ESP_LOGE(TAG, "TCP_SERVER: Send failed \n") ;
+                    close(s) ;
+                    continue ;
+                }
+
+                // move queue tail forward 
+                drdy_thread_context.tail        = (drdy_thread_context.tail+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
+
+            }
+
+            inet_ntoa_r(remote_addr.sin_addr.s_addr, addr_str, sizeof(addr_str) - 1) ;
+            ESP_LOGI(TAG, "Close connection to %s\n", addr_str ) ;
+
+            close(cs) ;
+
+            vTaskDelay( 500 / portTICK_PERIOD_MS) ;
+        }    
     }
 
 }
@@ -439,7 +550,7 @@ static void emg8x_app_start(void)
     vTaskDelay( 50 / portTICK_RATE_MS ) ;
 
     // Capture data and check for noise level
-    for(int nSample=0;nSample<SAMPLES_PER_TRANSPORT_BLOCK;nSample++)
+    for(int nSample=0;nSample<CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK;nSample++)
     {
 
     // Wait for DRDY
@@ -482,6 +593,31 @@ static void emg8x_app_start(void)
     drdy_thread_context.tail        = 0 ;
     drdy_thread_context.sampleCount = 0 ;
 
+    // Initialize counting semaphore which represents number of queued blocks
+    drdy_thread_context.xDataQueueSemaphore         = xSemaphoreCreateCounting( CONFIG_EMG8X_TRANSPORT_QUE_SIZE, 0 ) ; 
+
+    for (int iQue=0;iQue<CONFIG_EMG8X_TRANSPORT_QUE_SIZE;iQue++)
+    {
+        
+        unsigned char* pTransportBlockHeader        = (unsigned char*) drdy_thread_context.adcDataQue[iQue] ;
+
+        // Fill in each header
+        memset( pTransportBlockHeader, 0, CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE ) ;
+
+        // Sync 5 bytes
+        strncpy( (char*)pTransportBlockHeader, "EMG8x", 6 ) ;
+
+        // Initialize packet counter
+        drdy_thread_context.adcDataQue[iQue][CONFIG_EMG8X_PKT_COUNT_OFFSET]     = 0 ;
+
+    }
+
+    // Initialize tcp_server_thread_context
+    tcp_server_thread_context.pDrdyThreadContext    = &drdy_thread_context ;
+
+    // Start TCP server task
+    xTaskCreate( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL ) ;
+
     // Continuous capture data
     while(1)
     {
@@ -502,6 +638,11 @@ static void emg8x_app_start(void)
                                                             ((uint32_t) drdy_thread_context.spiReadBuffer[2])
                                                         ) ;
 
+            // save STAT field to transport block
+            drdy_thread_context.adcDataQue[drdy_thread_context.head][
+                (CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t) +
+                drdy_thread_context.sampleCount ] = drdy_thread_context.adcStat32 ;
+
             // transform 24 bit twos-complement samples to 32 bit signed integers 
             // save 32 bit samples into thread queue drdy_thread_context
             for(int chNum=0;chNum<AD1299_NUM_CH;chNum++)
@@ -517,7 +658,11 @@ static void emg8x_app_start(void)
                     signExtBits             = 0xff000000 ;
                 }
 
-                drdy_thread_context.adcDataQue[drdy_thread_context.head][chNum][drdy_thread_context.sampleCount]    = 
+                drdy_thread_context.adcDataQue[drdy_thread_context.head][
+                    (CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t) +
+                    (CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK)*(chNum+1) +
+                    drdy_thread_context.sampleCount
+                    ]    = 
                                             (int32_t) (
                                                             signExtBits |
                                                             ((uint32_t)(drdy_thread_context.spiReadBuffer[byteOffsetCh]<<16)) | 
@@ -528,15 +673,25 @@ static void emg8x_app_start(void)
 
             drdy_thread_context.sampleCount++ ;
 
-            if (drdy_thread_context.sampleCount>=SAMPLES_PER_TRANSPORT_BLOCK)
+            if (drdy_thread_context.sampleCount>=CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK)
             {
                 // Transport block collection done
 
                 // reset sample counter of transport block
                 drdy_thread_context.sampleCount     = 0 ;
 
-                // move queue head forward 
-                drdy_thread_context.head            = (drdy_thread_context.head+1)%(TRANSPORT_QUE_SIZE) ;
+                // Send notification to TCP server task
+                if (xSemaphoreGive( drdy_thread_context.xDataQueueSemaphore )==pdTRUE)
+                {
+
+                    // move queue head forward 
+                    drdy_thread_context.head        = (drdy_thread_context.head+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
+                }
+                else
+                {
+                    // There is no space in queue
+                    // skip data
+                }
 
                 //ESP_LOGI(TAG, "head: %d",  drdy_thread_context.head ) ;
             }

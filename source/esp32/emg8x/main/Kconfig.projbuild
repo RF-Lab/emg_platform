@@ -12,110 +12,56 @@ menu "WiFi Configuration"
         help
             WiFi password (WPA or WPA2) for the example to use.
 
-    config HOST_IP_ADDRESS
-        string "Broker URL"
-        default "192.168.1.38"
-        help
-            Host IP address to connect to
-
 endmenu
 
-menu "Homie3 Configuration"
+menu "EMG8x Configuration"
 
-    config HOMIE3_DEV_NAME
-        string "Homie3 device name"
-        default "homie3Node"
-        help
-            Homie3 device name
-
-    config HOMIE3_RELAY
-        bool "Relay node"
-        default "y"
-        help
-            Use Relay Node
-
-    config HOMIE3_RELAY_GPIO_NUM
-        int "Relay gpio num" if HOMIE3_RELAY
-        default 4
-        help
-            Relay GPIO num
-
-    config HOMIE3_THERMOMETER
-        bool "Thermometer node"
-        default "y"
-        help
-            Use Thermometer node
-
-    config HOMIE3_THERMOMETER_GPIO_NUM
-        int "Thermometer gpio num" if HOMIE3_THERMOMETER
-        default 0
-        help
-            Thermometer GPIO num
-
-    config HOMIE3_KEYBOARD
-        bool "Keyboard node"
-        default "y"
-        help
-            Use Keyboard driver (On/Off buttons)
-
-    config HOMIE3_BTN_ON_GPIO_NUM
-        int "Keyboard Button ON gpio num" if HOMIE3_KEYBOARD
-        default 33
-        help
-            Keyboard Button ON gpio num
-
-    config HOMIE3_BTN_ON_ACTIVE_LEVEL
-        int "Btn On active level 0/1" if HOMIE3_KEYBOARD
-        default 0
-        help
-            Btn On active level 0/1
-
-    config HOMIE3_BTN_OFF_GPIO_NUM
-        int "Keyboard Button OFF gpio num" if HOMIE3_KEYBOARD
-        default 32
-        help
-            Keyboard Button OFF gpio num
-
-    config HOMIE3_BTN_OFF_ACTIVE_LEVEL
-        int "Btn Off active level 0/1" if HOMIE3_KEYBOARD
+    config EMG8X_BOARD_REV
+        int "EMG8x Board Revision"
         default 1
         help
-            Btn Off active level 0/1
+            EMG8x Board Major revision number (f.e. 1 for 2020-r1.0)
 
-    config HOMIE3_KEYBOARD_RELAY_ADDRESS
-        string "Keyboard relay address" if HOMIE3_KEYBOARD
-        default "homie/relayNode/relay/power/set"
+    config EMG8X_ADC_SAMPLING_FREQUENCY
+        int "ADC sampling frequency code"
+        default 6
         help
-            Homie3 address to send command from keyboard ON/Off buttons 
+            0(16 kSPS),1(8 kSPS),2(4 kSPS),3(2 kSPS),4(1 kSPS),5(500 SPS),6(250 SPS),7(Reserved)
 
-    config HOMIE3_WATERTANK_SENSORS
-        bool "Watertank sensors"
-        default "y"
+    config EMG8X_SPI_CLOCK_FREQUENCY
+        int "SPI clock frequency, Hz"
+        default 500000
         help
-            Use Watertank driver (Level Sensors)
+            SPI clock frequency in Hz
 
-    config HOMIE3_FLOAT_LEVEL_GPIO_NUM
-        int "Float level gpio num" if HOMIE3_WATERTANK_SENSORS
-        default 12
-        help
-            Watertank float level gpio num
+    config EMG8X_TRANSPORT_BLOCK_HEADER_SIZE
+        int "Transport block header size (bytes)"
+        default 16
+        help 
+            Transport block header size in bytes (should be aligned to 4 bytes)
 
-    config HOMIE3_UP_LEVEL_GPIO_NUM
-        int "Up-level gpio num" if HOMIE3_WATERTANK_SENSORS
-        default 14
-        help
-            Watertank up-level gpio num
+    config EMG8X_PKT_COUNT_OFFSET
+        int "Offset to packet counter in 32 bit words"
+        default 2
+        help 
+            Offset to packet counter from the begining of transport block header in 4bytes words
 
-    config HOMIE3_USONIC_TRIGGER_GPIO_NUM
-        int "Ultra sonic sensor trigger gpio num" if HOMIE3_WATERTANK_SENSORS
-        default 27
-        help
-            Ultra sonic sensor trigger gpio num
+    config EMG8X_SAMPLES_PER_TRANSPORT_BLOCK
+        int "Number of samples per transport block"
+        default 64
+        help 
+            Number of samples per transport block
 
-    config HOMIE3_USONIC_ECHO_GPIO_NUM
-        int "Ultra sonic sensor echo gpio num" if HOMIE3_WATERTANK_SENSORS
-        default 26
-        help
-            Ultra sonic sensor echo gpio num
+    config EMG8X_TRANSPORT_QUE_SIZE
+        int "Transport queue size (blocks)"
+        default 2
+        help 
+            Transport queue size in blocks
+
+    config EMG8X_TCP_SERVER_PORT
+        int "Server TCP port"
+        default 3000
+        help 
+            TCP port to listen
 
 endmenu
