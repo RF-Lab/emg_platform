@@ -132,6 +132,8 @@ typedef struct
 
     int                     sampleCount ;   // 0 to CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK-1
 
+    uint32_t                blockCounter ;  // Number of received from ADC data blocks (num of full transport blocks)
+
     // read by thread, written by isr
     int32_t                 adcDataQue[CONFIG_EMG8X_TRANSPORT_QUE_SIZE][(CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t)+(AD1299_NUM_CH+1)*(CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK)] ;
 
@@ -368,7 +370,7 @@ void tcp_server_task( void* pvParameter )
             continue ;
         }
 
-        ESP_LOGI(TAG,"TCP server started at %s, listen on the port: %d\n", pTcpServerContext->serverIpAddr, CONFIG_EMG8X_TCP_SERVER_PORT ) ;
+        ESP_LOGI(TAG,"TCP server started at %s, listen on the port: %d, at CpuCore%1d\n", pTcpServerContext->serverIpAddr, CONFIG_EMG8X_TCP_SERVER_PORT, xPortGetCoreID() ) ;
 
         // data transfer cycle
         while(1)
@@ -378,19 +380,31 @@ void tcp_server_task( void* pvParameter )
             inet_ntoa_r(remote_addr.sin_addr.s_addr, addr_str, sizeof(addr_str) - 1) ;
             ESP_LOGI(TAG,"New incoming connection from: %s\n", addr_str ) ;
 
-            // Wait for data appears in the queue
-            if (xSemaphoreTake( drdy_thread_context.xDataQueueSemaphore, 0xFFFF ) == pdTRUE )
+            while(1)
             {
-                if( write(cs , drdy_thread_context.adcDataQue[drdy_thread_context.tail], 
-                    ((CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t)+(AD1299_NUM_CH+1)*(CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK))*sizeof(int32_t)) < 0)
+
+                if (drdy_thread_context.tail!=drdy_thread_context.head)
                 {
-                    ESP_LOGE(TAG, "TCP_SERVER: Send failed \n") ;
-                    close(s) ;
-                    continue ;
+                    if( write(cs , drdy_thread_context.adcDataQue[drdy_thread_context.tail], 
+                        ((CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t)+(AD1299_NUM_CH+1)*(CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK))*sizeof(int32_t)) < 0)
+                    {
+                        ESP_LOGE(TAG, "TCP_SERVER: Send failed\n") ;
+                        break ;
+                    }
+
+                    ESP_LOGI(TAG, "TCP_SERVER: Block %d Sent.", drdy_thread_context.adcDataQue[drdy_thread_context.tail][CONFIG_EMG8X_PKT_COUNT_OFFSET] ) ;
+
+                    // move queue tail forward 
+                    drdy_thread_context.tail        = (drdy_thread_context.tail+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
                 }
 
-                // move queue tail forward 
-                drdy_thread_context.tail        = (drdy_thread_context.tail+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
+                // Notify or/and wait for data appears in the queue
+                if ( xSemaphoreTake( drdy_thread_context.xDataQueueSemaphore, 0xFFFF ) != pdTRUE )
+                {
+                    // still waiting for data from the ADC
+                    ESP_LOGE(TAG, "TCP_SERVER: There are no data from ADC for a long time...\n") ;
+                    continue ;
+                }
 
             }
 
@@ -585,13 +599,14 @@ static void emg8x_app_start(void)
     gpio_install_isr_service(0) ;
 
     // Configure ISR for DRDY signal
-    drdy_isr_context.xSemaphore     = xSemaphoreCreateBinary() ;
+    drdy_isr_context.xSemaphore                     = xSemaphoreCreateBinary() ;
     gpio_isr_handler_add( AD1299_DRDY_PIN, drdy_gpio_isr_handler, &drdy_isr_context ) ;
 
     // Initialize drdy_thread_context
-    drdy_thread_context.head        = 0 ;
-    drdy_thread_context.tail        = 0 ;
-    drdy_thread_context.sampleCount = 0 ;
+    drdy_thread_context.head                        = 0 ;
+    drdy_thread_context.tail                        = 0 ;
+    drdy_thread_context.sampleCount                 = 0 ;
+    drdy_thread_context.blockCounter               = 0 ;
 
     // Initialize counting semaphore which represents number of queued blocks
     drdy_thread_context.xDataQueueSemaphore         = xSemaphoreCreateCounting( CONFIG_EMG8X_TRANSPORT_QUE_SIZE, 0 ) ; 
@@ -616,7 +631,10 @@ static void emg8x_app_start(void)
     tcp_server_thread_context.pDrdyThreadContext    = &drdy_thread_context ;
 
     // Start TCP server task
-    xTaskCreate( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL ) ;
+    xTaskCreatePinnedToCore( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL, 1 ) ;
+
+    // Queue full flag
+    int queueFull                                   = 0 ;
 
     // Continuous capture data
     while(1)
@@ -680,18 +698,35 @@ static void emg8x_app_start(void)
                 // reset sample counter of transport block
                 drdy_thread_context.sampleCount     = 0 ;
 
+                // put packet counter to transport header
+                drdy_thread_context.adcDataQue[drdy_thread_context.head][CONFIG_EMG8X_PKT_COUNT_OFFSET] = drdy_thread_context.blockCounter ;
+
                 // Send notification to TCP server task
                 if (xSemaphoreGive( drdy_thread_context.xDataQueueSemaphore )==pdTRUE)
                 {
 
                     // move queue head forward 
                     drdy_thread_context.head        = (drdy_thread_context.head+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
+
+                    if (queueFull)
+                    {
+                        ESP_LOGI(TAG, "ADC_READ_CYCLE: TCP FIFO ok @ block %d\n", drdy_thread_context.blockCounter ) ;
+                        queueFull = 0 ;
+                    }
                 }
                 else
                 {
                     // There is no space in queue
                     // skip data
+                    if (!queueFull)
+                    {
+                        ESP_LOGE(TAG, "ADC_READ_CYCLE: TCP FIFO Full @ block %d\n", drdy_thread_context.blockCounter ) ;
+                        queueFull = 1 ;
+                    }
                 }
+
+                // Increment received packet counter
+                drdy_thread_context.blockCounter += 1 ;
 
                 //ESP_LOGI(TAG, "head: %d",  drdy_thread_context.head ) ;
             }
