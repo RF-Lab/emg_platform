@@ -74,8 +74,6 @@ static const uint8_t        AD1299_ADDR_CONFIG2 = 0x02 ;                // CONFI
 static const uint8_t        AD1299_ADDR_CONFIG3 = 0x03 ;                // CONFIG3 register
 //static const uint8_t        AD1299_ADDR_LOFF    = 0x04 ;              
 static const uint8_t        AD1299_ADDR_CH1SET  = 0x05 ;
-static const uint8_t        AD1299_ADDR_CH4SET  = 0x08 ;
-/*
 static const uint8_t        AD1299_ADDR_CH2SET  = 0x06 ;
 static const uint8_t        AD1299_ADDR_CH3SET  = 0x07 ;
 static const uint8_t        AD1299_ADDR_CH4SET  = 0x08 ;
@@ -83,7 +81,6 @@ static const uint8_t        AD1299_ADDR_CH5SET  = 0x09 ;
 static const uint8_t        AD1299_ADDR_CH6SET  = 0x0a ;
 static const uint8_t        AD1299_ADDR_CH7SET  = 0x0b ;
 static const uint8_t        AD1299_ADDR_CH8SET  = 0x0c ;
-*/
 
 // AD1299 constants (see https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1599826124971)
 // Number of analog channels
@@ -264,10 +261,10 @@ uint8_t ad1299_rreg(spi_device_handle_t spi, const uint8_t addr)
     ret = spi_device_polling_transmit(spi, &t) ;
     if (ret==ESP_OK)
     {
-        ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[0] ) ;
-        ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[1] ) ;
-        ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[2] ) ;
-        ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[3] ) ;
+        //ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[0] ) ;
+        //ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[1] ) ;
+        //ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[2] ) ;
+        //ESP_LOGI( TAG, "Read successfuly: 0x%02X", t.rx_data[3] ) ;
     }
     ESP_ERROR_CHECK(ret) ;                          //Should have had no issues.
 
@@ -450,13 +447,14 @@ static void emg8x_app_start(void)
     
     ESP_LOGI(TAG, "Wait for 20 tclk") ;
 
-    //vTaskDelay( 10 / portTICK_RATE_MS ) ;
-    ets_delay_us( 15*10 ) ; //~30 clock periods @2MHz
+    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    //ets_delay_us( 15*10 ) ; //~30 clock periods @2MHz
 
     // Reset pulse
     ESP_LOGI(TAG, "Reset ad1299") ;
     gpio_set_level(AD1299_RESET_PIN, 0 ) ;
-    ets_delay_us( 15*10 ) ;  //~20 clock periods @2MHz
+    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    //ets_delay_us( 15*10 ) ;  //~20 clock periods @2MHz - This delay does not works, it is not enough for reset
     gpio_set_level(AD1299_RESET_PIN, 1 ) ;
 
     vTaskDelay( 500 / portTICK_RATE_MS ) ;
@@ -479,7 +477,7 @@ static void emg8x_app_start(void)
         .command_bits       = 0,                        // 0-16
         .address_bits       = 0,                        // 0-64
         .dummy_bits         = 0,                        // Amount of dummy bits to insert between address and data phase 
-        .clock_speed_hz     = 500000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
+        .clock_speed_hz     = 400000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
         .mode               = 1,                        // SPI mode 0
         .flags              = SPI_DEVICE_HALFDUPLEX,    // Bitwise OR of SPI_DEVICE_* flags
         .input_delay_ns     = 0,                        // The time required between SCLK and MISO
@@ -490,7 +488,7 @@ static void emg8x_app_start(void)
     } ;
     
     //Initialize the SPI bus
-    ret                     = spi_bus_initialize(VSPI_HOST, &buscfg, dmaChan ) ;
+    ret                     = spi_bus_initialize(VSPI_HOST, &buscfg, 0 ) ;
     ESP_ERROR_CHECK(ret) ;
     //Attach the LCD to the SPI bus
     ret                     = spi_bus_add_device(VSPI_HOST, &devcfg, &spi_dev ) ;
@@ -501,33 +499,64 @@ static void emg8x_app_start(void)
     ESP_LOGI(TAG, "Send SDATAC") ;
     
     ad1299_send_cmd8( spi_dev, AD1299_CMD_SDATAC ) ;
-    vTaskDelay( 500 / portTICK_RATE_MS ) ;
+    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+
+    /*
+
+    ESP_LOGI(TAG, "Read chip Id from Reg#0: 0x%02x", ad1299_rreg( spi_dev, AD1299_ADDR_ID ) ) ;
+
+    ad1299_send_cmd8( spi_dev, AD1299_CMD_RDATAC ) ;
+
+    gpio_set_level(AD1299_START_PIN, 1 ) ;
+
+    // Install ISR for all GPIOs
+    gpio_install_isr_service(0) ;
+
+    // Configure ISR for DRDY signal
+    drdy_isr_context.xSemaphore                     = xSemaphoreCreateBinary() ;
+    gpio_isr_handler_add( AD1299_DRDY_PIN, drdy_gpio_isr_handler, &drdy_isr_context ) ;
+
+    while(1)
+    {
+
+        // Wait for DRDY
+        //while( gpio_get_level(AD1299_DRDY_PIN)==1 ) { vTaskDelay( 1  ) ;}
+        if( xSemaphoreTake( drdy_isr_context.xSemaphore, 0xffff ) == pdTRUE )
+        {
+
+            // DRDY goes down - data ready to read
+            ad1299_read_data_block216( spi_dev, drdy_thread_context.spiReadBuffer ) ;
+        }
+    }
+    */
+
 
     // RREG id
     ESP_LOGI(TAG, "Read chip Id from Reg#0:") ;
-    uint8_t valueu8 = ad1299_rreg( spi_dev, AD1299_ADDR_ID ) ;
+    uint8_t valueu8             = ad1299_rreg( spi_dev, AD1299_ADDR_ID ) ;
 
-    uint8_t ad1299_rev_id   = valueu8>>5 ;
-    uint8_t ad1299_check_bit= (valueu8>>4) & 0x01 ;
-    uint8_t ad1299_dev_id   = (valueu8>>2) & 0x03 ;
-    uint8_t ad1299_num_ch   = (valueu8) & 0x03 ;
+    uint8_t ad1299_rev_id       = valueu8>>5 ;
+    uint8_t ad1299_check_bit    = (valueu8>>4) & 0x01 ;
+    uint8_t ad1299_dev_id       = (valueu8>>2) & 0x03 ;
+    uint8_t ad1299_num_ch       = (valueu8) & 0x03 ;
     
-    ESP_LOGI(TAG, "ad1299_rev_id:       0x%02X",  ad1299_rev_id ) ;
-    ESP_LOGI(TAG, "ad1299_check_bit:    %1d (should be 1)",  ad1299_check_bit ) ;
-    ESP_LOGI(TAG, "ad1299_dev_id:       0x%02X",  ad1299_dev_id ) ;
-    ESP_LOGI(TAG, "ad1299_num_ch:       0x%02X",  ad1299_num_ch ) ;
-    vTaskDelay( 500 / portTICK_RATE_MS ) ;
-
-    if (!ad1299_check_bit)
+    if (ad1299_check_bit && ad1299_dev_id==0x03 )
     {
-        ESP_LOGI(TAG, "error: ad1299 not found!" ) ;
-        //break ;
+        ESP_LOGI(TAG,"ads1299 found:") ;
+        ESP_LOGI(TAG, "!-->ad1299_rev_id:       0x%02X",  ad1299_rev_id ) ;
+        ESP_LOGI(TAG, "!-->ad1299_check_bit:    %1d (should be 1)",  ad1299_check_bit ) ;
+        ESP_LOGI(TAG, "!-->ad1299_dev_id:       0x%02X",  ad1299_dev_id ) ;
+        ESP_LOGI(TAG, "!-->ad1299_num_ch:       0x%02X",  ad1299_num_ch ) ;
     }
-
-
+    else
+    {
+        ESP_LOGE(TAG, "error: ads1299 not found!" ) ;
+        return ;
+    }
 
     // Set internal reference
     // WREG CONFIG3 E0h
+    ESP_LOGI(TAG, "Set internal reference" ) ;
     ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG3, 0xE0 ) ;
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
@@ -539,18 +568,22 @@ static void emg8x_app_start(void)
     }*/
 
     //Set device for DR=fmod/4096
-    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0x96 ) ;     // Default 0x96 (see power up sequence)
+    // Enable clk output
+    ESP_LOGI(TAG, "Set sampling rate" ) ;
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0xf6 ) ;     // Default 0x96 (see power up sequence)
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
-    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG2, 0xc0 ) ;
+    // Configure test signal parameters
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG2, 0xb5 ) ;
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
     // Set All Channels to Input Short
     for (int i=0;i<8;i++)
     {
         ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET+i, 0x01 ) ;
-        vTaskDelay( 50 / portTICK_RATE_MS ) ;
+        //vTaskDelay( 50 / portTICK_RATE_MS ) ;
     }
+    vTaskDelay( 50 / portTICK_RATE_MS ) ;
 
     // Activate Conversion
     // After This Point DRDY Toggles at
@@ -567,18 +600,18 @@ static void emg8x_app_start(void)
     for(int nSample=0;nSample<CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK;nSample++)
     {
 
-    // Wait for DRDY
-    while( gpio_get_level(AD1299_DRDY_PIN)==1 ) { vTaskDelay( 1  ) ;}
+        // Wait for DRDY
+        while( gpio_get_level(AD1299_DRDY_PIN)==1 ) { vTaskDelay( 1  ) ;}
 
-    // DRDY goes down - data ready to read
-    ad1299_read_data_block216( spi_dev, rxDataBuf ) ;
+        // DRDY goes down - data ready to read
+        ad1299_read_data_block216( spi_dev, rxDataBuf ) ;
 
-    ESP_LOGI(TAG, "DATA: STAT:0x%02X%02X%02X DATA1:0x%02X%02X%02X",  rxDataBuf[0],rxDataBuf[1],rxDataBuf[2], rxDataBuf[3],rxDataBuf[4],rxDataBuf[5] ) ;
+        ESP_LOGI(TAG, "DATA: STAT:0x%02X%02X%02X DATA1:0x%02X%02X%02X",  rxDataBuf[0],rxDataBuf[1],rxDataBuf[2], rxDataBuf[3],rxDataBuf[4],rxDataBuf[5] ) ;
 
-    // Place here code to collect samples and analyse noise level for 
-    // shorted analog inputs
+        // Place here code to collect samples and analyse noise level for 
+        // shorted analog inputs
 
-    vTaskDelay( 1 ) ;
+        vTaskDelay( 1 ) ;
 
     }
 
@@ -586,9 +619,18 @@ static void emg8x_app_start(void)
     ad1299_send_cmd8( spi_dev, AD1299_CMD_SDATAC ) ;
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
-    // Configure channel 4 in normal mode
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0 ) ;
+    // Configure channels
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET, 0x05 ) ;      // CH1: Test signal,    PGA_Gain=1
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH2SET, 0x03 ) ;      // CH2: Measure VDD,    PGA_Gain=1
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH3SET, 0x00 ) ;      // CH3: Normal,         PGA_Gain=1
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0x60 ) ;      // CH4: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH5SET, 0x00 ) ;      // CH5: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x60 ) ;      // CH6: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x60 ) ;      // CH7: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x60 ) ;      // CH8: Normal,         PGA_Gain=24
     vTaskDelay( 50 / portTICK_RATE_MS ) ;
+
+    ESP_LOGI(TAG, "Put device in RDATAC mode" ) ;
 
     // Put the Device Back in RDATAC Mode
     // RDATAC
@@ -606,7 +648,7 @@ static void emg8x_app_start(void)
     drdy_thread_context.head                        = 0 ;
     drdy_thread_context.tail                        = 0 ;
     drdy_thread_context.sampleCount                 = 0 ;
-    drdy_thread_context.blockCounter               = 0 ;
+    drdy_thread_context.blockCounter                = 0 ;
 
     // Initialize counting semaphore which represents number of queued blocks
     drdy_thread_context.xDataQueueSemaphore         = xSemaphoreCreateCounting( CONFIG_EMG8X_TRANSPORT_QUE_SIZE, 0 ) ; 
@@ -631,12 +673,13 @@ static void emg8x_app_start(void)
     tcp_server_thread_context.pDrdyThreadContext    = &drdy_thread_context ;
 
     // Start TCP server task
-    xTaskCreatePinnedToCore( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL, 1 ) ;
+    //xTaskCreatePinnedToCore( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL, 1 ) ;
+    xTaskCreate( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL ) ;
 
     // Queue full flag
     int queueFull                                   = 0 ;
 
-    // Continuous capture data
+    // Continuous capture the data
     while(1)
     {
 
@@ -648,11 +691,18 @@ static void emg8x_app_start(void)
             // DRDY goes down - data ready to read
             ad1299_read_data_block216( spi_dev, drdy_thread_context.spiReadBuffer ) ;
 
+            // Check for stat 0xCx presence
+            if ((drdy_thread_context.spiReadBuffer[0]&0xf0)!=0xc0)
+            {
+                //ESP_LOGE(TAG, "raw_REad:[%6d][%6d] 0xc0 not found!", drdy_thread_context.blockCounter, drdy_thread_context.sampleCount ) ;
+                //continue ;
+            }
+
             // get STAT field
             // transform 24 bit field to 32 bit integer
             drdy_thread_context.adcStat32   = (uint32_t) (
-                                                            ((uint32_t)(drdy_thread_context.spiReadBuffer[0]<<16)) | 
-                                                            ((uint32_t)(drdy_thread_context.spiReadBuffer[1]<<8)) | 
+                                                            (((uint32_t)drdy_thread_context.spiReadBuffer[0])<<16) | 
+                                                            (((uint32_t)drdy_thread_context.spiReadBuffer[1])<<8) | 
                                                             ((uint32_t) drdy_thread_context.spiReadBuffer[2])
                                                         ) ;
 
@@ -676,17 +726,26 @@ static void emg8x_app_start(void)
                     signExtBits             = 0xff000000 ;
                 }
 
+                int32_t value_i32           = 
+                                            (int32_t) (
+                                                            signExtBits |
+                                                            (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh])<<16) | 
+                                                            (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh+1])<<8) | 
+                                                            ((uint32_t) drdy_thread_context.spiReadBuffer[byteOffsetCh+2])
+                                                        ) ;
+
+/*
+                if (abs(value_i32)>100000)
+                {
+                    ESP_LOGI(TAG, "read_val: %d, %02x-%02x-%02x", value_i32, drdy_thread_context.spiReadBuffer[byteOffsetCh], drdy_thread_context.spiReadBuffer[byteOffsetCh+1],drdy_thread_context.spiReadBuffer[byteOffsetCh+1] ) ;
+                }
+*/                
+
                 drdy_thread_context.adcDataQue[drdy_thread_context.head][
                     (CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t) +
                     (CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK)*(chNum+1) +
                     drdy_thread_context.sampleCount
-                    ]    = 
-                                            (int32_t) (
-                                                            signExtBits |
-                                                            ((uint32_t)(drdy_thread_context.spiReadBuffer[byteOffsetCh]<<16)) | 
-                                                            ((uint32_t)(drdy_thread_context.spiReadBuffer[byteOffsetCh+1]<<8)) | 
-                                                            ((uint32_t) drdy_thread_context.spiReadBuffer[byteOffsetCh+2])
-                                                        ) ;
+                    ]    = value_i32 ;
             }
 
             drdy_thread_context.sampleCount++ ;
