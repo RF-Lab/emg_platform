@@ -40,12 +40,14 @@ EMG8x_ADDRESS                           = '192.168.1.65' ;
 
 
 AD1299_NUM_CH                           =8
+CHANNEL_TO_MONITOR                      =5
 TRANSPORT_BLOCK_HEADER_SIZE             =16
 PKT_COUNT_OFFSET                        =2
-SAMPLES_PER_TRANSPORT_BLOCK             =256
-TRANSPORT_QUE_SIZE                      =2
+SAMPLES_PER_TRANSPORT_BLOCK             =128
+TRANSPORT_QUE_SIZE                      =4
 TCP_SERVER_PORT                         =3000
-SAMPLES_TO_COLLECT                      = 4096
+SAMPLES_TO_COLLECT                      = 2048
+SPS                                     = 250
 
 TCP_PACKET_SIZE                         = int(((TRANSPORT_BLOCK_HEADER_SIZE)/4+(AD1299_NUM_CH+1)*(SAMPLES_PER_TRANSPORT_BLOCK))*4)
 
@@ -76,20 +78,21 @@ try:
             if startOfBlock>=0:
         
                 # SAMPLES_PER_TRANSPORT_BLOCK*(AD1299_NUM_CH+1)+TRANSPORT_BLOCK_HEADER_SIZE/4
-                samples                 = unpack('2308i', receivedBuffer[startOfBlock:startOfBlock+TCP_PACKET_SIZE] )
-                
-                print( 'Received block #{}'.format(samples[PKT_COUNT_OFFSET]) )
-                
+                samples                 = unpack('1156i', receivedBuffer[startOfBlock:startOfBlock+TCP_PACKET_SIZE] )
+               
                 # remove block from received buffer
                 receivedBuffer          = receivedBuffer[startOfBlock+TCP_PACKET_SIZE:] 
                 
-                # get channel 4 samples
-                offset_to4ch    =  int(TRANSPORT_BLOCK_HEADER_SIZE/4 + SAMPLES_PER_TRANSPORT_BLOCK*4) 
+                # get channel offset
+                offset_toch    =  int(TRANSPORT_BLOCK_HEADER_SIZE/4 + SAMPLES_PER_TRANSPORT_BLOCK*CHANNEL_TO_MONITOR) 
                 
                 #print( samples[offset_to4ch:offset_to4ch+SAMPLES_PER_TRANSPORT_BLOCK] )
-                dataSamples = samples[offset_to4ch:offset_to4ch+SAMPLES_PER_TRANSPORT_BLOCK]
+                dataSamples = samples[offset_toch:offset_toch+SAMPLES_PER_TRANSPORT_BLOCK]
                 
-                npSamples[numSamples:numSamples+SAMPLES_PER_TRANSPORT_BLOCK] = np.array(dataSamples)
+                blockSamples = np.array(dataSamples)
+                print( 'Received block #{0} mean:{1:10.1f} var:{2:10.1f}'.format(samples[PKT_COUNT_OFFSET],np.mean(blockSamples),np.var(blockSamples)/1e6) )
+                
+                npSamples[numSamples:numSamples+SAMPLES_PER_TRANSPORT_BLOCK] = blockSamples
                 numSamples += SAMPLES_PER_TRANSPORT_BLOCK
                 if numSamples>=SAMPLES_TO_COLLECT:
                     break 
@@ -105,18 +108,19 @@ try:
 finally:
     sock.close()
     
-# remove corrupted samples
-# (not clear)
-npSamples[abs(npSamples)>100000] = 0
 
 plt.figure(1)    
-plt.plot(npSamples)
+plt.clf()
+plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-1)/SPS,SAMPLES_TO_COLLECT),npSamples)
 plt.xlabel('Время, сек')
-plt.title('Канал №4')
+plt.ylabel('Напряжение, мкв')
+plt.title('Канал №{}'.format(CHANNEL_TO_MONITOR))
 plt.grid('true')
+plt.ylim((-7e6,7e6))
 
 plt.figure(2)    
-frex,Pxx     = signal.welch( npSamples, fs=1024 )
+plt.clf()
+frex,Pxx     = signal.welch( npSamples, fs=SPS )
 plt.semilogy( frex,Pxx )
 plt.xlabel('Частота, Гц')
 plt.title('Спектральная плотность мощности')
