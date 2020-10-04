@@ -54,14 +54,14 @@ np.savetxt('emg_filt_data_n.txt',npRawSamples) - для фильтрованны
 npSamples = np.loadtxt('emg_filt_data_n.txt')
 
 ## Список файлов:
-emg_raw_data_0.txt      - сырой файл со сжатием кисти.
-emg_raw_data_1.txt      - сырой файл с подъемом кисти вверх.
-emg_raw_data_2.txt      - сырой файл со щелчком указательным и большим пальцами.
+* emg_raw_data_0.txt      - сырой файл со сжатием кисти.
+* emg_raw_data_1.txt      - сырой файл с подъемом кисти вверх.
+* emg_raw_data_2.txt      - сырой файл со щелчком указательным и большим пальцами.
 
-emg_filt_data_0.txt      - фильтрованный файл со сжатием кисти.
-emg_filt_data_1.txt      - фильтрованный файл с подъемом кисти вверх.
-emg_filt_data_2.txt      - фильтрованный файл со щелчком указательным и большим пальцами.
+* emg_filt_data_0.txt      - фильтрованный файл со сжатием кисти.
+* emg_filt_data_1.txt      - фильтрованный файл с подъемом кисти вверх.
+* emg_filt_data_2.txt      - фильтрованный файл со щелчком указательным и большим пальцами.
 
 ## Исходники
-[ESP32/FreeRTOS](https://github.com/RF-Lab/emg_platform/blob/master/source/esp32/emg8x/main/app_main.c)
-[Python client](https://github.com/RF-Lab/emg_platform/blob/master/source/python/hwtools/emg8x_tcp_client.py)
+* [ESP32/FreeRTOS](https://github.com/RF-Lab/emg_platform/blob/master/source/esp32/emg8x/main/app_main.c)
+* [Python client](https://github.com/RF-Lab/emg_platform/blob/master/source/python/hwtools/emg8x_tcp_client.py)
