@@ -23,3 +23,7 @@ ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x00 ) ;      // CH6: Normal,         
 ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x00 ) ;      // CH7: Normal,         PGA_Gain=1
 ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x00 ) ;      // CH8: Normal,         PGA_Gain=1
 ```
+## Описание эксперимента:
+* Использовался один канал номер 5.
+* Скорость оцифровки 250 SPS.
+* Три непрерывных записи по 30 секунд:
