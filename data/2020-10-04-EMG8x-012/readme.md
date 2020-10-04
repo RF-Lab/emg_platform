@@ -1,20 +1,15 @@
-## 1d_autoencoder
+# Тестовый эксперимент по сбору EMG сигналов для проверки EMG8x
 
-**...**
+## Настройки АЦП
 
-## 1dCNN_retraining
-
-**...**
-
-## cnn1d
-
-**...**
-
-## sav_work
-_SAV - Semendarov Andrey V._
-
-Основная часть работы программного решения может быть представлена в виде структурно-функциональной схемы:
-
-![СтруктурноФункциональнаяСхемаПО](https://user-images.githubusercontent.com/31689842/59972945-a78f4080-95a0-11e9-84d2-33569bfb515c.png)
-
-Вся программная реализация основана на ядерном методе опорных векторов в режиме один против одного. В качестве вектора признаков сигнала выступал сам вектор сигнала ЭМГ. Все сигналы делятся на тренировочные и тестовые данные в соотношении 2 к 1. Диапазон значений параметров из сетки параметров выставлен экспериментальным путем. Для каждого рассмотренного в исследовании ядра существует своя сетка параметров для увеличения производительности.
+```
+// Configure channels
+ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET, 0x05 ) ;      // CH1: Test signal,    PGA_Gain=1
+ad1299_wreg( spi_dev, AD1299_ADDR_CH2SET, 0x03 ) ;      // CH2: Measure VDD,    PGA_Gain=1
+ad1299_wreg( spi_dev, AD1299_ADDR_CH3SET, 0x00 ) ;      // CH3: Normal,         PGA_Gain=1
+ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0x00 ) ;      // CH4: Normal,         PGA_Gain=24
+ad1299_wreg( spi_dev, AD1299_ADDR_CH5SET, 0x30 ) ;      // CH5: Normal,         PGA_Gain=24
+ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x00 ) ;      // CH6: Normal,         PGA_Gain=24
+ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x00 ) ;      // CH7: Normal,         PGA_Gain=24
+ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x00 ) ;      // CH8: Normal,         PGA_Gain=24
+```
