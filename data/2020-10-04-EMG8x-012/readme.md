@@ -62,3 +62,6 @@ emg_filt_data_0.txt      - фильтрованный файл со сжатие
 emg_filt_data_1.txt      - фильтрованный файл с подъемом кисти вверх.
 emg_filt_data_2.txt      - фильтрованный файл со щелчком указательным и большим пальцами.
 
+## Исходники
+[ESP32/FreeRTOS](https://github.com/RF-Lab/emg_platform/blob/master/source/esp32/emg8x/main/app_main.c)
+[Python client](https://github.com/RF-Lab/emg_platform/blob/master/source/python/hwtools/emg8x_tcp_client.py)
