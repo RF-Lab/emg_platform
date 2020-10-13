@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name emg8x_lib.lib)(type Legacy)(uri C:/userdata/projects/emg_platform/hw_platform/ADS1299EMG8xR2/emg8x_lib.lib)(options "")(descr ""))
+)
