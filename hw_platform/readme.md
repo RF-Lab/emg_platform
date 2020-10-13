@@ -1,8 +1,11 @@
 # EMG hardware platform
 ## EMG8x (Revision 1)
 Первый вариант платы на основе 8-канального АЦП ADS1299. На данный момент собран один экземпляр платы. Цифровая часть полностью работает. По аналоговой части есть ряд ошибок значительно снижающий общие характеристики платы.
+
 ![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=1ILe61-I7x9Qac2lrjNZa3rqXznOtPNTw)
+
 ![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=1uYkZH1ljI7POEj6VSd-617ZXaz0Fbder)
+
 ## EMG8x (Revision 2)
 * Исправлены ошибки, допущенные в Revision 1.
 * Полностью дифференциальный интерфейс с раздельными входными фильтрами (как в [EEG Front-End Performance Demonstration Kit](https://www.ti.com/lit/ug/slau443b/slau443b.pdf?ts=1602258946892&ref_url=https%253A%252F%252Fwww.ti.com%252Ftool%252FADS1299EEGFE-PDK))
