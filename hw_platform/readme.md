@@ -6,6 +6,8 @@
 
 ![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=1uYkZH1ljI7POEj6VSd-617ZXaz0Fbder)
 
+Gerber файлы для производства платы размещены [здесь](https://github.com/RF-Lab/emg_platform/blob/master/hw_platform/ADS1299EMG8x/gerber.zip)
+
 ## EMG8x (Revision 2)
 * Исправлены ошибки, допущенные в Revision 1.
 * Полностью дифференциальный интерфейс с раздельными входными фильтрами (как в [EEG Front-End Performance Demonstration Kit](https://www.ti.com/lit/ug/slau443b/slau443b.pdf?ts=1602258946892&ref_url=https%253A%252F%252Fwww.ti.com%252Ftool%252FADS1299EEGFE-PDK))
@@ -13,6 +15,11 @@
 * Третий электрод теперь можно завести на GNDA, на сигнал смещения или на общий электрод.
 * Интерфейс с одним общим электродом (меньше проводов).
 * Питание от двух аккумуляторов Li-Ion 18650.
+
+Проект полностью выполнен в Open Source САПР [KiCAD](https://kicad-pcb.org/).
+
+Файлы проекта размещены [здесь](https://github.com/RF-Lab/emg_platform/tree/master/hw_platform/ADS1299EMG8xR2)
+
 ![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=18xvGgrcY3SdtwbyLzkZvpchL3RI9LBVP)
 ## Общедоступные платы других производителей EMG Shields
 1. [Analog EMG Sensor by OYMotion SKU:SEN0240](https://www.dfrobot.com/wiki/index.php/Analog_EMG_Sensor_by_OYMotion_SKU:SEN0240).
