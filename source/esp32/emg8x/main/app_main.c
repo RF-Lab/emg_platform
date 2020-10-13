@@ -557,7 +557,7 @@ static void emg8x_app_start(void)
     // Set internal reference
     // WREG CONFIG3 E0h
     ESP_LOGI(TAG, "Set internal reference" ) ;
-    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG3, 0xE0 ) ;
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG3, 0xEE ) ;
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
  /*   while(1)
@@ -623,11 +623,11 @@ static void emg8x_app_start(void)
     ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET, 0x05 ) ;      // CH1: Test signal,    PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH2SET, 0x03 ) ;      // CH2: Measure VDD,    PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH3SET, 0x00 ) ;      // CH3: Normal,         PGA_Gain=1
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0x60 ) ;      // CH4: Normal,         PGA_Gain=24
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH5SET, 0x00 ) ;      // CH5: Normal,         PGA_Gain=24
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x60 ) ;      // CH6: Normal,         PGA_Gain=24
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x60 ) ;      // CH7: Normal,         PGA_Gain=24
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x60 ) ;      // CH8: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0x00 ) ;      // CH4: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH5SET, 0x30 ) ;      // CH5: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x00 ) ;      // CH6: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x00 ) ;      // CH7: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x00 ) ;      // CH8: Normal,         PGA_Gain=24
     vTaskDelay( 50 / portTICK_RATE_MS ) ;
 
     ESP_LOGI(TAG, "Put device in RDATAC mode" ) ;

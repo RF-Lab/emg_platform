@@ -39,15 +39,15 @@ from scipy import signal
 EMG8x_ADDRESS                           = '192.168.1.65' ;
 
 
-AD1299_NUM_CH                           =8
-CHANNEL_TO_MONITOR                      =5
-TRANSPORT_BLOCK_HEADER_SIZE             =16
-PKT_COUNT_OFFSET                        =2
-SAMPLES_PER_TRANSPORT_BLOCK             =128
-TRANSPORT_QUE_SIZE                      =4
-TCP_SERVER_PORT                         =3000
-SAMPLES_TO_COLLECT                      = 2048
-SPS                                     = 250
+AD1299_NUM_CH                           =   8
+CHANNEL_TO_MONITOR                      =   5
+TRANSPORT_BLOCK_HEADER_SIZE             =   16
+PKT_COUNT_OFFSET                        =   2
+SAMPLES_PER_TRANSPORT_BLOCK             =   128
+TRANSPORT_QUE_SIZE                      =   4
+TCP_SERVER_PORT                         =   3000
+SPS                                     =   250
+SAMPLES_TO_COLLECT                      =   SAMPLES_PER_TRANSPORT_BLOCK*2*30
 
 TCP_PACKET_SIZE                         = int(((TRANSPORT_BLOCK_HEADER_SIZE)/4+(AD1299_NUM_CH+1)*(SAMPLES_PER_TRANSPORT_BLOCK))*4)
 
@@ -90,7 +90,7 @@ try:
                 dataSamples = samples[offset_toch:offset_toch+SAMPLES_PER_TRANSPORT_BLOCK]
                 
                 blockSamples = np.array(dataSamples)
-                print( 'Received block #{0} mean:{1:10.1f} var:{2:10.1f}'.format(samples[PKT_COUNT_OFFSET],np.mean(blockSamples),np.var(blockSamples)/1e6) )
+                print( 'Block #{0} mean:{1:10.1f},  var:{2:8.1f}, sec:{3:4.0f}'.format(samples[PKT_COUNT_OFFSET],np.mean(blockSamples),np.var(blockSamples)/1e6, numSamples/SPS ) )
                 
                 npSamples[numSamples:numSamples+SAMPLES_PER_TRANSPORT_BLOCK] = blockSamples
                 numSamples += SAMPLES_PER_TRANSPORT_BLOCK
@@ -108,20 +108,36 @@ try:
 finally:
     sock.close()
     
+npRawSamples        = npSamples
+ 
+# remove 50 Hz
+#hflt        = signal.firls( 127, [0/125.0, 40/125.0, 44/125.0, 56/125.0, 60/125.0, 90/125.0, 95/125.0, 105/125.0, 110/125.0, 125/125.0],   [1.0, 1.0,  0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0 ])
+hflt        = signal.firls( 151, [0, 40,  45, 55, 60, 90, 95, 105, 115, 125],   [1.0, 1.0,  0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0 ],fs = SPS)
 
-plt.figure(1)    
-plt.clf()
-plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-1)/SPS,SAMPLES_TO_COLLECT),npSamples)
-plt.xlabel('Время, сек')
-plt.ylabel('Напряжение, мкв')
-plt.title('Канал №{}'.format(CHANNEL_TO_MONITOR))
-plt.grid('true')
-plt.ylim((-7e6,7e6))
+#plt.figure(3)
+#w, h = signal.freqz(hflt,fs=SPS)
+#plt.plot(w, 20 * np.log10(abs(h)), 'b')
 
+npFiltSamples       = np.convolve( hflt, npSamples, 'same' )
+    
 plt.figure(2)    
 plt.clf()
-frex,Pxx     = signal.welch( npSamples, fs=SPS )
+frex,Pxx     = signal.welch( npFiltSamples, fs=SPS )
 plt.semilogy( frex,Pxx )
 plt.xlabel('Частота, Гц')
 plt.title('Спектральная плотность мощности')
 plt.grid('true')
+
+plt.figure(1)    
+plt.clf()
+plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-1)/SPS,SAMPLES_TO_COLLECT),npFiltSamples)
+plt.xlabel('Время, сек')
+plt.ylabel('Напряжение, мкв')
+plt.title('Канал №{}'.format(CHANNEL_TO_MONITOR))
+plt.grid('true')
+#plt.ylim((-7e6,7e6))
+
+
+np.savetxt('emg_raw_data.txt',npRawSamples)
+np.savetxt('emg_filt_data.txt',npFiltSamples)
+#npSamples = np.loadtxt('emg_data.txt')
