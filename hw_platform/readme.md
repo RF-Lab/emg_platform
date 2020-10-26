@@ -21,6 +21,9 @@ Gerber файлы для производства платы размещены 
 Файлы проекта размещены [здесь](https://github.com/RF-Lab/emg_platform/tree/master/hw_platform/ADS1299EMG8xR2)
 
 ![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=18xvGgrcY3SdtwbyLzkZvpchL3RI9LBVP)
+
+![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=1KYdTuIX_fYVNJwBQyU52c1kfoPJkaA2G)
+
 ## Общедоступные платы других производителей EMG Shields
 1. [Analog EMG Sensor by OYMotion SKU:SEN0240](https://www.dfrobot.com/wiki/index.php/Analog_EMG_Sensor_by_OYMotion_SKU:SEN0240).
 2. [Olimex SHIELD-EKG-EMG](https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/open-source-hardware).
