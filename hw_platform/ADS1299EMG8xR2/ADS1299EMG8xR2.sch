@@ -152,7 +152,7 @@ U 1 1 5F7DF04E
 P 1050 950
 F 0 "JP2" H 1050 1154 50  0000 C CNN
 F 1 "Jumper_3_Bridged12" H 1050 1063 50  0000 C CNN
-F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged2Bar12_Pad1.0x1.5mm_NumberLabels" H 1050 950 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1050 950 50  0001 C CNN
 F 3 "~" H 1050 950 50  0001 C CNN
 	1    1050 950 
 	1    0    0    -1  
@@ -1308,7 +1308,7 @@ U 1 1 5F84CE17
 P 750 7050
 F 0 "JP1" H 750 7254 50  0000 C CNN
 F 1 "Jumper_3_Bridged12" H 750 7163 50  0000 C CNN
-F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged2Bar12_Pad1.0x1.5mm_NumberLabels" H 750 7050 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 750 7050 50  0001 C CNN
 F 3 "~" H 750 7050 50  0001 C CNN
 	1    750  7050
 	0    -1   -1   0   
@@ -1386,7 +1386,7 @@ U 1 1 5F92DA34
 P 3850 1200
 F 0 "JP3" H 3650 1350 50  0000 C CNN
 F 1 "Jumper" H 4050 1350 50  0000 C CNN
-F 2 "Jumper:SolderJumper-2_P1.3mm_Bridged2Bar_Pad1.0x1.5mm" H 3850 1200 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3850 1200 50  0001 C CNN
 F 3 "~" H 3850 1200 50  0001 C CNN
 	1    3850 1200
 	1    0    0    -1  
@@ -1700,7 +1700,7 @@ U 1 1 5FB13469
 P 6000 5550
 F 0 "JP4" H 6000 5754 50  0000 C CNN
 F 1 "Jumper_3_Bridged12" H 6000 5663 50  0000 C CNN
-F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged2Bar12_Pad1.0x1.5mm_NumberLabels" H 6000 5550 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 6000 5550 50  0001 C CNN
 F 3 "~" H 6000 5550 50  0001 C CNN
 	1    6000 5550
 	0    -1   -1   0   
@@ -1737,7 +1737,7 @@ U 1 1 5FB608C9
 P 9400 5550
 F 0 "JP6" H 9400 5754 50  0000 C CNN
 F 1 "Jumper_3_Bridged12" H 9400 5663 50  0000 C CNN
-F 2 "Jumper:SolderJumper-3_P1.3mm_Bridged2Bar12_Pad1.0x1.5mm_NumberLabels" H 9400 5550 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 9400 5550 50  0001 C CNN
 F 3 "~" H 9400 5550 50  0001 C CNN
 	1    9400 5550
 	-1   0    0    1   
@@ -1863,7 +1863,7 @@ U 1 1 5FBDBDA2
 P 6050 6850
 F 0 "JP5" H 6050 7114 50  0000 C CNN
 F 1 "Jumper" H 6050 7023 50  0000 C CNN
-F 2 "Jumper:SolderJumper-2_P1.3mm_Bridged2Bar_Pad1.0x1.5mm" H 6050 6850 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 6050 6850 50  0001 C CNN
 F 3 "~" H 6050 6850 50  0001 C CNN
 	1    6050 6850
 	1    0    0    -1  
