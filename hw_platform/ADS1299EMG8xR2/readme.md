@@ -1,5 +1,6 @@
 # EMG hardware platform EMG8x Revision2
 
+| Field      | Value       |
 | ------------- | ------------- |
 | Название      | EMG8xR2       |
 | Дата размещения| 08.11.2020   |
