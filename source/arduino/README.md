@@ -43,5 +43,6 @@ EMG shield: https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/open-so
   documents:https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/resources/SHIELD-EKG-EMG.pdf (need perform page 12 and 13)
   matlab script: Main_v2.m - real-time classification and 3dHand visualization:  unpack 3dHand and in script change paths on your :       https://yadi.sk/d/lEAcx24b9zndsQ
   
-  
-  
+================================================================
+Gravity: Analog EMG Sensor
+Добавлен код на Arduino для работы с DFRobot Gravity: Analog EMG Sensor    https://www.dfrobot.com/product-1661.html
