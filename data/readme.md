@@ -31,3 +31,4 @@ seven_movs_one_min.mat данные на 17.11.2020
 В датасет в формате {13,1}(7,54200) где 13 - количестово дней, 7- количество жестов 54200 - временная область длинна вектора
 пример вскрытия датасета на питоне https://colab.research.google.com/drive/1qWji3KMVBfx5gCuU2-ZPiPu90cWFBKSI?usp=sharing
 строчку seven_movs_one_min:		Array(6, 1) замените на seven_movs_one_min:		Array(13, 1)
+Чтобы отцентрировать сигнал, нужно вычесть из каждого вектора 256
