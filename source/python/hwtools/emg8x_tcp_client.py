@@ -36,18 +36,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import signal
 
-EMG8x_ADDRESS                           = '192.168.1.65' ;
+EMG8x_ADDRESS                           = '192.168.1.42' ;
+CHANNELS_TO_MONITOR                     =  (6,7,8)
 
 
 AD1299_NUM_CH                           =   8
-CHANNEL_TO_MONITOR                      =   5
 TRANSPORT_BLOCK_HEADER_SIZE             =   16
 PKT_COUNT_OFFSET                        =   2
 SAMPLES_PER_TRANSPORT_BLOCK             =   128
 TRANSPORT_QUE_SIZE                      =   4
 TCP_SERVER_PORT                         =   3000
-SPS                                     =   250
-SAMPLES_TO_COLLECT                      =   SAMPLES_PER_TRANSPORT_BLOCK*2*30
+SPS                                     =   500
+SAMPLES_TO_COLLECT                      =   SAMPLES_PER_TRANSPORT_BLOCK*4*10
 
 TCP_PACKET_SIZE                         = int(((TRANSPORT_BLOCK_HEADER_SIZE)/4+(AD1299_NUM_CH+1)*(SAMPLES_PER_TRANSPORT_BLOCK))*4)
 
@@ -63,7 +63,7 @@ sock.connect(server_address)
 
 receivedBuffer                          = bytes()
 
-npSamples                               = np.zeros((SAMPLES_TO_COLLECT,))
+rawSamples                              = np.zeros((SAMPLES_TO_COLLECT,len(CHANNELS_TO_MONITOR)))
 # Collected samples
 numSamples                              = 0 
 
@@ -81,21 +81,28 @@ try:
                 samples                 = unpack('1156i', receivedBuffer[startOfBlock:startOfBlock+TCP_PACKET_SIZE] )
                
                 # remove block from received buffer
-                receivedBuffer          = receivedBuffer[startOfBlock+TCP_PACKET_SIZE:] 
+                receivedBuffer          = receivedBuffer[startOfBlock+TCP_PACKET_SIZE:]
                 
-                # get channel offset
-                offset_toch    =  int(TRANSPORT_BLOCK_HEADER_SIZE/4 + SAMPLES_PER_TRANSPORT_BLOCK*CHANNEL_TO_MONITOR) 
+                chCount = 0
+                for chIdx in CHANNELS_TO_MONITOR:
+                                    
+                    # get channel offset
+                    offset_toch    =  int(TRANSPORT_BLOCK_HEADER_SIZE/4 + SAMPLES_PER_TRANSPORT_BLOCK*chIdx) 
                 
-                #print( samples[offset_to4ch:offset_to4ch+SAMPLES_PER_TRANSPORT_BLOCK] )
-                dataSamples = samples[offset_toch:offset_toch+SAMPLES_PER_TRANSPORT_BLOCK]
+                    #print( samples[offset_to4ch:offset_to4ch+SAMPLES_PER_TRANSPORT_BLOCK] )
+                    dataSamples = samples[offset_toch:offset_toch+SAMPLES_PER_TRANSPORT_BLOCK]
                 
-                blockSamples = np.array(dataSamples)
-                print( 'Block #{0} mean:{1:10.1f},  var:{2:8.1f}, sec:{3:4.0f}'.format(samples[PKT_COUNT_OFFSET],np.mean(blockSamples),np.var(blockSamples)/1e6, numSamples/SPS ) )
+                    blockSamples = np.array(dataSamples)
+                    print( 'Ch#{0} Block #{1} mean:{2:10.1f},  var:{3:8.1f}, sec:{4:4.0f}'.format(chIdx, samples[PKT_COUNT_OFFSET],np.mean(blockSamples),np.var(blockSamples)/1e6, numSamples/SPS ) )
                 
-                npSamples[numSamples:numSamples+SAMPLES_PER_TRANSPORT_BLOCK] = blockSamples
+                    rawSamples[numSamples:numSamples+SAMPLES_PER_TRANSPORT_BLOCK,chCount] = blockSamples
+                    
+                    chCount += 1
+                
                 numSamples += SAMPLES_PER_TRANSPORT_BLOCK
                 if numSamples>=SAMPLES_TO_COLLECT:
-                    break 
+                    break
+                
         else:
             receivedData                    = sock.recv( TCP_PACKET_SIZE )
             if not receivedData:
@@ -108,36 +115,47 @@ try:
 finally:
     sock.close()
     
-npRawSamples        = npSamples
- 
 # remove 50 Hz
 #hflt        = signal.firls( 127, [0/125.0, 40/125.0, 44/125.0, 56/125.0, 60/125.0, 90/125.0, 95/125.0, 105/125.0, 110/125.0, 125/125.0],   [1.0, 1.0,  0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0 ])
-hflt        = signal.firls( 151, [0, 40,  45, 55, 60, 90, 95, 105, 115, 125],   [1.0, 1.0,  0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0 ],fs = SPS)
+hflt        = signal.firls( 257, [ 0,10,  15,40,  43,57,  60,95,  98,104,  107,143, 146,155, 158,193, 196,205, 208,230, 233,SPS/2 ],   
+                           [     0.,0., 1.0,1.0, .0,.0, 1.0,1.0, 0.0,0.0, 1.0,1.0,  0.0,0.0, 1.0,1.0, .0,.0,   1.0,1.0, .0,.0  ],fs = SPS)
 
 #plt.figure(3)
 #w, h = signal.freqz(hflt,fs=SPS)
 #plt.plot(w, 20 * np.log10(abs(h)), 'b')
 
-npFiltSamples       = np.convolve( hflt, npSamples, 'same' )
-    
-plt.figure(2)    
-plt.clf()
-frex,Pxx     = signal.welch( npFiltSamples, fs=SPS )
-plt.semilogy( frex,Pxx )
-plt.xlabel('Частота, Гц')
-plt.title('Спектральная плотность мощности')
-plt.grid('true')
+filtSamples     = rawSamples * 0
 
+for chCount in range(len(CHANNELS_TO_MONITOR)):
+    filtSamples[:,chCount]      = np.convolve( hflt, rawSamples[:,chCount], 'same' )
+
+side_len        = 500     
 plt.figure(1)    
 plt.clf()
-plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-1)/SPS,SAMPLES_TO_COLLECT),npFiltSamples)
-plt.xlabel('Время, сек')
-plt.ylabel('Напряжение, мкв')
-plt.title('Канал №{}'.format(CHANNEL_TO_MONITOR))
-plt.grid('true')
-#plt.ylim((-7e6,7e6))
+for chCount in range(len(CHANNELS_TO_MONITOR)):
+    plt.subplot(len(CHANNELS_TO_MONITOR),1,chCount+1)
+#    plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-2*side_len-1)/SPS,SAMPLES_TO_COLLECT-2*side_len), 
+#                 rawSamples[side_len:-side_len,chCount])
+    plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-2*side_len-1)/SPS,SAMPLES_TO_COLLECT-2*side_len), 
+                 filtSamples[side_len:-side_len,chCount])
+    plt.xlabel('Время, сек')
+    plt.ylabel('Напряжение, мкв')
+    plt.title('Канал {}'.format(CHANNELS_TO_MONITOR[chCount]))
+    plt.grid('true')
 
 
-np.savetxt('emg_raw_data.txt',npRawSamples)
-np.savetxt('emg_filt_data.txt',npFiltSamples)
-#npSamples = np.loadtxt('emg_data.txt')
+plt.figure(2)    
+plt.clf()
+for chCount in range(len(CHANNELS_TO_MONITOR)):
+    #plt.subplot(len(CHANNELS_TO_MONITOR),1,chCount+1)
+    frex,Pxx     = signal.welch( rawSamples[side_len:-side_len,chCount], fs=SPS )
+    plt.semilogy( frex,Pxx )
+    frex,Pxx     = signal.welch( filtSamples[side_len:-side_len,chCount], fs=SPS )
+    plt.semilogy( frex,Pxx )
+    plt.xlabel('Частота, Гц')
+    plt.title('Спектральная плотность мощности')
+    plt.grid('true')
+
+
+np.savetxt('emg_raw_snapping.txt',rawSamples )
+np.savetxt('emg_filt_snapping.txt',filtSamples )

@@ -50,16 +50,41 @@
 #include "hal/gpio_types.h"
 #include "driver/gpio.h"
 
+#include <wifi_provisioning/manager.h>
+
+#include <wifi_provisioning/scheme_ble.h>
+
+#include <wifi_provisioning/scheme_softap.h>
+
 static const char *TAG                          = "EMG8x" ;
 
 // Pinout mapping
 // Use pinout rules from here: (https://randomnerdtutorials.com/esp32-pinout-reference-gpios/)
 // NodeMCU 32-s2 pinout: (https://www.instructables.com/id/ESP32-Internal-Details-and-Pinout/)
 
+#if CONFIG_EMG8X_BOARD_REV == 1
+
+#pragma message ( "Set to EMG8x-Rev.2 pinouts!" )
+
 static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;         // ADS<--ESP Power down pin (active low)
 static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<--ESP Reset pin (active low)
 static const gpio_num_t     AD1299_DRDY_PIN     = GPIO_NUM_33 ;         // ADS-->ESP DRDY pin (active low)
 static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<--ESP Start data conversion pint (active high)
+
+#elif CONFIG_EMG8X_BOARD_REV == 2
+
+#pragma message ( "Set to EMG8x-Rev.2 pinouts!" )
+
+static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;         // ADS<--ESP Power down pin (active low)
+static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<--ESP Reset pin (active low)
+static const gpio_num_t     AD1299_DRDY_PIN     = GPIO_NUM_4 ;          // ADS-->ESP DRDY pin (active low)
+static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<--ESP Start data conversion pint (active high)
+
+#else
+
+#pragma message ( "Wrong revision number!" )
+
+#endif
 
 // SPI comands (see https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1599826124971)
 static const uint8_t        AD1299_CMD_RREG     = 0x20 ;                // Read register
@@ -103,6 +128,12 @@ static const uint8_t        AD1299_ADDR_CH8SET  = 0x0c ;
 
 // TCP server port to listen, use 'idf.py menuconfig' to change this constant
 // CONFIG_EMG8X_TCP_SERVER_PORT =                           3000
+
+
+void spi_data_pump_task( void* pvParameter ) ;
+
+
+spi_device_handle_t         spi_dev ;
 
 
 static EventGroupHandle_t   wifi_event_group ;
@@ -186,6 +217,8 @@ static void wifi_init(void)
             .password = CONFIG_WIFI_PASSWORD,
         },
     } ;
+    
+    
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)) ;
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config)) ;
     ESP_LOGI(TAG, "start the WIFI SSID:[%s]", CONFIG_WIFI_SSID) ;
@@ -419,7 +452,6 @@ void tcp_server_task( void* pvParameter )
 static void emg8x_app_start(void)
 {
     int dmaChan             = 0 ;  // disable dma
-    spi_device_handle_t spi_dev ;
     esp_err_t ret           = 0 ;
 
     ESP_LOGI(TAG, "Initialize GPIO lines") ;
@@ -477,7 +509,7 @@ static void emg8x_app_start(void)
         .command_bits       = 0,                        // 0-16
         .address_bits       = 0,                        // 0-64
         .dummy_bits         = 0,                        // Amount of dummy bits to insert between address and data phase 
-        .clock_speed_hz     = 400000,                   // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
+        .clock_speed_hz     = 1000000,                  // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
         .mode               = 1,                        // SPI mode 0
         .flags              = SPI_DEVICE_HALFDUPLEX,    // Bitwise OR of SPI_DEVICE_* flags
         .input_delay_ns     = 0,                        // The time required between SCLK and MISO
@@ -570,7 +602,7 @@ static void emg8x_app_start(void)
     //Set device for DR=fmod/4096
     // Enable clk output
     ESP_LOGI(TAG, "Set sampling rate" ) ;
-    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0xf6 ) ;     // Default 0x96 (see power up sequence)
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0xf5 ) ;     // Default 0x96 (see power up sequence)
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
     // Configure test signal parameters
@@ -625,9 +657,9 @@ static void emg8x_app_start(void)
     ad1299_wreg( spi_dev, AD1299_ADDR_CH3SET, 0x00 ) ;      // CH3: Normal,         PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0x00 ) ;      // CH4: Normal,         PGA_Gain=24
     ad1299_wreg( spi_dev, AD1299_ADDR_CH5SET, 0x30 ) ;      // CH5: Normal,         PGA_Gain=24
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x00 ) ;      // CH6: Normal,         PGA_Gain=24
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x00 ) ;      // CH7: Normal,         PGA_Gain=24
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x00 ) ;      // CH8: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x50 ) ;      // CH6: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x50 ) ;      // CH7: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x50 ) ;      // CH8: Normal,         PGA_Gain=24
     vTaskDelay( 50 / portTICK_RATE_MS ) ;
 
     ESP_LOGI(TAG, "Put device in RDATAC mode" ) ;
@@ -673,9 +705,16 @@ static void emg8x_app_start(void)
     tcp_server_thread_context.pDrdyThreadContext    = &drdy_thread_context ;
 
     // Start TCP server task
-    //xTaskCreatePinnedToCore( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL, 1 ) ;
+    //xTaskCreatePinnedToCore( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL, 0 ) ;
     xTaskCreate( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL ) ;
+    xTaskCreatePinnedToCore( &spi_data_pump_task, "spi_data_pump_task", 4096, &tcp_server_thread_context, 5, NULL, 1 ) ;
+    
+}
 
+void spi_data_pump_task( void* pvParameter )
+{
+    ESP_LOGI(TAG,"spi_data_pump_task started at CpuCore%1d\n", xPortGetCoreID() ) ;
+    
     // Queue full flag
     int queueFull                                   = 0 ;
 
@@ -689,15 +728,24 @@ static void emg8x_app_start(void)
         {
 
             // DRDY goes down - data ready to read
+            /*
+            while( gpio_get_level(AD1299_DRDY_PIN)==1 )
+            {
+                if (drdy_thread_context.sampleCount%100==0)
+                {
+                    vTaskDelay( 1 ) ;
+                }
+            }*/
+            
             ad1299_read_data_block216( spi_dev, drdy_thread_context.spiReadBuffer ) ;
 
             // Check for stat 0xCx presence
             if ((drdy_thread_context.spiReadBuffer[0]&0xf0)!=0xc0)
             {
-                //ESP_LOGE(TAG, "raw_REad:[%6d][%6d] 0xc0 not found!", drdy_thread_context.blockCounter, drdy_thread_context.sampleCount ) ;
-                //continue ;
+                ESP_LOGE(TAG, "raw_REad:[%6d][%6d] 0xc0 not found!", drdy_thread_context.blockCounter, drdy_thread_context.sampleCount ) ;
+                continue ;
             }
-
+            
             // get STAT field
             // transform 24 bit field to 32 bit integer
             drdy_thread_context.adcStat32   = (uint32_t) (
@@ -789,11 +837,8 @@ static void emg8x_app_start(void)
 
                 //ESP_LOGI(TAG, "head: %d",  drdy_thread_context.head ) ;
             }
-
         }
-
     }
-
 }
 
 void app_main()
