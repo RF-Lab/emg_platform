@@ -1,5 +1,7 @@
 # EMG hardware platform EMG8x Revision2
 
+## Общие характеристики
+
 | Field      | Value       |
 | ------------- | ------------- |
 | Название      | EMG8xR2       |
@@ -17,7 +19,20 @@
 | Процессор| Espressif ESP32 |
 | Критические ошибки| Нет информации|
 
+## Конфигурация
 
+Для сборки микропрограммного обеспечения необходимо установить ESP-IDF. Для настройки параметров прошивки используется команда 
+```
+idf.py menuconfig
+```
+В разделе WiFi Configuration следует указать режим. В режиме SoftAP платформа работает в режиме точки доступа. 
+
+Внимание! Пароль в режиме SoftAP должен быть не менее 8 символов!!!
+
+Если опция SoftAP выключена, то платформа работает в режиме станции. В этом случае SSID и пароль необходимо установить для доступа к вашей WiFi сети.
+![WiFiConfig](https://drive.google.com/uc?export=view&id=1MJfj9EwQQmBjOCEw-MoydRnb6mCN9Bni)
+
+## Схема
 
 ![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=1L_DrWvEDwm783Buy2m62GdEQSulPrG8b)
 
