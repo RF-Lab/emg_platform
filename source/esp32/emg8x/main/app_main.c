@@ -34,7 +34,7 @@
 #include "esp_wifi.h"
 #include "esp_system.h"
 #include "nvs_flash.h"
-#include "esp_event_loop.h"
+#include "esp_event.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -49,12 +49,7 @@
 #include "esp_log.h"
 #include "hal/gpio_types.h"
 #include "driver/gpio.h"
-
-#include <wifi_provisioning/manager.h>
-
-#include <wifi_provisioning/scheme_ble.h>
-
-#include <wifi_provisioning/scheme_softap.h>
+#include "driver/spi_master.h"
 
 static const char *TAG                          = "EMG8x" ;
 
@@ -62,9 +57,9 @@ static const char *TAG                          = "EMG8x" ;
 // Use pinout rules from here: (https://randomnerdtutorials.com/esp32-pinout-reference-gpios/)
 // NodeMCU 32-s2 pinout: (https://www.instructables.com/id/ESP32-Internal-Details-and-Pinout/)
 
-#if CONFIG_EMG8X_BOARD_REV == 1
+#if CONFIG_EMG8X_BOARD_EMULATION == 0
 
-#pragma message ( "Set to EMG8x-Rev.2 pinouts!" )
+#if CONFIG_EMG8X_BOARD_REV == 1
 
 static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;         // ADS<--ESP Power down pin (active low)
 static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<--ESP Reset pin (active low)
@@ -73,16 +68,12 @@ static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<-
 
 #elif CONFIG_EMG8X_BOARD_REV == 2
 
-#pragma message ( "Set to EMG8x-Rev.2 pinouts!" )
-
 static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;         // ADS<--ESP Power down pin (active low)
 static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<--ESP Reset pin (active low)
 static const gpio_num_t     AD1299_DRDY_PIN     = GPIO_NUM_4 ;          // ADS-->ESP DRDY pin (active low)
 static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<--ESP Start data conversion pint (active high)
 
 #else
-
-#pragma message ( "Wrong revision number!" )
 
 #endif
 
@@ -106,6 +97,8 @@ static const uint8_t        AD1299_ADDR_CH5SET  = 0x09 ;
 static const uint8_t        AD1299_ADDR_CH6SET  = 0x0a ;
 static const uint8_t        AD1299_ADDR_CH7SET  = 0x0b ;
 static const uint8_t        AD1299_ADDR_CH8SET  = 0x0c ;
+
+#endif
 
 // AD1299 constants (see https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1599826124971)
 // Number of analog channels
@@ -134,10 +127,6 @@ void spi_data_pump_task( void* pvParameter ) ;
 
 
 spi_device_handle_t         spi_dev ;
-
-
-static EventGroupHandle_t   wifi_event_group ;
-const static int            CONNECTED_BIT  =                BIT0 ;
 
 // DRDY signal interrupt context
 typedef struct
@@ -183,50 +172,194 @@ typedef struct
 } type_tcp_server_thread_context ;
 type_tcp_server_thread_context tcp_server_thread_context ;
 
-static esp_err_t wifi_event_handler(void *ctx, system_event_t *event)
+#if CONFIG_WIFI_MODE_SOFTAP
+
+static void wifi_event_handler(void* arg, esp_event_base_t event_base,
+                                    int32_t event_id, void* event_data)
 {
-    switch (event->event_id) {
-        case SYSTEM_EVENT_STA_START:
-            esp_wifi_connect() ;
-            break;
-        case SYSTEM_EVENT_STA_GOT_IP:
-            xEventGroupSetBits(wifi_event_group, CONNECTED_BIT) ;
-            strncpy(tcp_server_thread_context.serverIpAddr, ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip), 127) ;
-            break;
-        case SYSTEM_EVENT_STA_DISCONNECTED:
-            esp_wifi_connect();
-            xEventGroupClearBits(wifi_event_group, CONNECTED_BIT) ;
-            break;
-        default:
-            break;
+    if (event_id == WIFI_EVENT_AP_STACONNECTED) 
+    {
+        wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
+        ESP_LOGI(TAG, "station "MACSTR" join, AID=%d",
+                 MAC2STR(event->mac), event->aid);
+    } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
+        wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
+        ESP_LOGI(TAG, "station "MACSTR" leave, AID=%d",
+                 MAC2STR(event->mac), event->aid);
     }
-    return ESP_OK;
+}
+
+ esp_netif_ip_info_t ap_ip_info ;
+void wifi_init_softap(void)
+{
+    ESP_ERROR_CHECK(esp_netif_init()) ;
+    ESP_ERROR_CHECK(esp_event_loop_create_default()) ;
+    esp_netif_create_default_wifi_ap() ;
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT() ;
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg)) ;
+
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        &wifi_event_handler,
+                                                        NULL,
+                                                        NULL)) ;
+
+    wifi_config_t wifi_config = {
+        .ap = {
+            .ssid = CONFIG_WIFI_SSID,
+            .ssid_len = strlen(CONFIG_WIFI_SSID),
+            .channel = CONFIG_WIFI_CHANNEL,
+            .password = CONFIG_WIFI_PASSWORD,
+            .max_connection = CONFIG_MAX_STA_CONN,
+            .authmode = WIFI_AUTH_WPA_WPA2_PSK
+        },
+    } ;
+
+    if (strlen(CONFIG_WIFI_PASSWORD) == 0) 
+    {
+        wifi_config.ap.authmode = WIFI_AUTH_OPEN ;
+    }
+
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP)) ;
+    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config)) ;
+    ESP_ERROR_CHECK(esp_wifi_start()) ;
+
+    ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s channel:%d",
+            CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD, CONFIG_WIFI_CHANNEL) ;
+    
+    
+    // Get default netif object
+    esp_netif_t *esp_netif = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF") ;
+    if (esp_netif)
+    {
+        ESP_ERROR_CHECK(esp_netif_get_ip_info(esp_netif,&ap_ip_info)) ;
+        strncpy(tcp_server_thread_context.serverIpAddr, ipaddr_ntoa((const ip_addr_t *)&ap_ip_info.ip), 127) ;
+        ESP_LOGI(TAG, "local AP address is: %s\n", tcp_server_thread_context.serverIpAddr ) ;
+    }
+
+    //strncpy(tcp_server_thread_context.serverIpAddr, ipaddr_ntoa(&gnetif.ip_addr), 127) ;
+    //ESP_LOGI(TAG, ipaddr_ntoa(gnetif.ip_addr.addr) )
+    //ESP_LOGI(TAG, "local address: %s\n", tcp_server_thread_context.serverIpAddr ) ;
+
+}
+
+#else
+/* FreeRTOS event group to signal when we are connected*/
+static EventGroupHandle_t s_wifi_event_group ;
+
+/* The event group allows multiple bits for each event, but we only care about two events:
+ * - we are connected to the AP with an IP
+ * - we failed to connect after the maximum amount of retries */
+#define WIFI_CONNECTED_BIT BIT0
+#define WIFI_FAIL_BIT      BIT1
+#define EXAMPLE_ESP_MAXIMUM_RETRY 10
+
+static int s_retry_num = 0 ;
+
+static void event_handler(void* arg, esp_event_base_t event_base,
+                                int32_t event_id, void* event_data)
+{
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) 
+    {
+        esp_wifi_connect() ;
+    } 
+    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) 
+    {
+        if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY) {
+            esp_wifi_connect();
+            s_retry_num++;
+            ESP_LOGI(TAG, "retry to connect to the AP") ;
+        } else {
+            xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
+        }
+        ESP_LOGI(TAG,"connect to the AP fail") ;
+    } 
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) 
+    {
+        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+        strncpy(tcp_server_thread_context.serverIpAddr, ipaddr_ntoa((const ip_addr_t *)&event->ip_info.ip), 127) ;
+        ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
+        s_retry_num = 0;
+        xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT) ;
+    }
 }
 
 static void wifi_init(void)
 {
-    tcpip_adapter_init() ;
-    wifi_event_group        = xEventGroupCreate() ;
-    ESP_ERROR_CHECK(esp_event_loop_init(wifi_event_handler, NULL)) ;
-    wifi_init_config_t cfg  = WIFI_INIT_CONFIG_DEFAULT() ;
+    s_wifi_event_group = xEventGroupCreate() ;
+
+    ESP_ERROR_CHECK(esp_netif_init()) ;
+
+    ESP_ERROR_CHECK(esp_event_loop_create_default()) ;
+    esp_netif_create_default_wifi_sta() ;
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT() ;
     ESP_ERROR_CHECK(esp_wifi_init(&cfg)) ;
-    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM)) ;
+
+    esp_event_handler_instance_t instance_any_id ;
+    esp_event_handler_instance_t instance_got_ip ;
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        &event_handler,
+                                                        NULL,
+                                                        &instance_any_id)) ;
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                                                        IP_EVENT_STA_GOT_IP,
+                                                        &event_handler,
+                                                        NULL,
+                                                        &instance_got_ip)) ;
+
     wifi_config_t wifi_config = {
         .sta = {
             .ssid = CONFIG_WIFI_SSID,
             .password = CONFIG_WIFI_PASSWORD,
-        },
-    } ;
-    
-    
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)) ;
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config)) ;
-    ESP_LOGI(TAG, "start the WIFI SSID:[%s]", CONFIG_WIFI_SSID) ;
-    ESP_ERROR_CHECK(esp_wifi_start()) ;
-    ESP_LOGI(TAG, "Waiting for wifi") ;
-    xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY) ;
-}
+            /* Setting a password implies station will connect to all security modes including WEP/WPA.
+             * However these modes are deprecated and not advisable to be used. Incase your Access point
+             * doesn't support WPA2, these mode can be enabled by commenting below line */
+	     .threshold.authmode = WIFI_AUTH_WPA2_PSK,
 
+            .pmf_cfg = {
+                .capable = true,
+                .required = false
+            },
+        },
+    };
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
+    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
+    ESP_ERROR_CHECK(esp_wifi_start() );
+
+    ESP_LOGI(TAG, "wifi_init_sta finished.");
+
+    /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
+     * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
+    EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
+            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
+            pdFALSE,
+            pdFALSE,
+            portMAX_DELAY);
+
+    /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
+     * happened. */
+    if (bits & WIFI_CONNECTED_BIT) {
+        ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
+                 CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD ) ;
+    } else if (bits & WIFI_FAIL_BIT) {
+        ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
+                 CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD ) ;
+    } else {
+        ESP_LOGE(TAG, "UNEXPECTED EVENT") ;
+    }
+
+    /* The event will not be processed after unregister */
+    ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, instance_got_ip));
+    ESP_ERROR_CHECK(esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, instance_any_id));
+    vEventGroupDelete(s_wifi_event_group);
+}
+#endif
+
+
+#if CONFIG_EMG8X_BOARD_EMULATION == 0
 // send 8bit command
 void ad1299_send_cmd8(spi_device_handle_t spi, const uint8_t cmd)
 {
@@ -350,6 +483,8 @@ static void drdy_gpio_isr_handler(void* arg)
 
 }
 
+#endif
+
 // 
 // TCP server task 
 // This routine is waiting for data appears in ADC queue and
@@ -451,7 +586,8 @@ void tcp_server_task( void* pvParameter )
 
 static void emg8x_app_start(void)
 {
-    int dmaChan             = 0 ;  // disable dma
+#if CONFIG_EMG8X_BOARD_EMULATION==0
+//    int dmaChan             = 0 ;  // disable dma
     esp_err_t ret           = 0 ;
 
     ESP_LOGI(TAG, "Initialize GPIO lines") ;
@@ -676,6 +812,8 @@ static void emg8x_app_start(void)
     drdy_isr_context.xSemaphore                     = xSemaphoreCreateBinary() ;
     gpio_isr_handler_add( AD1299_DRDY_PIN, drdy_gpio_isr_handler, &drdy_isr_context ) ;
 
+#endif // Emulation
+
     // Initialize drdy_thread_context
     drdy_thread_context.head                        = 0 ;
     drdy_thread_context.tail                        = 0 ;
@@ -711,6 +849,14 @@ static void emg8x_app_start(void)
     
 }
 
+#if CONFIG_EMG8X_BOARD_EMULATION
+int numSamplesToMilliseconds(int numSamples)
+{
+    int sampleRate  = 16000/(1<<CONFIG_EMG8X_ADC_SAMPLING_FREQUENCY) ;
+    return (1000*numSamples/sampleRate) ;
+}
+#endif
+
 void spi_data_pump_task( void* pvParameter )
 {
     ESP_LOGI(TAG,"spi_data_pump_task started at CpuCore%1d\n", xPortGetCoreID() ) ;
@@ -724,7 +870,14 @@ void spi_data_pump_task( void* pvParameter )
 
         // Wait for DRDY
         //while( gpio_get_level(AD1299_DRDY_PIN)==1 ) { vTaskDelay( 1  ) ;}
-        if( xSemaphoreTake( drdy_isr_context.xSemaphore, 0xffff ) == pdTRUE )
+#if CONFIG_EMG8X_BOARD_EMULATION
+        if (drdy_thread_context.sampleCount%60==0)
+        {
+            vTaskDelay( numSamplesToMilliseconds(60)/ portTICK_PERIOD_MS ) ;
+        }
+#else
+        if( /*gpio_get_level(AD1299_DRDY_PIN)==0 ||*/ xSemaphoreTake( drdy_isr_context.xSemaphore, 0xffff )==pdTRUE )
+#endif
         {
 
             // DRDY goes down - data ready to read
@@ -737,7 +890,11 @@ void spi_data_pump_task( void* pvParameter )
                 }
             }*/
             
+#if CONFIG_EMG8X_BOARD_EMULATION
+            drdy_thread_context.spiReadBuffer[0] = 0xc0 ;
+#else
             ad1299_read_data_block216( spi_dev, drdy_thread_context.spiReadBuffer ) ;
+#endif
 
             // Check for stat 0xCx presence
             if ((drdy_thread_context.spiReadBuffer[0]&0xf0)!=0xc0)
@@ -781,13 +938,9 @@ void spi_data_pump_task( void* pvParameter )
                                                             (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh+1])<<8) | 
                                                             ((uint32_t) drdy_thread_context.spiReadBuffer[byteOffsetCh+2])
                                                         ) ;
-
-/*
-                if (abs(value_i32)>100000)
-                {
-                    ESP_LOGI(TAG, "read_val: %d, %02x-%02x-%02x", value_i32, drdy_thread_context.spiReadBuffer[byteOffsetCh], drdy_thread_context.spiReadBuffer[byteOffsetCh+1],drdy_thread_context.spiReadBuffer[byteOffsetCh+1] ) ;
-                }
-*/                
+#if CONFIG_EMG8X_BOARD_EMULATION
+                value_i32                   = (drdy_thread_context.sampleCount%20)<10 ;
+#endif
 
                 drdy_thread_context.adcDataQue[drdy_thread_context.head][
                     (CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t) +
@@ -843,17 +996,29 @@ void spi_data_pump_task( void* pvParameter )
 
 void app_main()
 {
-    ESP_LOGI(TAG, "[APP] Startup..");
-    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
-    ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
+    ESP_LOGI(TAG, "[APP] Startup..") ;
+    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size()) ;
+    ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version()) ;
 
-    esp_log_level_set("*", ESP_LOG_INFO);
-    esp_log_level_set("TRANSPORT_TCP", ESP_LOG_VERBOSE);
-    esp_log_level_set("TRANSPORT_SSL", ESP_LOG_VERBOSE);
-    esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
-    esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
+    //esp_log_level_set("*", ESP_LOG_INFO);
+    //esp_log_level_set("TRANSPORT_TCP", ESP_LOG_VERBOSE);
+    //esp_log_level_set("TRANSPORT_SSL", ESP_LOG_VERBOSE);
+    //esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
+    //esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
 
-    nvs_flash_init() ;
+    //Initialize NVS
+    esp_err_t ret = nvs_flash_init() ;
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) 
+    {
+      ESP_ERROR_CHECK(nvs_flash_erase()) ;
+      ret = nvs_flash_init() ;
+    }
+    ESP_ERROR_CHECK(ret) ;
+
+#if CONFIG_WIFI_MODE_SOFTAP    
+    wifi_init_softap() ;
+#else
     wifi_init() ;
+#endif    
     emg8x_app_start() ;
 }
