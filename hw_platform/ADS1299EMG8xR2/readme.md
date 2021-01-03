@@ -33,9 +33,11 @@ idf.py menuconfig
 
 ![WiFiConfig](https://drive.google.com/uc?export=view&id=1MJfj9EwQQmBjOCEw-MoydRnb6mCN9Bni)
 
-В разделе EMG8x доступна опция ADS1299 Emulation, которая позволяет запустить процессор без платы АЦП. При этом вместо реальных данных поставляется тестовый периодический сигнал.
+В разделе EMG8x доступна опция ADS1299 Emulation, которая позволяет запустить процессор без платы АЦП. При этом вместо реальных данных подставляется тестовый периодический сигнал.
 
 ![WiFiConfig](https://drive.google.com/uc?export=view&id=1yztndch84vDITJ4aMiv7DsKqSIPqdQcS)
+
+Остальные параметры должны быть установлены одинаково для аппаратной платформы и для клиентского скрипта [emg8x_tcp_client.py](https://github.com/RF-Lab/emg_platform/blob/master/source/python/hwtools/emg8x_tcp_client.py)
 
 ## Схема
 
