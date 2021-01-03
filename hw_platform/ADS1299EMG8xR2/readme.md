@@ -30,7 +30,12 @@ idf.py menuconfig
 Внимание! Пароль в режиме SoftAP должен быть не менее 8 символов!!!
 
 Если опция SoftAP выключена, то платформа работает в режиме станции. В этом случае SSID и пароль необходимо установить для доступа к вашей WiFi сети.
+
 ![WiFiConfig](https://drive.google.com/uc?export=view&id=1MJfj9EwQQmBjOCEw-MoydRnb6mCN9Bni)
+
+В разделе EMG8x доступна опция ADS1299 Emulation, которая позволяет запустить процессор без платы АЦП. При этом вместо реальных данных поставляется тестовый периодический сигнал.
+
+![WiFiConfig](https://drive.google.com/uc?export=view&id=1yztndch84vDITJ4aMiv7DsKqSIPqdQcS)
 
 ## Схема
 
