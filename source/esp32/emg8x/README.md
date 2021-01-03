@@ -25,6 +25,11 @@ idf.py menuconfig
 В режиме ADS1299 Emulation опция ADC Sampling frequency code управляет скоростью генерации тестовых данных. В любом режиме скорость сэмплирования определяется по формуле SPS=16000/(2^freq_code) Гц. Например, если ADC Sampling frequency code = 5, то сигнал генерируется со скоростью 16000/(2^5)=500 отсчетов в секунду. 
 Остальные параметры должны быть установлены одинаково для аппаратной платформы и для клиентского скрипта [emg8x_tcp_client.py](https://github.com/RF-Lab/emg_platform/blob/master/source/python/hwtools/emg8x_tcp_client.py)
 
+Также следует проверить слудующие настройки, и при необходимости установить их в соответсвии с примерами ниже:
+
+![ClockConfig](https://drive.google.com/uc?export=view&id=1eZYpX7af0FeQneOZydpKUNTEvS1AI8eY)
+
+![ClockConfig](https://drive.google.com/uc?export=view&id=1fnWqT9L5hfGXn0zA2qqtULJ1NKOukP4W)
 
 ### Build and Flash
 
