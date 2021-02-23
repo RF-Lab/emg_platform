@@ -36,8 +36,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import signal
 
-EMG8x_ADDRESS                           = '192.168.1.42' ;
-CHANNELS_TO_MONITOR                     =  (6,7,8)
+EMG8x_ADDRESS                           = '192.168.1.41' ;
+CHANNELS_TO_MONITOR                     =  (7,)
 
 
 AD1299_NUM_CH                           =   8
@@ -47,7 +47,7 @@ SAMPLES_PER_TRANSPORT_BLOCK             =   128
 TRANSPORT_QUE_SIZE                      =   4
 TCP_SERVER_PORT                         =   3000
 SPS                                     =   500
-SAMPLES_TO_COLLECT                      =   SAMPLES_PER_TRANSPORT_BLOCK*4*10
+SAMPLES_TO_COLLECT                      =   SAMPLES_PER_TRANSPORT_BLOCK*4*40
 
 TCP_PACKET_SIZE                         = int(((TRANSPORT_BLOCK_HEADER_SIZE)/4+(AD1299_NUM_CH+1)*(SAMPLES_PER_TRANSPORT_BLOCK))*4)
 
@@ -115,14 +115,69 @@ try:
 finally:
     sock.close()
     
-# remove 50 Hz
-#hflt        = signal.firls( 127, [0/125.0, 40/125.0, 44/125.0, 56/125.0, 60/125.0, 90/125.0, 95/125.0, 105/125.0, 110/125.0, 125/125.0],   [1.0, 1.0,  0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0 ])
-hflt        = signal.firls( 257, [ 0,10,  15,40,  43,57,  60,95,  98,104,  107,143, 146,155, 158,193, 196,205, 208,230, 233,SPS/2 ],   
-                           [     0.,0., 1.0,1.0, .0,.0, 1.0,1.0, 0.0,0.0, 1.0,1.0,  0.0,0.0, 1.0,1.0, .0,.0,   1.0,1.0, .0,.0  ],fs = SPS)
+# remove 50 Hz and harmonics
+guard_band              = 5 # Guard band between passband and stop band
+side_band               = 3 # Reject band 50*n-side_band..50*n+side_band
 
-#plt.figure(3)
-#w, h = signal.freqz(hflt,fs=SPS)
-#plt.plot(w, 20 * np.log10(abs(h)), 'b')
+idx                     = 0 
+freqs                   = np.zeros((100,))
+hresp                   = np.zeros((100,))
+Att                     = 15 
+
+
+#remove low frequencies
+freqs[idx]              = 0.
+hresp[idx]              = 1/7
+idx                     = idx + 1
+freqs[idx]              = 10.
+hresp[idx]              = 1/7
+idx                     = idx + 1
+
+freqs[idx]              = 12.
+hresp[idx]              = 1.
+idx                     = idx + 1
+
+for f in np.arange(50.,SPS/2.,50.):
+    
+    # end of passband
+    freqs[idx]          = f-guard_band  
+    hresp[idx]          = 1 
+    idx                 = idx + 1
+    
+    # start of stopband
+    freqs[idx]          = f-side_band  
+    hresp[idx]          = 1/Att
+    idx                 = idx + 1
+    
+    # end of stopband
+    freqs[idx]          = f+side_band  
+    hresp[idx]          = 1/Att
+    idx                 = idx + 1
+    
+    # start of passband
+    freqs[idx]          = f+guard_band  
+    hresp[idx]          = 1
+    idx                 = idx + 1
+    
+# reject all frequencies above last 50Hz harmonic    
+freqs[idx]              = SPS/2
+hresp[idx]              = 1
+idx                     = idx + 1
+
+freqs                   = freqs[0:idx]
+hresp                   = hresp[0:idx]
+
+hflt        = signal.firls( 513, freqs, hresp, fs = SPS )
+    
+#hflt        = signal.firls( 513, [ 0,10,  15,40,  43,57,  60,95,  98,104,  107,143, 146,155, 158,193, 196,205, 208,230, 243,255,  265,400, 430,SPS/2 ],   
+#                           [     0.,0., 1.0,1.0, .0,.0, 1.0,1.0, 0.0,0.0, 1.0,1.0,  0.0,0.0, 1.0,1.0, .0,.0,   1.0,1.0, .0,.0,  1.0, 1.0, 0.,0. ],fs = SPS)
+
+plt.figure(4)
+plt.clf()
+w, h = signal.freqz(hflt,fs=SPS)
+plt.plot(w, 20 * np.log10(abs(h)), 'b')
+plt.grid(True)
+plt.title('Filter reponse')
 
 filtSamples     = rawSamples * 0
 
@@ -134,17 +189,30 @@ plt.figure(1)
 plt.clf()
 for chCount in range(len(CHANNELS_TO_MONITOR)):
     plt.subplot(len(CHANNELS_TO_MONITOR),1,chCount+1)
-#    plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-2*side_len-1)/SPS,SAMPLES_TO_COLLECT-2*side_len), 
-#                 rawSamples[side_len:-side_len,chCount])
     plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-2*side_len-1)/SPS,SAMPLES_TO_COLLECT-2*side_len), 
-                 filtSamples[side_len:-side_len,chCount])
+                 rawSamples[side_len:-side_len,chCount])
+    #plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-2*side_len-1)/SPS,SAMPLES_TO_COLLECT-2*side_len), 
+    #            filtSamples[side_len:-side_len,chCount])
     plt.xlabel('Время, сек')
     plt.ylabel('Напряжение, мкв')
-    plt.title('Канал {}'.format(CHANNELS_TO_MONITOR[chCount]))
+    plt.title('Канал {} -raw samples'.format(CHANNELS_TO_MONITOR[chCount]))
     plt.grid('true')
 
 
 plt.figure(2)    
+plt.clf()
+for chCount in range(len(CHANNELS_TO_MONITOR)):
+    plt.subplot(len(CHANNELS_TO_MONITOR),1,chCount+1)
+    #plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-2*side_len-1)/SPS,SAMPLES_TO_COLLECT-2*side_len), 
+    #             rawSamples[side_len:-side_len,chCount])
+    plt.plot(np.linspace(0,(SAMPLES_TO_COLLECT-2*side_len-1)/SPS,SAMPLES_TO_COLLECT-2*side_len), 
+                filtSamples[side_len:-side_len,chCount])
+    plt.xlabel('Время, сек')
+    plt.ylabel('Напряжение, мкв')
+    plt.title('Канал {} Digital FIR'.format(CHANNELS_TO_MONITOR[chCount]))
+    plt.grid('true')
+
+plt.figure(3)    
 plt.clf()
 for chCount in range(len(CHANNELS_TO_MONITOR)):
     #plt.subplot(len(CHANNELS_TO_MONITOR),1,chCount+1)
@@ -159,3 +227,7 @@ for chCount in range(len(CHANNELS_TO_MONITOR)):
 
 np.savetxt('emg_raw_snapping.txt',rawSamples )
 np.savetxt('emg_filt_snapping.txt',filtSamples )
+
+#x           = np.loadtxt('emg_raw_1.txt' )
+#frex,Pxx    = signal.welch( x, fs=SPS )
+#plt.semilogy( frex,Pxx )

@@ -73,6 +73,14 @@ static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<-
 static const gpio_num_t     AD1299_DRDY_PIN     = GPIO_NUM_4 ;          // ADS-->ESP DRDY pin (active low)
 static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<--ESP Start data conversion pint (active high)
 
+#elif CONFIG_EMG8X_BOARD_REV == 3
+
+// Same as Rev 2
+static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;         // ADS<--ESP Power down pin (active low)
+static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<--ESP Reset pin (active low)
+static const gpio_num_t     AD1299_DRDY_PIN     = GPIO_NUM_4 ;          // ADS-->ESP DRDY pin (active low)
+static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<--ESP Start data conversion pint (active high)
+
 #else
 
 #endif
@@ -790,11 +798,11 @@ static void emg8x_app_start(void)
     // Configure channels
     ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET, 0x05 ) ;      // CH1: Test signal,    PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH2SET, 0x03 ) ;      // CH2: Measure VDD,    PGA_Gain=1
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH3SET, 0x00 ) ;      // CH3: Normal,         PGA_Gain=1
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH3SET, 0x30 ) ;      // CH3: Normal,         PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0x00 ) ;      // CH4: Normal,         PGA_Gain=24
     ad1299_wreg( spi_dev, AD1299_ADDR_CH5SET, 0x30 ) ;      // CH5: Normal,         PGA_Gain=24
     ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x50 ) ;      // CH6: Normal,         PGA_Gain=24
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x50 ) ;      // CH7: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x30 ) ;      // CH7: Normal,         PGA_Gain=24
     ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x50 ) ;      // CH8: Normal,         PGA_Gain=24
     vTaskDelay( 50 / portTICK_RATE_MS ) ;
 
@@ -876,7 +884,7 @@ void spi_data_pump_task( void* pvParameter )
             vTaskDelay( numSamplesToMilliseconds(60)/ portTICK_PERIOD_MS ) ;
         }
 #else
-        if( /*gpio_get_level(AD1299_DRDY_PIN)==0 ||*/ xSemaphoreTake( drdy_isr_context.xSemaphore, 0xffff )==pdTRUE )
+        if( gpio_get_level(AD1299_DRDY_PIN)==0 || xSemaphoreTake( drdy_isr_context.xSemaphore, 0xffff )==pdTRUE )
 #endif
         {
 
@@ -999,6 +1007,29 @@ void app_main()
     ESP_LOGI(TAG, "[APP] Startup..") ;
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size()) ;
     ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version()) ;
+
+    esp_chip_info_t chip_info ;
+    memset(&chip_info,0,sizeof(esp_chip_info_t)) ;
+    esp_chip_info(&chip_info) ;
+    switch(chip_info.model)
+    {
+        case CHIP_ESP32:
+            ESP_LOGI(TAG, "[APP] Processor model: ESP32") ;
+            break ;
+        case CHIP_ESP32S2:
+            ESP_LOGI(TAG, "[APP] Processor model: ESP32-S2") ;
+            break ;
+        case CHIP_ESP32S3:
+            ESP_LOGI(TAG, "[APP] Processor model: ESP32-S3") ;
+            break ;
+        case CHIP_ESP32C3:
+            ESP_LOGI(TAG, "[APP] Processor model: ESP32-C3") ;
+            break ;
+        default:
+            ESP_LOGI(TAG, "[APP] Processor model: Unknown(%d)",chip_info.model) ;
+            break ;
+    }
+    ESP_LOGI(TAG, "[APP] Processor num cores: %d",chip_info.cores) ;
 
     //esp_log_level_set("*", ESP_LOG_INFO);
     //esp_log_level_set("TRANSPORT_TCP", ESP_LOG_VERBOSE);
