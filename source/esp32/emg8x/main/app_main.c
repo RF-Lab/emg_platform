@@ -50,12 +50,16 @@
 #include "hal/gpio_types.h"
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
+#include "esp_attr.h"
 
 static const char *TAG                          = "EMG8x" ;
 
 // Pinout mapping
 // Use pinout rules from here: (https://randomnerdtutorials.com/esp32-pinout-reference-gpios/)
 // NodeMCU 32-s2 pinout: (https://www.instructables.com/id/ESP32-Internal-Details-and-Pinout/)
+
+// DEBUG purpose pins
+static const gpio_num_t     DEBUG_PIN1          = GPIO_NUM_27 ;         // Debug pin #1
 
 #if CONFIG_EMG8X_BOARD_EMULATION == 0
 
@@ -131,17 +135,19 @@ static const uint8_t        AD1299_ADDR_CH8SET  = 0x0c ;
 // CONFIG_EMG8X_TCP_SERVER_PORT =                           3000
 
 
-void spi_data_pump_task( void* pvParameter ) ;
+IRAM_ATTR void spi_data_pump_task( void* pvParameter ) ;
 
+DRAM_ATTR spi_device_handle_t         spi_dev ;
 
-spi_device_handle_t         spi_dev ;
+DRAM_ATTR TaskHandle_t      tcpTaskHandle ;
+DRAM_ATTR TaskHandle_t      datapumpTaskHandle ;
 
 // DRDY signal interrupt context
 typedef struct
 {
     SemaphoreHandle_t       xSemaphore ;
 } type_drdy_isr_context ; 
-type_drdy_isr_context       drdy_isr_context ;
+DRAM_ATTR type_drdy_isr_context       drdy_isr_context ;
 
 // ADC data variables combined into the structure
 typedef struct
@@ -167,7 +173,7 @@ typedef struct
     SemaphoreHandle_t       xDataQueueSemaphore ;
 
 } type_drdy_thread_context ;
-type_drdy_thread_context    drdy_thread_context ;
+DRAM_ATTR type_drdy_thread_context    drdy_thread_context ;
 
 // TCP Server context
 typedef struct
@@ -178,7 +184,7 @@ typedef struct
     char                        serverIpAddr[128] ;
 
 } type_tcp_server_thread_context ;
-type_tcp_server_thread_context tcp_server_thread_context ;
+DRAM_ATTR type_tcp_server_thread_context tcp_server_thread_context ;
 
 #if CONFIG_WIFI_MODE_SOFTAP
 
@@ -369,7 +375,7 @@ static void wifi_init(void)
 
 #if CONFIG_EMG8X_BOARD_EMULATION == 0
 // send 8bit command
-void ad1299_send_cmd8(spi_device_handle_t spi, const uint8_t cmd)
+IRAM_ATTR void ad1299_send_cmd8(spi_device_handle_t spi, const uint8_t cmd)
 {
     esp_err_t ret ;
     spi_transaction_t t ;
@@ -392,7 +398,7 @@ void ad1299_send_cmd8(spi_device_handle_t spi, const uint8_t cmd)
 }
 
 // Write to ad1299 register
-void ad1299_wreg(spi_device_handle_t spi, const uint8_t addr, const uint8_t value)
+IRAM_ATTR void ad1299_wreg(spi_device_handle_t spi, const uint8_t addr, const uint8_t value)
 {
     esp_err_t ret ;
     spi_transaction_t t ;
@@ -415,7 +421,7 @@ void ad1299_wreg(spi_device_handle_t spi, const uint8_t addr, const uint8_t valu
     ESP_ERROR_CHECK(ret) ;            //Should have had no issues.
 }
 
-uint8_t ad1299_rreg(spi_device_handle_t spi, const uint8_t addr)
+IRAM_ATTR uint8_t ad1299_rreg(spi_device_handle_t spi, const uint8_t addr)
 {
     esp_err_t ret ;
     spi_transaction_t t ;
@@ -451,7 +457,7 @@ uint8_t ad1299_rreg(spi_device_handle_t spi, const uint8_t addr)
     spi     - spi handle
     data216 - pointer to array of 27 bytes length (216 bits=24bit * 9)
 */
-void ad1299_read_data_block216(spi_device_handle_t spi, uint8_t* data216)
+IRAM_ATTR void ad1299_read_data_block216(spi_device_handle_t spi, uint8_t* data216)
 {
     esp_err_t ret ;
     spi_transaction_t t ;
@@ -474,12 +480,14 @@ uint8_t rxDataBuf [27] ;
 // DRDY signal ISR
 // DRDY becomes low when ADS1299 collect 8 samples (1 sample of 24bit for each channel )
 // and ready to transfer these data to ESP32 using 1 SPI transaction with 9*24 bits length
-static void drdy_gpio_isr_handler(void* arg)
+IRAM_ATTR static void drdy_gpio_isr_handler(void* arg)
 {
-    type_drdy_isr_context* pContext = (type_drdy_isr_context*) arg ;
+    //type_drdy_isr_context* pContext = (type_drdy_isr_context*) arg ;
     static BaseType_t high_task_wakeup = pdFALSE ;
     
-    xSemaphoreGiveFromISR( pContext->xSemaphore, &high_task_wakeup ) ;
+    //xSemaphoreGiveFromISR( pContext->xSemaphore, &high_task_wakeup ) ;
+
+    vTaskNotifyGiveFromISR( datapumpTaskHandle, &high_task_wakeup ) ;
 
     /* If high_task_wakeup was set to true you
     should yield.  The actual macro used here is
@@ -571,8 +579,11 @@ void tcp_server_task( void* pvParameter )
                     drdy_thread_context.tail        = (drdy_thread_context.tail+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
                 }
 
+                //taskYIELD() ;
+
                 // Notify or/and wait for data appears in the queue
-                if ( xSemaphoreTake( drdy_thread_context.xDataQueueSemaphore, 0xFFFF ) != pdTRUE )
+                //if ( xSemaphoreTake( drdy_thread_context.xDataQueueSemaphore, 0xFFFF ) != pdTRUE )
+                if (!ulTaskNotifyTake( pdFALSE, 0xffff )) // Wait or/and decrement count
                 {
                     // still waiting for data from the ADC
                     ESP_LOGE(TAG, "TCP_SERVER: There are no data from ADC for a long time...\n") ;
@@ -615,6 +626,11 @@ static void emg8x_app_start(void)
     gpio_set_intr_type( AD1299_DRDY_PIN, GPIO_INTR_NEGEDGE ) ;
     gpio_intr_enable( AD1299_DRDY_PIN ) ;
 
+    // Debug pin
+    gpio_reset_pin( DEBUG_PIN1 ) ;
+    gpio_set_direction( DEBUG_PIN1, GPIO_MODE_OUTPUT ) ;
+    gpio_set_level( DEBUG_PIN1,     0 ) ;
+
     // See 10.1.2 Setting the Device for Basic Data Capture (ADS1299 Datasheet)
     ESP_LOGI(TAG, "Set PWDN & RESET to 1") ;
     gpio_set_level(AD1299_PWDN_PIN,     1 ) ;
@@ -644,7 +660,7 @@ static void emg8x_app_start(void)
         .quadwp_io_num      = -1,
         .quadhd_io_num      = -1,
         .flags              = 0,                        // Abilities of bus to be checked by the driver. Or-ed value of ``SPICOMMON_BUSFLAG_*`` flags.
-        .intr_flags         = 0,
+        .intr_flags         = ESP_INTR_FLAG_IRAM,
         .max_transfer_sz    = 0                         // maximum data size in bytes, 0 means 4094
     } ;
 
@@ -669,7 +685,8 @@ static void emg8x_app_start(void)
     //Attach the LCD to the SPI bus
     ret                     = spi_bus_add_device(VSPI_HOST, &devcfg, &spi_dev ) ;
     ESP_ERROR_CHECK(ret) ;
-    ESP_LOGI(TAG, "SPI driver initialized") ;
+    ESP_LOGI(TAG, "SPI driver initialized, Freq limit is:%dHz", spi_get_freq_limit( false, 0 ) ) ;
+    
 
     // Send SDATAC / Stop Read Data Continuously Mode
     ESP_LOGI(TAG, "Send SDATAC") ;
@@ -746,7 +763,7 @@ static void emg8x_app_start(void)
     //Set device for DR=fmod/4096
     // Enable clk output
     ESP_LOGI(TAG, "Set sampling rate" ) ;
-    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0xf5 ) ;     // Default 0x96 (see power up sequence)
+    ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0xf4 ) ;     // Default 0x96 (see power up sequence)
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
     // Configure test signal parameters
@@ -797,13 +814,13 @@ static void emg8x_app_start(void)
 
     // Configure channels
     ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET, 0x05 ) ;      // CH1: Test signal,    PGA_Gain=1
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH2SET, 0x03 ) ;      // CH2: Measure VDD,    PGA_Gain=1
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH2SET, 0x30 ) ;      // CH2: Measure VDD,    PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH3SET, 0x30 ) ;      // CH3: Normal,         PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0x00 ) ;      // CH4: Normal,         PGA_Gain=24
     ad1299_wreg( spi_dev, AD1299_ADDR_CH5SET, 0x30 ) ;      // CH5: Normal,         PGA_Gain=24
     ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x50 ) ;      // CH6: Normal,         PGA_Gain=24
     ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x30 ) ;      // CH7: Normal,         PGA_Gain=24
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x50 ) ;      // CH8: Normal,         PGA_Gain=24
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x30 ) ;      // CH8: Normal,         PGA_Gain=24
     vTaskDelay( 50 / portTICK_RATE_MS ) ;
 
     ESP_LOGI(TAG, "Put device in RDATAC mode" ) ;
@@ -813,13 +830,6 @@ static void emg8x_app_start(void)
     ad1299_send_cmd8( spi_dev, AD1299_CMD_RDATAC ) ;
     vTaskDelay( 50 / portTICK_RATE_MS ) ;
     
-    // Install ISR for all GPIOs
-    gpio_install_isr_service(0) ;
-
-    // Configure ISR for DRDY signal
-    drdy_isr_context.xSemaphore                     = xSemaphoreCreateBinary() ;
-    gpio_isr_handler_add( AD1299_DRDY_PIN, drdy_gpio_isr_handler, &drdy_isr_context ) ;
-
 #endif // Emulation
 
     // Initialize drdy_thread_context
@@ -852,8 +862,32 @@ static void emg8x_app_start(void)
 
     // Start TCP server task
     //xTaskCreatePinnedToCore( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL, 0 ) ;
-    xTaskCreate( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, 5, NULL ) ;
-    xTaskCreatePinnedToCore( &spi_data_pump_task, "spi_data_pump_task", 4096, &tcp_server_thread_context, 5, NULL, 1 ) ;
+    /*https://github.com/espressif/esp-idf/blob/0bbc721a633f9afe4f3ebe648b9ca99e2f2f6d5f/components/freertos/include/freertos/task.h*/
+    //xTaskCreate( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, tskIDLE_PRIORITY+5, &tcpTaskHandle ) ;
+
+    // !!!
+    // Data pump task and TCP task should be pinned to different cores to prevent influence of TCP to realtime data pump procedures
+
+    // Start TCP task on Core#0
+    xTaskCreatePinnedToCore( &tcp_server_task, "tcp_server_task", 4096, &tcp_server_thread_context, tskIDLE_PRIORITY+5, &tcpTaskHandle, 0 ) ;
+    configASSERT( tcpTaskHandle ) ;
+
+    // Start Data pump task on Core#1
+    xTaskCreatePinnedToCore( &spi_data_pump_task, "spi_data_pump_task", 4096, &tcp_server_thread_context, tskIDLE_PRIORITY+5, &datapumpTaskHandle, 1 ) ;
+    configASSERT( datapumpTaskHandle ) ;
+
+#if CONFIG_EMG8X_BOARD_EMULATION==0
+    // ISR uses datapumpTaskHandle to deliver notification
+
+    // Install ISR for all GPIOs
+    gpio_install_isr_service(0) ;
+
+    // Configure ISR for DRDY signal
+    drdy_isr_context.xSemaphore                     = xSemaphoreCreateBinary() ;
+    gpio_isr_handler_add( AD1299_DRDY_PIN, drdy_gpio_isr_handler, &drdy_isr_context ) ;
+
+#endif
+
     
 }
 
@@ -865,7 +899,7 @@ int numSamplesToMilliseconds(int numSamples)
 }
 #endif
 
-void spi_data_pump_task( void* pvParameter )
+IRAM_ATTR void spi_data_pump_task( void* pvParameter )
 {
     ESP_LOGI(TAG,"spi_data_pump_task started at CpuCore%1d\n", xPortGetCoreID() ) ;
     
@@ -884,120 +918,163 @@ void spi_data_pump_task( void* pvParameter )
             vTaskDelay( numSamplesToMilliseconds(60)/ portTICK_PERIOD_MS ) ;
         }
 #else
-        if( gpio_get_level(AD1299_DRDY_PIN)==0 || xSemaphoreTake( drdy_isr_context.xSemaphore, 0xffff )==pdTRUE )
-#endif
+        
+        // Wait for DRDY signal becomes low
+        if (gpio_get_level(AD1299_DRDY_PIN)!=0)
         {
-
-            // DRDY goes down - data ready to read
-            /*
-            while( gpio_get_level(AD1299_DRDY_PIN)==1 )
+            if (!ulTaskNotifyTake( pdTRUE, 0xffff ))
             {
-                if (drdy_thread_context.sampleCount%100==0)
-                {
-                    vTaskDelay( 1 ) ;
-                }
-            }*/
-            
-#if CONFIG_EMG8X_BOARD_EMULATION
-            drdy_thread_context.spiReadBuffer[0] = 0xc0 ;
-#else
-            ad1299_read_data_block216( spi_dev, drdy_thread_context.spiReadBuffer ) ;
-#endif
-
-            // Check for stat 0xCx presence
-            if ((drdy_thread_context.spiReadBuffer[0]&0xf0)!=0xc0)
-            {
-                ESP_LOGE(TAG, "raw_REad:[%6d][%6d] 0xc0 not found!", drdy_thread_context.blockCounter, drdy_thread_context.sampleCount ) ;
+                // Data is not ready
                 continue ;
             }
-            
-            // get STAT field
-            // transform 24 bit field to 32 bit integer
-            drdy_thread_context.adcStat32   = (uint32_t) (
-                                                            (((uint32_t)drdy_thread_context.spiReadBuffer[0])<<16) | 
-                                                            (((uint32_t)drdy_thread_context.spiReadBuffer[1])<<8) | 
-                                                            ((uint32_t) drdy_thread_context.spiReadBuffer[2])
-                                                        ) ;
+        }
 
-            // save STAT field to transport block
-            drdy_thread_context.adcDataQue[drdy_thread_context.head][
-                (CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t) +
-                drdy_thread_context.sampleCount ] = drdy_thread_context.adcStat32 ;
+        // Wait using semaphore
+        //if( gpio_get_level(AD1299_DRDY_PIN)==0 xSemaphoreTake( drdy_isr_context.xSemaphore, 0xffff )==pdTRUE )
 
-            // transform 24 bit twos-complement samples to 32 bit signed integers 
-            // save 32 bit samples into thread queue drdy_thread_context
-            for(int chNum=0;chNum<AD1299_NUM_CH;chNum++)
-            {
-
-                uint32_t signExtBits        = 0x00000000 ;
-
-                int byteOffsetCh            = (chNum+1)*3 ; // offset in raw data to first byte of 24 twos complement field
-
-                if (drdy_thread_context.spiReadBuffer[ byteOffsetCh ] & 0x80)
-                {
-                    // extend sign bit to 31..24
-                    signExtBits             = 0xff000000 ;
-                }
-
-                int32_t value_i32           = 
-                                            (int32_t) (
-                                                            signExtBits |
-                                                            (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh])<<16) | 
-                                                            (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh+1])<<8) | 
-                                                            ((uint32_t) drdy_thread_context.spiReadBuffer[byteOffsetCh+2])
-                                                        ) ;
-#if CONFIG_EMG8X_BOARD_EMULATION
-                value_i32                   = (drdy_thread_context.sampleCount%20)<10 ;
 #endif
+            
+        //gpio_set_level( DEBUG_PIN1,     1 ) ;
+#if CONFIG_EMG8X_BOARD_EMULATION
+        drdy_thread_context.spiReadBuffer[0] = 0xc0 ;
+#else
+        // Read data from device
+        ad1299_read_data_block216( spi_dev, drdy_thread_context.spiReadBuffer ) ;
+#endif
+        //gpio_set_level( DEBUG_PIN1,     0 ) ;
 
-                drdy_thread_context.adcDataQue[drdy_thread_context.head][
-                    (CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t) +
-                    (CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK)*(chNum+1) +
-                    drdy_thread_context.sampleCount
-                    ]    = value_i32 ;
+        // Check for stat 0xCx presence
+        if ((drdy_thread_context.spiReadBuffer[0]&0xf0)!=0xc0)
+        {
+            ESP_LOGE(TAG, "raw_REad:[%6d][%6d] 0xc0 not found!", drdy_thread_context.blockCounter, drdy_thread_context.sampleCount ) ;
+            continue ;
+        }
+        
+        //gpio_set_level( DEBUG_PIN1,     1 ) ;
+        // get STAT field
+        // transform 24 bit field to 32 bit integer
+        drdy_thread_context.adcStat32   = (uint32_t) (
+                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[0])<<16) | 
+                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[1])<<8) | 
+                                                        ((uint32_t) drdy_thread_context.spiReadBuffer[2])
+                                                    ) ;
+
+        // save STAT field to transport block
+        drdy_thread_context.adcDataQue[drdy_thread_context.head][
+            (CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t) +
+            drdy_thread_context.sampleCount ] = drdy_thread_context.adcStat32 ;
+
+        // transform 24 bit twos-complement samples to 32 bit signed integers 
+        // save 32 bit samples into thread queue drdy_thread_context
+        for(int chNum=0;chNum<AD1299_NUM_CH;chNum++)
+        {
+
+            uint32_t signExtBits        = 0x00000000 ;
+
+            int byteOffsetCh            = (chNum+1)*3 ; // offset in raw data to first byte of 24 twos complement field
+
+            if (drdy_thread_context.spiReadBuffer[ byteOffsetCh ] & 0x80)
+            {
+                // extend sign bit to 31..24
+                signExtBits             = 0xff000000 ;
             }
 
-            drdy_thread_context.sampleCount++ ;
+            int32_t value_i32           = 
+                                        (int32_t) (
+                                                        signExtBits |
+                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh])<<16) | 
+                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh+1])<<8) | 
+                                                        ((uint32_t) drdy_thread_context.spiReadBuffer[byteOffsetCh+2])
+                                                    ) ;
+#if CONFIG_EMG8X_BOARD_EMULATION
+            value_i32                   = (drdy_thread_context.sampleCount%20)<10 ;
+#endif
 
-            if (drdy_thread_context.sampleCount>=CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK)
+            drdy_thread_context.adcDataQue[drdy_thread_context.head][
+                (CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t) +
+                (CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK)*(chNum+1) +
+                drdy_thread_context.sampleCount
+                ]    = value_i32 ;
+        } //for(int chNum=0
+        //gpio_set_level( DEBUG_PIN1,     0 ) ;
+
+        drdy_thread_context.sampleCount++ ;
+
+        if (drdy_thread_context.sampleCount>=CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK)
+        {
+            // Transport block collection done
+
+            // reset sample counter of transport block
+            drdy_thread_context.sampleCount     = 0 ;
+
+            // put packet counter to transport header
+            drdy_thread_context.adcDataQue[drdy_thread_context.head][CONFIG_EMG8X_PKT_COUNT_OFFSET] = drdy_thread_context.blockCounter ;
+
+            gpio_set_level( DEBUG_PIN1,     1 ) ;
+
+            if (!queueFull)
             {
-                // Transport block collection done
-
-                // reset sample counter of transport block
-                drdy_thread_context.sampleCount     = 0 ;
-
-                // put packet counter to transport header
-                drdy_thread_context.adcDataQue[drdy_thread_context.head][CONFIG_EMG8X_PKT_COUNT_OFFSET] = drdy_thread_context.blockCounter ;
-
-                // Send notification to TCP server task
-                if (xSemaphoreGive( drdy_thread_context.xDataQueueSemaphore )==pdTRUE)
+                // Send notification to TCP server task and increment taskCounter
+                uint32_t taskCounterValueBeforeIncrement  = 0 ;
+                xTaskNotifyAndQuery( tcpTaskHandle, 0, eIncrement, &taskCounterValueBeforeIncrement ) ;
+                if ((taskCounterValueBeforeIncrement+1)==CONFIG_EMG8X_TRANSPORT_QUE_SIZE)
                 {
-
-                    // move queue head forward 
-                    drdy_thread_context.head        = (drdy_thread_context.head+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
-
-                    if (queueFull)
-                    {
-                        ESP_LOGI(TAG, "ADC_READ_CYCLE: TCP FIFO ok @ block %d\n", drdy_thread_context.blockCounter ) ;
-                        queueFull = 0 ;
-                    }
+                    // Queue is over!
+                    // Do not move head forward - wait for TCP server sends data to host
+                    ESP_LOGE(TAG, "ADC_READ_CYCLE: TCP FIFO Full @ block %d\n", drdy_thread_context.blockCounter ) ;
+                    queueFull = 1 ;
                 }
                 else
                 {
-                    // There is no space in queue
-                    // skip data
-                    if (!queueFull)
-                    {
-                        ESP_LOGE(TAG, "ADC_READ_CYCLE: TCP FIFO Full @ block %d\n", drdy_thread_context.blockCounter ) ;
-                        queueFull = 1 ;
-                    }
+                    // There is empty space in the queue
+                    // move queue head forward 
+                    drdy_thread_context.head        = (drdy_thread_context.head+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
                 }
-
-                // Increment received packet counter
-                drdy_thread_context.blockCounter += 1 ;
-
-                //ESP_LOGI(TAG, "head: %d",  drdy_thread_context.head ) ;
+                
             }
+            else
+            {
+                // check for queue state
+                uint32_t taskCounterValue  = 0 ;
+                xTaskNotifyAndQuery( tcpTaskHandle, 0, eNoAction, &taskCounterValue ) ;
+                if ((taskCounterValue+1)<CONFIG_EMG8X_TRANSPORT_QUE_SIZE)
+                {
+                    ESP_LOGI(TAG, "ADC_READ_CYCLE: TCP FIFO ok @ block %d\n", drdy_thread_context.blockCounter ) ;
+                    queueFull = 0 ;
+                }
+            }
+            
+/*
+            //if (xSemaphoreGive( drdy_thread_context.xDataQueueSemaphore )==pdTRUE)
+            if ( !queueFull )
+            {
+
+                // move queue head forward 
+                drdy_thread_context.head        = (drdy_thread_context.head+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
+
+                if (queueFull)
+                {
+                    ESP_LOGI(TAG, "ADC_READ_CYCLE: TCP FIFO ok @ block %d\n", drdy_thread_context.blockCounter ) ;
+                    queueFull = 0 ;
+                }
+            }
+            else
+            {
+                // There is no space in queue
+                // skip data
+                if (!queueFull)
+                {
+                    ESP_LOGE(TAG, "ADC_READ_CYCLE: TCP FIFO Full @ block %d\n", drdy_thread_context.blockCounter ) ;
+                    queueFull = 1 ;
+                }
+            }
+            */
+            gpio_set_level( DEBUG_PIN1,     0 ) ;
+
+            // Increment received packet counter
+            drdy_thread_context.blockCounter += 1 ;
+
+            //ESP_LOGI(TAG, "head: %d",  drdy_thread_context.head ) ;
         }
     }
 }

@@ -37,17 +37,17 @@ import numpy as np
 from scipy import signal
 
 EMG8x_ADDRESS                           = '192.168.1.41' ;
-CHANNELS_TO_MONITOR                     =  (7,)
+CHANNELS_TO_MONITOR                     =  (2,)
 
 
 AD1299_NUM_CH                           =   8
 TRANSPORT_BLOCK_HEADER_SIZE             =   16
 PKT_COUNT_OFFSET                        =   2
-SAMPLES_PER_TRANSPORT_BLOCK             =   128
+SAMPLES_PER_TRANSPORT_BLOCK             =   64
 TRANSPORT_QUE_SIZE                      =   4
 TCP_SERVER_PORT                         =   3000
-SPS                                     =   500
-SAMPLES_TO_COLLECT                      =   SAMPLES_PER_TRANSPORT_BLOCK*4*40
+SPS                                     =   1000
+SAMPLES_TO_COLLECT                      =   SAMPLES_PER_TRANSPORT_BLOCK*8*60
 
 TCP_PACKET_SIZE                         = int(((TRANSPORT_BLOCK_HEADER_SIZE)/4+(AD1299_NUM_CH+1)*(SAMPLES_PER_TRANSPORT_BLOCK))*4)
 
@@ -78,7 +78,9 @@ try:
             if startOfBlock>=0:
         
                 # SAMPLES_PER_TRANSPORT_BLOCK*(AD1299_NUM_CH+1)+TRANSPORT_BLOCK_HEADER_SIZE/4
-                samples                 = unpack('1156i', receivedBuffer[startOfBlock:startOfBlock+TCP_PACKET_SIZE] )
+                strFormat = '{:d}i'.format(round(SAMPLES_PER_TRANSPORT_BLOCK*(AD1299_NUM_CH+1)+TRANSPORT_BLOCK_HEADER_SIZE/4))
+                #'1156i'
+                samples                 = unpack(strFormat, receivedBuffer[startOfBlock:startOfBlock+TCP_PACKET_SIZE] )
                
                 # remove block from received buffer
                 receivedBuffer          = receivedBuffer[startOfBlock+TCP_PACKET_SIZE:]
@@ -225,9 +227,13 @@ for chCount in range(len(CHANNELS_TO_MONITOR)):
     plt.grid('true')
 
 
-np.savetxt('emg_raw_snapping.txt',rawSamples )
+np.savetxt('emg_raw.txt',rawSamples )
 np.savetxt('emg_filt_snapping.txt',filtSamples )
 
 #x           = np.loadtxt('emg_raw_1.txt' )
 #frex,Pxx    = signal.welch( x, fs=SPS )
 #plt.semilogy( frex,Pxx )
+
+#x           = np.loadtxt('emg_fil_короткое_сжатие_пациент1_левая.txt' )
+#plt.figure(5)    
+#plt.plot(x)
