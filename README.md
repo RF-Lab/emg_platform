@@ -13,6 +13,9 @@ Afiliated organizations list:
 MIREA - Russian Technological University
 
 ![MIREA](https://i.ibb.co/DYv06Vw/KBSP-colour.png)  
+
+MGUPI - Moscow State University of Instrument Engineering and Computer Science
+
 ![MGUPI](https://i.ibb.co/Hz51487/mgupi.jpg)
 
 
