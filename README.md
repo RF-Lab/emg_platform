@@ -8,7 +8,7 @@ Electromyography (EMG) signal processing platform includes:
 * [EMG open source hardware platform](https://github.com/estel1/emg_platform/blob/master/hw_platform/readme.md).
 * [EMG training datasets](https://github.com/estel1/emg_platform/blob/master/data/readme.md). 
 
-Afiliated organizations list:
+Afiliated organizations:
 
 MIREA - Russian Technological University
 
