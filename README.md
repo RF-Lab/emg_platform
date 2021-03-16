@@ -1,5 +1,14 @@
 # EMG signal processing platform
 
+[Этот readme на русском](./readme-ru.md).
+
+Electromyography (EMG) signal processing platform includes:
+
+* [EMG signal classification algorithms (matlab, python)](https://github.com/estel1/emg_platform/blob/master/source/readme.md).
+* [EMG open source hardware platform](https://github.com/estel1/emg_platform/blob/master/hw_platform/readme.md).
+* [EMG training datasets](https://github.com/estel1/emg_platform/blob/master/data/readme.md). 
+
+## Sorry, text below is under construction
 Платформа состоит из:
 1. Тренировочные наборы данных и функции для работы с ними [.\data](https://github.com/estel1/emg_platform/blob/master/data/readme.md). 
 2. Функции для предобработки, обнаружения и классификации сигналов EMG, реализующие различные алгоритмы.
