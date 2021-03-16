@@ -11,7 +11,7 @@ Electromyography (EMG) signal processing platform includes:
 Afiliated organizations:
 
 MIREA - Russian Technological University
-![MIREA](https://www.mirea.ru/upload/medialibrary/80f/MIREA_Gerb_Colour.png =250x)
+![MIREA](https://www.mirea.ru/upload/medialibrary/73f/KBSP-colour.png)
 
 ## Sorry, text below is under construction
 Платформа состоит из:
