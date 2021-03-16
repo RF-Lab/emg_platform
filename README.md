@@ -12,7 +12,7 @@ Afiliated organizations list:
 
 MIREA - Russian Technological University
 
-![MIREA](https://i.ibb.co/DYv06Vw/KBSP-colour.png)  
+![MIREA](https://i.ibb.co/DYv06Vw/KBSP-colour.png)
 
 
 
