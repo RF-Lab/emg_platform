@@ -1,1 +1,1 @@
-## EMG signal processing and classification software library
+## EMG signal clasification algorithm
