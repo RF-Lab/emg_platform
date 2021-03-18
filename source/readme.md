@@ -1,1 +1,1 @@
-## EMG signal clasification algorithm
+## EMG signal processing and clasification algorithms
