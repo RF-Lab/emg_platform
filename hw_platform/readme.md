@@ -1,28 +1,11 @@
 # EMG hardware platform
-## EMG8x (Revision 1)
-Первый вариант платы на основе 8-канального АЦП ADS1299. На данный момент собран один экземпляр платы. Цифровая часть полностью работает. По аналоговой части есть ряд ошибок значительно снижающий общие характеристики платы.
 
-![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=1ILe61-I7x9Qac2lrjNZa3rqXznOtPNTw)
+Hardware platform includes 8 channel high precision ADC ADS1299 from Texas Instruments. BLE and WiFi interfaces implemented using 2-Core SOC ESP-32 from Espressif.
 
-![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=1uYkZH1ljI7POEj6VSd-617ZXaz0Fbder)
+Schematic and layout deisgned using KiCAD.
 
-Gerber файлы для производства платы размещены [здесь](https://github.com/RF-Lab/emg_platform/blob/master/hw_platform/ADS1299EMG8x/gerber.zip)
+![image](https://user-images.githubusercontent.com/105689/112060860-c4d6b180-8b6e-11eb-9a3f-be37003a924f.png)
 
-## EMG8x (Revision 2)
-* Исправлены ошибки, допущенные в Revision 1.
-* Полностью дифференциальный интерфейс с раздельными входными фильтрами (как в [EEG Front-End Performance Demonstration Kit](https://www.ti.com/lit/ug/slau443b/slau443b.pdf?ts=1602258946892&ref_url=https%253A%252F%252Fwww.ti.com%252Ftool%252FADS1299EEGFE-PDK))
-* Полностью дифференциальный интерфейс с общим фильтром (как в [Datasheet ADS1299](https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1602417721400))
-* Третий электрод теперь можно завести на GNDA, на сигнал смещения или на общий электрод.
-* Интерфейс с одним общим электродом (меньше проводов).
-* Питание от двух аккумуляторов Li-Ion 18650.
-
-Проект полностью выполнен в Open Source САПР [KiCAD](https://kicad-pcb.org/).
-
-Файлы проекта размещены [здесь](https://github.com/RF-Lab/emg_platform/tree/master/hw_platform/ADS1299EMG8xR2)
-
-![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=18xvGgrcY3SdtwbyLzkZvpchL3RI9LBVP)
-
-![Схема (KiCAD Eeschema)](https://drive.google.com/uc?export=view&id=1KYdTuIX_fYVNJwBQyU52c1kfoPJkaA2G)
 
 ## Общедоступные платы других производителей EMG Shields
 1. [Analog EMG Sensor by OYMotion SKU:SEN0240](https://www.dfrobot.com/wiki/index.php/Analog_EMG_Sensor_by_OYMotion_SKU:SEN0240).
