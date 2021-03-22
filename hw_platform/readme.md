@@ -6,6 +6,7 @@ Schematic and layout deisgned using KiCAD.
 
 ![image](https://user-images.githubusercontent.com/105689/112060860-c4d6b180-8b6e-11eb-9a3f-be37003a924f.png)
 
+![image](https://i.ibb.co/vDVrzjp/schematic-emg8x-rev4-page2.png)
 
 ## Общедоступные платы других производителей EMG Shields
 1. [Analog EMG Sensor by OYMotion SKU:SEN0240](https://www.dfrobot.com/wiki/index.php/Analog_EMG_Sensor_by_OYMotion_SKU:SEN0240).
