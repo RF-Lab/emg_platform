@@ -1,11 +1,11 @@
 # EMG hardware platform
 
-Hardware platform includes 8 channel high precision ADC ADS1299 from Texas Instruments. BLE and WiFi interfaces implemented using 2-Core SOC ESP-32 from Espressif.
+Hardware platform includes 8 channel high precision ADC [ADS1299](https://www.ti.com/product/ADS1299) from Texas Instruments. BLE and WiFi interfaces implemented using 2-Core SOC ESP-32 from [Espressif](https://www.espressif.com/). Schematic and layout implemented with [KiCAD EDA](https://kicad.org/). Actual board revision (Rev.4) utilizes 6 channels (two unused channels switched off).
 
-Schematic and layout deisgned using KiCAD.
-
+* Schematic Sheet1:
 ![image](https://i.ibb.co/zQRMpvR/schematic-emg8x-rev4-page1.png)
 
+* Schematic Sheet2:
 ![image](https://i.ibb.co/vDVrzjp/schematic-emg8x-rev4-page2.png)
 
 ## Общедоступные платы других производителей EMG Shields
