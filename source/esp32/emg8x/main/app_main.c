@@ -562,7 +562,7 @@ void tcp_server_task( void* pvParameter )
             ESP_LOGI(TAG,"New incoming connection from: %s\n", addr_str ) ;
 
             while(1)
-            {
+            {                
 
                 if (drdy_thread_context.tail!=drdy_thread_context.head)
                 {
