@@ -5,13 +5,13 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 2
 Title "EMG8x"
-Date "2021-01-06"
-Rev "R3"
+Date "2021-03-15"
+Rev "R4"
 Comp "RF-LAB.ORG/KB-3/KB-2/MGUPI/MIREA"
-Comment1 "active passband (2 types)"
-Comment2 "Four types analogue filters: passive passband (2 types)"
-Comment3 "Based on ADS1299, WiFi/BLE based on ESP32"
-Comment4 "8 channel EMG hardware platform"
+Comment1 "ESP32 (2Cores x 250MHz +WiFi+ BLE)"
+Comment2 "Four identical interfaces based on INA331 amplifier"
+Comment3 "Based on 8 channel ADC ADS1299 (4 channel switched off for R4)"
+Comment4 "4 channel wireless EMG acquisition platform"
 $EndDescr
 $Comp
 L MCU_Espressif:ESP32-DevKitC U13
@@ -1517,9 +1517,9 @@ Wire Wire Line
 Wire Wire Line
 	2550 1600 3250 1600
 $Sheet
-S 1150 1450 500  150 
+S 900  1550 800  450 
 U 5FF7A86A
-F0 "iamp" 50
+F0 "Analogue interfaces" 50
 F1 "iamp.sch" 50
 $EndSheet
 $Comp
@@ -1655,4 +1655,113 @@ F 3 "" H 4050 5000 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	4050 4900 4050 5000
+$Comp
+L Device:R R13
+U 1 1 60AB8BF3
+P 10350 3700
+F 0 "R13" V 10300 3500 50  0000 C CNN
+F 1 "300" V 10350 3700 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 10280 3700 50  0001 C CNN
+F 3 "~" H 10350 3700 50  0001 C CNN
+	1    10350 3700
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R16
+U 1 1 60ABA011
+P 10350 3800
+F 0 "R16" V 10300 3600 50  0000 C CNN
+F 1 "300" V 10350 3800 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 10280 3800 50  0001 C CNN
+F 3 "~" H 10350 3800 50  0001 C CNN
+	1    10350 3800
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R17
+U 1 1 60ABA181
+P 10350 3900
+F 0 "R17" V 10300 3700 50  0000 C CNN
+F 1 "300" V 10350 3900 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 10280 3900 50  0001 C CNN
+F 3 "~" H 10350 3900 50  0001 C CNN
+	1    10350 3900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9600 3700 10200 3700
+Wire Wire Line
+	9600 3800 10200 3800
+Wire Wire Line
+	9600 3900 10200 3900
+$Comp
+L Device:LED D1
+U 1 1 60AEA16B
+P 10600 3350
+F 0 "D1" H 10700 3300 50  0000 C CNN
+F 1 "LED" H 10850 3300 50  0000 C CNN
+F 2 "LED_SMD:LED_0805_2012Metric" H 10600 3350 50  0001 C CNN
+F 3 "~" H 10600 3350 50  0001 C CNN
+	1    10600 3350
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:LED D2
+U 1 1 60AEAE4C
+P 10800 3350
+F 0 "D2" H 10900 3300 50  0000 C CNN
+F 1 "LED" H 11050 3300 50  0000 C CNN
+F 2 "LED_SMD:LED_0805_2012Metric" H 10800 3350 50  0001 C CNN
+F 3 "~" H 10800 3350 50  0001 C CNN
+	1    10800 3350
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:LED D3
+U 1 1 60AEB100
+P 11000 3350
+F 0 "D3" H 11100 3300 50  0000 C CNN
+F 1 "LED" H 11250 3300 50  0000 C CNN
+F 2 "LED_SMD:LED_0805_2012Metric" H 11000 3350 50  0001 C CNN
+F 3 "~" H 11000 3350 50  0001 C CNN
+	1    11000 3350
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	10500 3700 10600 3700
+Wire Wire Line
+	10500 3800 10800 3800
+Wire Wire Line
+	10500 3900 11000 3900
+$Comp
+L power:GNDD #PWR0117
+U 1 1 60B4C9D6
+P 10600 2900
+F 0 "#PWR0117" H 10600 2650 50  0001 C CNN
+F 1 "GNDD" H 10600 2750 50  0000 C CNN
+F 2 "" H 10600 2900 50  0001 C CNN
+F 3 "" H 10600 2900 50  0001 C CNN
+	1    10600 2900
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	10600 3200 10600 3000
+Wire Wire Line
+	10800 3200 10800 3000
+Wire Wire Line
+	10800 3000 10600 3000
+Connection ~ 10600 3000
+Wire Wire Line
+	10600 3000 10600 2900
+Wire Wire Line
+	11000 3200 11000 3000
+Wire Wire Line
+	11000 3000 10800 3000
+Connection ~ 10800 3000
+Wire Wire Line
+	10600 3700 10600 3500
+Wire Wire Line
+	10800 3800 10800 3500
+Wire Wire Line
+	11000 3900 11000 3500
 $EndSCHEMATC
