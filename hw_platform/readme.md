@@ -9,6 +9,7 @@ Hardware platform includes 8 channel high precision ADC [ADS1299](https://www.ti
 ![image](https://i.ibb.co/vDVrzjp/schematic-emg8x-rev4-page2.png)
 
 * 3D PCB visualization:
+
 ![Image](https://i.ibb.co/WxPzTH6/emg-8-6-x-R4.png)
 
 ## Other EMG boards
