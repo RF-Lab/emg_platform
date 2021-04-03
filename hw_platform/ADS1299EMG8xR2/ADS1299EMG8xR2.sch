@@ -7,11 +7,11 @@ Sheet 1 2
 Title "EMG8x"
 Date "2021-03-15"
 Rev "R4"
-Comp "RF-LAB.ORG/KB-3/KB-2/MGUPI/MIREA"
-Comment1 "ESP32 (2Cores x 250MHz +WiFi+ BLE)"
-Comment2 "Four identical interfaces based on INA331 amplifier"
-Comment3 "Based on 8 channel ADC ADS1299 (4 channel switched off for R4)"
-Comment4 "4 channel wireless EMG acquisition platform"
+Comp "RF-LAB.ORG, MIREA.RU KB2 (KB3)"
+Comment1 "Built on ESP32 SOC (2Cores x 250MHz +WiFi+ BLE)"
+Comment2 "Six identical analogue interfaces with INA331 amplifier"
+Comment3 "Based on 8 channel ADC ADS1299 (2 channel switched off for R4)"
+Comment4 "Wireless EMG acquisition platform"
 $EndDescr
 $Comp
 L MCU_Espressif:ESP32-DevKitC U13
@@ -1014,53 +1014,53 @@ $EndComp
 $Comp
 L Device:Battery_Cell BT1
 U 1 1 5FBDEC7D
-P 5150 1100
-F 0 "BT1" H 5268 1196 50  0000 L CNN
-F 1 "Battery_Cell" H 5268 1105 50  0000 L CNN
-F 2 "Battery:BatteryHolder_Blossom_1x18650" V 5150 1160 50  0001 C CNN
-F 3 "~" V 5150 1160 50  0001 C CNN
-	1    5150 1100
+P 8650 2200
+F 0 "BT1" H 8768 2296 50  0000 L CNN
+F 1 "Battery_Cell" H 8768 2205 50  0000 L CNN
+F 2 "Battery:BatteryHolder_Blossom_1x18650" V 8650 2260 50  0001 C CNN
+F 3 "~" V 8650 2260 50  0001 C CNN
+	1    8650 2200
 	0    -1   -1   0   
 $EndComp
 $Comp
 L Device:Battery_Cell BT2
 U 1 1 5FBE0428
-P 5650 1100
-F 0 "BT2" H 5768 1196 50  0000 L CNN
-F 1 "Battery_Cell" H 5768 1105 50  0000 L CNN
-F 2 "Battery:BatteryHolder_Blossom_1x18650" V 5650 1160 50  0001 C CNN
-F 3 "~" V 5650 1160 50  0001 C CNN
-	1    5650 1100
+P 9150 2200
+F 0 "BT2" H 9268 2296 50  0000 L CNN
+F 1 "Battery_Cell" H 9268 2205 50  0000 L CNN
+F 2 "Battery:BatteryHolder_Blossom_1x18650" V 9150 2260 50  0001 C CNN
+F 3 "~" V 9150 2260 50  0001 C CNN
+	1    9150 2200
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:GNDD #PWR051
 U 1 1 5FBE0CC7
-P 5900 1100
-F 0 "#PWR051" H 5900 850 50  0001 C CNN
-F 1 "GNDD" V 5900 900 50  0000 C CNN
-F 2 "" H 5900 1100 50  0001 C CNN
-F 3 "" H 5900 1100 50  0001 C CNN
-	1    5900 1100
+P 9400 2200
+F 0 "#PWR051" H 9400 1950 50  0001 C CNN
+F 1 "GNDD" V 9400 2000 50  0000 C CNN
+F 2 "" H 9400 2200 50  0001 C CNN
+F 3 "" H 9400 2200 50  0001 C CNN
+	1    9400 2200
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:+6V #PWR042
 U 1 1 5FBE119E
-P 4800 1100
-F 0 "#PWR042" H 4800 950 50  0001 C CNN
-F 1 "+6V" V 4800 1200 50  0000 L CNN
-F 2 "" H 4800 1100 50  0001 C CNN
-F 3 "" H 4800 1100 50  0001 C CNN
-	1    4800 1100
+P 8300 2200
+F 0 "#PWR042" H 8300 2050 50  0001 C CNN
+F 1 "+6V" V 8300 2300 50  0000 L CNN
+F 2 "" H 8300 2200 50  0001 C CNN
+F 3 "" H 8300 2200 50  0001 C CNN
+	1    8300 2200
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
-	4800 1100 4950 1100
+	8300 2200 8450 2200
 Wire Wire Line
-	5250 1100 5450 1100
+	8750 2200 8950 2200
 Wire Wire Line
-	5750 1100 5900 1100
+	9250 2200 9400 2200
 $Comp
 L Device:R R20
 U 1 1 5FC5FC1A
