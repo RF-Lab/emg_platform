@@ -11,6 +11,7 @@
 ![MIREA](https://i.ibb.co/DYv06Vw/KBSP-colour.png)
 
 
+
 * Схема принципиальная. Лист 1.
 
 ![image](https://i.ibb.co/jMTmMg3/emg8x-schematic-page1.png)
