@@ -4,11 +4,11 @@ Hardware platform includes 8 channel high precision ADC [ADS1299](https://www.ti
 
 * Schematic Sheet1:
 
-![image](https://i.ibb.co/HHzVzzM/schematic-emg8x-rev4-page1.png)
+![image](https://i.ibb.co/jMTmMg3/emg8x-schematic-page1.png)
 
 * Schematic Sheet2:
 
-![image](https://i.ibb.co/LxM08Mz/schematic-emg8x-rev4-page2.png)
+![image](https://i.ibb.co/vLCs59N/emg8x-schematic-page2.png)
 
 * 3D PCB visualization:
 
