@@ -1,5 +1,7 @@
 # EMG hardware platform
 
+[Этот readme на русском](./readme-ru.md).
+
 Hardware platform includes 8 channel high precision ADC [ADS1299](https://www.ti.com/product/ADS1299) from Texas Instruments. BLE and WiFi interfaces implemented using 2-Core SOC ESP-32 from [Espressif](https://www.espressif.com/). Schematic and layout implemented with [KiCAD EDA](https://kicad.org/). Actual board revision [Rev.4](https://github.com/RF-Lab/emg_platform/tree/master/hw_platform/ADS1299EMG8xR2) utilizes 6 channels (two unused channels switched off).
 
 * Schematic Sheet1:
