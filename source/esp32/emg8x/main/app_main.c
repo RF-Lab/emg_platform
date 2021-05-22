@@ -85,6 +85,14 @@ static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<-
 static const gpio_num_t     AD1299_DRDY_PIN     = GPIO_NUM_4 ;          // ADS-->ESP DRDY pin (active low)
 static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<--ESP Start data conversion pint (active high)
 
+#elif CONFIG_EMG8X_BOARD_REV == 4
+
+// Same as Rev 2,3
+static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;         // ADS<--ESP Power down pin (active low)
+static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<--ESP Reset pin (active low)
+static const gpio_num_t     AD1299_DRDY_PIN     = GPIO_NUM_4 ;          // ADS-->ESP DRDY pin (active low)
+static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<--ESP Start data conversion pint (active high)
+
 #else
 
 #endif
@@ -100,7 +108,7 @@ static const uint8_t        AD1299_ADDR_ID      = 0x00 ;                // ID re
 static const uint8_t        AD1299_ADDR_CONFIG1 = 0x01 ;                // CONFIG1 register
 static const uint8_t        AD1299_ADDR_CONFIG2 = 0x02 ;                // CONFIG2 register
 static const uint8_t        AD1299_ADDR_CONFIG3 = 0x03 ;                // CONFIG3 register
-//static const uint8_t        AD1299_ADDR_LOFF    = 0x04 ;              
+static const uint8_t        AD1299_ADDR_LEADOFF = 0x04 ;              
 static const uint8_t        AD1299_ADDR_CH1SET  = 0x05 ;
 static const uint8_t        AD1299_ADDR_CH2SET  = 0x06 ;
 static const uint8_t        AD1299_ADDR_CH3SET  = 0x07 ;
@@ -770,6 +778,10 @@ static void emg8x_app_start(void)
     ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG2, 0xb5 ) ;
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
+    // Configure test signal parameters
+    ad1299_wreg( spi_dev, AD1299_ADDR_LEADOFF, 0x0e ) ;
+    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+
     // Set All Channels to Input Short
     for (int i=0;i<8;i++)
     {
@@ -813,7 +825,7 @@ static void emg8x_app_start(void)
     vTaskDelay( 100 / portTICK_RATE_MS ) ;
 
     // Configure channels
-    ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET, 0x05 ) ;      // CH1: Test signal,    PGA_Gain=1
+    ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET, 0x40 ) ;      // CH1: Test signal,    PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH2SET, 0x30 ) ;      // CH2: Measure VDD,    PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH3SET, 0x30 ) ;      // CH3: Normal,         PGA_Gain=1
     ad1299_wreg( spi_dev, AD1299_ADDR_CH4SET, 0x00 ) ;      // CH4: Normal,         PGA_Gain=24
@@ -898,6 +910,9 @@ int numSamplesToMilliseconds(int numSamples)
     return (1000*numSamples/sampleRate) ;
 }
 #endif
+
+//float my_data_array[4096] ;
+//int32_t sampleCounter = 0 ;
 
 IRAM_ATTR void spi_data_pump_task( void* pvParameter )
 {
@@ -1096,12 +1111,14 @@ void app_main()
         case CHIP_ESP32S2:
             ESP_LOGI(TAG, "[APP] Processor model: ESP32-S2") ;
             break ;
+/*
         case CHIP_ESP32S3:
             ESP_LOGI(TAG, "[APP] Processor model: ESP32-S3") ;
             break ;
         case CHIP_ESP32C3:
             ESP_LOGI(TAG, "[APP] Processor model: ESP32-C3") ;
             break ;
+*/
         default:
             ESP_LOGI(TAG, "[APP] Processor model: Unknown(%d)",chip_info.model) ;
             break ;

@@ -47,7 +47,7 @@ SAMPLES_PER_TRANSPORT_BLOCK             =   64
 TRANSPORT_QUE_SIZE                      =   4
 TCP_SERVER_PORT                         =   3000
 SPS                                     =   1000
-SAMPLES_TO_COLLECT                      =   SAMPLES_PER_TRANSPORT_BLOCK*8*60
+SAMPLES_TO_COLLECT                      =   SAMPLES_PER_TRANSPORT_BLOCK*8*80
 
 TCP_PACKET_SIZE                         = int(((TRANSPORT_BLOCK_HEADER_SIZE)/4+(AD1299_NUM_CH+1)*(SAMPLES_PER_TRANSPORT_BLOCK))*4)
 
