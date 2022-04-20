@@ -59,7 +59,8 @@ static const char *TAG                          = "EMG8x" ;
 // NodeMCU 32-s2 pinout: (https://www.instructables.com/id/ESP32-Internal-Details-and-Pinout/)
 
 // DEBUG purpose pins
-static const gpio_num_t     DEBUG_PIN1          = GPIO_NUM_27 ;         // Debug pin #1
+//static const gpio_num_t     DEBUG_PIN1          = GPIO_NUM_27 ;         // Debug pin #1
+static const gpio_num_t         ESP_LED1          = GPIO_NUM_2 ;         // Debug pin #1
 
 #if CONFIG_EMG8X_BOARD_EMULATION == 0
 
@@ -92,6 +93,9 @@ static const gpio_num_t     AD1299_PWDN_PIN     = GPIO_NUM_22 ;         // ADS<-
 static const gpio_num_t     AD1299_RESET_PIN    = GPIO_NUM_32 ;         // ADS<--ESP Reset pin (active low)
 static const gpio_num_t     AD1299_DRDY_PIN     = GPIO_NUM_4 ;          // ADS-->ESP DRDY pin (active low)
 static const gpio_num_t     AD1299_START_PIN    = GPIO_NUM_21 ;         // ADS<--ESP Start data conversion pint (active high)
+static const gpio_num_t     BOARD_LED1          = GPIO_NUM_25 ;         // Extra led1
+static const gpio_num_t     BOARD_LED2          = GPIO_NUM_26 ;         // Extra led2
+static const gpio_num_t     BOARD_LED3          = GPIO_NUM_27 ;         // Extra led3
 
 #else
 
@@ -366,6 +370,10 @@ static void wifi_init(void)
     if (bits & WIFI_CONNECTED_BIT) {
         ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
                  CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD ) ;
+#if CONFIG_EMG8X_BOARD_REV == 4                
+        gpio_set_level( BOARD_LED1,     1 ) ;
+#endif
+
     } else if (bits & WIFI_FAIL_BIT) {
         ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
                  CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD ) ;
@@ -569,11 +577,20 @@ void tcp_server_task( void* pvParameter )
             inet_ntoa_r(remote_addr.sin_addr.s_addr, addr_str, sizeof(addr_str) - 1) ;
             ESP_LOGI(TAG,"New incoming connection from: %s\n", addr_str ) ;
 
+#if CONFIG_EMG8X_BOARD_REV == 4                
+        gpio_set_level( BOARD_LED2,     1 ) ;
+#endif
+
+
             while(1)
             {                
 
                 if (drdy_thread_context.tail!=drdy_thread_context.head)
                 {
+#if CONFIG_EMG8X_BOARD_REV == 4                
+                    gpio_set_level( BOARD_LED3,     1 ) ;
+#endif
+                    
                     if( write(cs , drdy_thread_context.adcDataQue[drdy_thread_context.tail], 
                         ((CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t)+(AD1299_NUM_CH+1)*(CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK))*sizeof(int32_t)) < 0)
                     {
@@ -581,6 +598,9 @@ void tcp_server_task( void* pvParameter )
                         break ;
                     }
 
+#if CONFIG_EMG8X_BOARD_REV == 4                
+                    gpio_set_level( BOARD_LED3,     0 ) ;
+#endif
                     ESP_LOGI(TAG, "TCP_SERVER: Block %d Sent.", drdy_thread_context.adcDataQue[drdy_thread_context.tail][CONFIG_EMG8X_PKT_COUNT_OFFSET] ) ;
 
                     // move queue tail forward 
@@ -605,6 +625,11 @@ void tcp_server_task( void* pvParameter )
 
             close(cs) ;
 
+#if CONFIG_EMG8X_BOARD_REV == 4                
+        gpio_set_level( BOARD_LED2,     0 ) ;
+        gpio_set_level( BOARD_LED3,     0 ) ;
+#endif
+
             vTaskDelay( 500 / portTICK_PERIOD_MS) ;
         }    
     }
@@ -620,6 +645,9 @@ static void emg8x_app_start(void)
     ESP_LOGI(TAG, "Initialize GPIO lines") ;
 
     // Initialize GPIO pins
+
+
+
     gpio_reset_pin( AD1299_PWDN_PIN ) ;
     gpio_set_direction( AD1299_PWDN_PIN, GPIO_MODE_OUTPUT ) ;
 
@@ -635,9 +663,9 @@ static void emg8x_app_start(void)
     gpio_intr_enable( AD1299_DRDY_PIN ) ;
 
     // Debug pin
-    gpio_reset_pin( DEBUG_PIN1 ) ;
-    gpio_set_direction( DEBUG_PIN1, GPIO_MODE_OUTPUT ) ;
-    gpio_set_level( DEBUG_PIN1,     0 ) ;
+    //gpio_reset_pin( DEBUG_PIN1 ) ;
+    //gpio_set_direction( DEBUG_PIN1, GPIO_MODE_OUTPUT ) ;
+    //gpio_set_level( DEBUG_PIN1,     0 ) ;
 
     // See 10.1.2 Setting the Device for Basic Data Capture (ADS1299 Datasheet)
     ESP_LOGI(TAG, "Set PWDN & RESET to 1") ;
@@ -754,6 +782,9 @@ static void emg8x_app_start(void)
         ESP_LOGE(TAG, "error: ads1299 not found!" ) ;
         return ;
     }
+
+    gpio_set_level( ESP_LED1,     1 ) ;
+
 
     // Set internal reference
     // WREG CONFIG3 E0h
@@ -1025,7 +1056,7 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
             // put packet counter to transport header
             drdy_thread_context.adcDataQue[drdy_thread_context.head][CONFIG_EMG8X_PKT_COUNT_OFFSET] = drdy_thread_context.blockCounter ;
 
-            gpio_set_level( DEBUG_PIN1,     1 ) ;
+            //gpio_set_level( DEBUG_PIN1,     1 ) ;
 
             if (!queueFull)
             {
@@ -1084,7 +1115,7 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
                 }
             }
             */
-            gpio_set_level( DEBUG_PIN1,     0 ) ;
+            //gpio_set_level( DEBUG_PIN1,     0 ) ;
 
             // Increment received packet counter
             drdy_thread_context.blockCounter += 1 ;
@@ -1139,6 +1170,25 @@ void app_main()
       ret = nvs_flash_init() ;
     }
     ESP_ERROR_CHECK(ret) ;
+
+#if CONFIG_EMG8X_BOARD_REV == 4
+    gpio_reset_pin( BOARD_LED1 ) ;
+    gpio_reset_pin( BOARD_LED2 ) ;
+    gpio_reset_pin( BOARD_LED3 ) ;
+
+    gpio_set_direction( BOARD_LED1, GPIO_MODE_OUTPUT ) ;
+    gpio_set_direction( BOARD_LED2, GPIO_MODE_OUTPUT ) ;
+    gpio_set_direction( BOARD_LED3, GPIO_MODE_OUTPUT ) ;
+
+    gpio_set_level( BOARD_LED1,     0 ) ;
+    gpio_set_level( BOARD_LED2,     0 ) ;
+    gpio_set_level( BOARD_LED3,     0 ) ;
+#endif
+
+    gpio_reset_pin( ESP_LED1 ) ;
+    gpio_set_direction( ESP_LED1, GPIO_MODE_OUTPUT ) ;
+    gpio_set_level( ESP_LED1,     0 ) ;
+
 
 #if CONFIG_WIFI_MODE_SOFTAP    
     wifi_init_softap() ;
