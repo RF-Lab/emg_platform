@@ -1,5 +1,5 @@
 //
-// Copyright 2019-2020 rf-lab.org 
+// Copyright 2019-2020 rf-lab.org
 // (MIREA KB-2( frmly. MIREA KB-3, MGUPI IT-6 "Control and simulation in technical systems"))
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,6 +51,8 @@
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
 #include "esp_attr.h"
+
+#include  "esp_chip_info.h"
 
 static const char *TAG                          = "EMG8x" ;
 
@@ -112,7 +114,7 @@ static const uint8_t        AD1299_ADDR_ID      = 0x00 ;                // ID re
 static const uint8_t        AD1299_ADDR_CONFIG1 = 0x01 ;                // CONFIG1 register
 static const uint8_t        AD1299_ADDR_CONFIG2 = 0x02 ;                // CONFIG2 register
 static const uint8_t        AD1299_ADDR_CONFIG3 = 0x03 ;                // CONFIG3 register
-static const uint8_t        AD1299_ADDR_LEADOFF = 0x04 ;              
+static const uint8_t        AD1299_ADDR_LEADOFF = 0x04 ;
 static const uint8_t        AD1299_ADDR_CH1SET  = 0x05 ;
 static const uint8_t        AD1299_ADDR_CH2SET  = 0x06 ;
 static const uint8_t        AD1299_ADDR_CH3SET  = 0x07 ;
@@ -126,22 +128,22 @@ static const uint8_t        AD1299_ADDR_CH8SET  = 0x0c ;
 
 // AD1299 constants (see https://www.ti.com/lit/ds/symlink/ads1299.pdf?ts=1599826124971)
 // Number of analog channels
-#define                     AD1299_NUM_CH                   8            
+#define                     AD1299_NUM_CH                   8
 
 // Transport protocol constants
 
 // Transport header size (bytes), use 'idf.py menuconfig' to change this constant
-// CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE =               16          
+// CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE =               16
 
 // Offset to packet counter in 32 bit words, use 'idf.py menuconfig' to change this constant
-// CONFIG_EMG8X_PKT_COUNT_OFFSET =                          2          
+// CONFIG_EMG8X_PKT_COUNT_OFFSET =                          2
 
 // Number of 32bit samples per transport block, use 'idf.py menuconfig' to change this constant
-// CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK =               64          
+// CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK =               64
 
 // Device thread to transport queue size, use 'idf.py menuconfig' to change this constant
 // Number of transport blocks to queue
-// CONFIG_EMG8X_TRANSPORT_QUE_SIZE =                        2                         
+// CONFIG_EMG8X_TRANSPORT_QUE_SIZE =                        2
 
 // TCP server port to listen, use 'idf.py menuconfig' to change this constant
 // CONFIG_EMG8X_TCP_SERVER_PORT =                           3000
@@ -158,7 +160,7 @@ DRAM_ATTR TaskHandle_t      datapumpTaskHandle ;
 typedef struct
 {
     SemaphoreHandle_t       xSemaphore ;
-} type_drdy_isr_context ; 
+} type_drdy_isr_context ;
 DRAM_ATTR type_drdy_isr_context       drdy_isr_context ;
 
 // ADC data variables combined into the structure
@@ -166,7 +168,7 @@ typedef struct
 {
 
     uint8_t                 spiReadBuffer [27] ;            // Buffer to receive raw data from ADS1299 th SPI transaction
-    
+
     uint32_t                adcStat32 ;                     // STAT field of last transaction in 32bit form (only 24bits used)
 
     // ISR to thread data queue
@@ -203,7 +205,7 @@ DRAM_ATTR type_tcp_server_thread_context tcp_server_thread_context ;
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                                     int32_t event_id, void* event_data)
 {
-    if (event_id == WIFI_EVENT_AP_STACONNECTED) 
+    if (event_id == WIFI_EVENT_AP_STACONNECTED)
     {
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
         ESP_LOGI(TAG, "station "MACSTR" join, AID=%d",
@@ -242,7 +244,7 @@ void wifi_init_softap(void)
         },
     } ;
 
-    if (strlen(CONFIG_WIFI_PASSWORD) == 0) 
+    if (strlen(CONFIG_WIFI_PASSWORD) == 0)
     {
         wifi_config.ap.authmode = WIFI_AUTH_OPEN ;
     }
@@ -253,8 +255,8 @@ void wifi_init_softap(void)
 
     ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s channel:%d",
             CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD, CONFIG_WIFI_CHANNEL) ;
-    
-    
+
+
     // Get default netif object
     esp_netif_t *esp_netif = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF") ;
     if (esp_netif)
@@ -286,11 +288,11 @@ static int s_retry_num = 0 ;
 static void event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
 {
-    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) 
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
     {
         esp_wifi_connect() ;
-    } 
-    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) 
+    }
+    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
     {
         if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY) {
             esp_wifi_connect();
@@ -300,8 +302,8 @@ static void event_handler(void* arg, esp_event_base_t event_base,
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         }
         ESP_LOGI(TAG,"connect to the AP fail") ;
-    } 
-    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) 
+    }
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
         strncpy(tcp_server_thread_context.serverIpAddr, ipaddr_ntoa((const ip_addr_t *)&event->ip_info.ip), 127) ;
@@ -370,7 +372,7 @@ static void wifi_init(void)
     if (bits & WIFI_CONNECTED_BIT) {
         ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
                  CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD ) ;
-#if CONFIG_EMG8X_BOARD_REV == 4                
+#if CONFIG_EMG8X_BOARD_REV == 4
         gpio_set_level( BOARD_LED1,     1 ) ;
 #endif
 
@@ -468,7 +470,7 @@ IRAM_ATTR uint8_t ad1299_rreg(spi_device_handle_t spi, const uint8_t addr)
 
 }
 
-/*  
+/*
     ad1299_read_data_block216(spi_device_handle_t spi, uint8_t* data216)
     spi     - spi handle
     data216 - pointer to array of 27 bytes length (216 bits=24bit * 9)
@@ -500,7 +502,7 @@ IRAM_ATTR static void drdy_gpio_isr_handler(void* arg)
 {
     //type_drdy_isr_context* pContext = (type_drdy_isr_context*) arg ;
     static BaseType_t high_task_wakeup = pdFALSE ;
-    
+
     //xSemaphoreGiveFromISR( pContext->xSemaphore, &high_task_wakeup ) ;
 
     vTaskNotifyGiveFromISR( datapumpTaskHandle, &high_task_wakeup ) ;
@@ -517,8 +519,8 @@ IRAM_ATTR static void drdy_gpio_isr_handler(void* arg)
 
 #endif
 
-// 
-// TCP server task 
+//
+// TCP server task
 // This routine is waiting for data appears in ADC queue and
 // then send to to connected tcp client(s)
 char addr_str[128] ;
@@ -538,20 +540,20 @@ void tcp_server_task( void* pvParameter )
     static unsigned int socklen ;
     socklen = sizeof(remote_addr) ;
     int cs ; //client socket
-    
+
     //xEventGroupWaitBits(wifi_event_group,CONNECTED_BIT,false,true,portMAX_DELAY) ;
 
     while(1)
     {
         s = socket( AF_INET, SOCK_STREAM, 0) ;
-        if(s < 0) 
+        if(s < 0)
         {
             ESP_LOGE(TAG, "TCP_SERVER: Failed to allocate socket.\n") ;
             vTaskDelay(1000 / portTICK_PERIOD_MS) ;
             continue ;
         }
 
-        if(bind(s, (struct sockaddr *)&tcpServerAddr, sizeof(tcpServerAddr)) != 0) 
+        if(bind(s, (struct sockaddr *)&tcpServerAddr, sizeof(tcpServerAddr)) != 0)
         {
             ESP_LOGE(TAG, "TCP_SERVER: socket bind failed errno=%d \n", errno) ;
             close(s) ;
@@ -577,33 +579,33 @@ void tcp_server_task( void* pvParameter )
             inet_ntoa_r(remote_addr.sin_addr.s_addr, addr_str, sizeof(addr_str) - 1) ;
             ESP_LOGI(TAG,"New incoming connection from: %s\n", addr_str ) ;
 
-#if CONFIG_EMG8X_BOARD_REV == 4                
+#if CONFIG_EMG8X_BOARD_REV == 4
         gpio_set_level( BOARD_LED2,     1 ) ;
 #endif
 
 
             while(1)
-            {                
+            {
 
                 if (drdy_thread_context.tail!=drdy_thread_context.head)
                 {
-#if CONFIG_EMG8X_BOARD_REV == 4                
+#if CONFIG_EMG8X_BOARD_REV == 4
                     gpio_set_level( BOARD_LED3,     1 ) ;
 #endif
-                    
-                    if( write(cs , drdy_thread_context.adcDataQue[drdy_thread_context.tail], 
+
+                    if( write(cs , drdy_thread_context.adcDataQue[drdy_thread_context.tail],
                         ((CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t)+(AD1299_NUM_CH+1)*(CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK))*sizeof(int32_t)) < 0)
                     {
                         ESP_LOGE(TAG, "TCP_SERVER: Send failed\n") ;
                         break ;
                     }
 
-#if CONFIG_EMG8X_BOARD_REV == 4                
+#if CONFIG_EMG8X_BOARD_REV == 4
                     gpio_set_level( BOARD_LED3,     0 ) ;
 #endif
                     ESP_LOGI(TAG, "TCP_SERVER: Block %d Sent.", drdy_thread_context.adcDataQue[drdy_thread_context.tail][CONFIG_EMG8X_PKT_COUNT_OFFSET] ) ;
 
-                    // move queue tail forward 
+                    // move queue tail forward
                     drdy_thread_context.tail        = (drdy_thread_context.tail+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
                 }
 
@@ -625,13 +627,13 @@ void tcp_server_task( void* pvParameter )
 
             close(cs) ;
 
-#if CONFIG_EMG8X_BOARD_REV == 4                
+#if CONFIG_EMG8X_BOARD_REV == 4
         gpio_set_level( BOARD_LED2,     0 ) ;
         gpio_set_level( BOARD_LED3,     0 ) ;
 #endif
 
             vTaskDelay( 500 / portTICK_PERIOD_MS) ;
-        }    
+        }
     }
 
 }
@@ -651,7 +653,7 @@ static void emg8x_app_start(void)
     gpio_reset_pin( AD1299_PWDN_PIN ) ;
     gpio_set_direction( AD1299_PWDN_PIN, GPIO_MODE_OUTPUT ) ;
 
-    gpio_reset_pin( AD1299_RESET_PIN ) ; 
+    gpio_reset_pin( AD1299_RESET_PIN ) ;
     gpio_set_direction( AD1299_RESET_PIN, GPIO_MODE_OUTPUT ) ;
 
     gpio_reset_pin( AD1299_START_PIN ) ;
@@ -672,20 +674,20 @@ static void emg8x_app_start(void)
     gpio_set_level(AD1299_PWDN_PIN,     1 ) ;
     gpio_set_level(AD1299_RESET_PIN,    1 ) ;
     gpio_set_level(AD1299_START_PIN,    0 ) ;
-    
+
     ESP_LOGI(TAG, "Wait for 20 tclk") ;
 
-    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    vTaskDelay( 100 / portTICK_PERIOD_MS ) ;
     //ets_delay_us( 15*10 ) ; //~30 clock periods @2MHz
 
     // Reset pulse
     ESP_LOGI(TAG, "Reset ad1299") ;
     gpio_set_level(AD1299_RESET_PIN, 0 ) ;
-    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    vTaskDelay( 100 / portTICK_PERIOD_MS ) ;
     //ets_delay_us( 15*10 ) ;  //~20 clock periods @2MHz - This delay does not works, it is not enough for reset
     gpio_set_level(AD1299_RESET_PIN, 1 ) ;
 
-    vTaskDelay( 500 / portTICK_RATE_MS ) ;
+    vTaskDelay( 500 / portTICK_PERIOD_MS ) ;
 
     ESP_LOGI(TAG, "Initialize SPI driver...") ;
     // SEE esp-idf/components/driver/include/driver/spi_common.h
@@ -704,7 +706,7 @@ static void emg8x_app_start(void)
     spi_device_interface_config_t devcfg = {
         .command_bits       = 0,                        // 0-16
         .address_bits       = 0,                        // 0-64
-        .dummy_bits         = 0,                        // Amount of dummy bits to insert between address and data phase 
+        .dummy_bits         = 0,                        // Amount of dummy bits to insert between address and data phase
         .clock_speed_hz     = 1000000,                  // Clock speed, divisors of 80MHz, in Hz. See ``SPI_MASTER_FREQ_*``.
         .mode               = 1,                        // SPI mode 0
         .flags              = SPI_DEVICE_HALFDUPLEX,    // Bitwise OR of SPI_DEVICE_* flags
@@ -712,9 +714,9 @@ static void emg8x_app_start(void)
         .spics_io_num       = GPIO_NUM_5,               // CS pin
         .queue_size         = 1,                        // No queued transactions
         .cs_ena_pretrans    = 1,                        // 0 not used
-        .cs_ena_posttrans   = 0,                        // 0 not used                        
+        .cs_ena_posttrans   = 0,                        // 0 not used
     } ;
-    
+
     //Initialize the SPI bus
     ret                     = spi_bus_initialize(VSPI_HOST, &buscfg, 0 ) ;
     ESP_ERROR_CHECK(ret) ;
@@ -722,13 +724,13 @@ static void emg8x_app_start(void)
     ret                     = spi_bus_add_device(VSPI_HOST, &devcfg, &spi_dev ) ;
     ESP_ERROR_CHECK(ret) ;
     ESP_LOGI(TAG, "SPI driver initialized, Freq limit is:%dHz", spi_get_freq_limit( false, 0 ) ) ;
-    
+
 
     // Send SDATAC / Stop Read Data Continuously Mode
     ESP_LOGI(TAG, "Send SDATAC") ;
-    
+
     ad1299_send_cmd8( spi_dev, AD1299_CMD_SDATAC ) ;
-    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    vTaskDelay( 100 / portTICK_PERIOD_MS ) ;
 
     /*
 
@@ -768,7 +770,7 @@ static void emg8x_app_start(void)
     uint8_t ad1299_check_bit    = (valueu8>>4) & 0x01 ;
     uint8_t ad1299_dev_id       = (valueu8>>2) & 0x03 ;
     uint8_t ad1299_num_ch       = (valueu8) & 0x03 ;
-    
+
     if (ad1299_check_bit && ad1299_dev_id==0x03 )
     {
         ESP_LOGI(TAG,"ads1299 found:") ;
@@ -790,47 +792,47 @@ static void emg8x_app_start(void)
     // WREG CONFIG3 E0h
     ESP_LOGI(TAG, "Set internal reference" ) ;
     ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG3, 0xEE ) ;
-    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    vTaskDelay( 100 / portTICK_PERIOD_MS ) ;
 
  /*   while(1)
     {
         uint8_t reg_value = ad1299_rreg( spi_dev, AD1299_ADDR_CONFIG3 ) ;
         ESP_LOGI(TAG, "check CONF3:       0x%02X",  reg_value ) ;
-        vTaskDelay( 500 / portTICK_RATE_MS ) ;
+        vTaskDelay( 500 / portTICK_PERIOD_MS ) ;
     }*/
 
     //Set device for DR=fmod/4096
     // Enable clk output
     ESP_LOGI(TAG, "Set sampling rate" ) ;
     ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG1, 0xf4 ) ;     // Default 0x96 (see power up sequence)
-    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    vTaskDelay( 100 / portTICK_PERIOD_MS ) ;
 
     // Configure test signal parameters
     ad1299_wreg( spi_dev, AD1299_ADDR_CONFIG2, 0xb5 ) ;
-    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    vTaskDelay( 100 / portTICK_PERIOD_MS ) ;
 
     // Configure test signal parameters
     ad1299_wreg( spi_dev, AD1299_ADDR_LEADOFF, 0x0e ) ;
-    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    vTaskDelay( 100 / portTICK_PERIOD_MS ) ;
 
     // Set All Channels to Input Short
     for (int i=0;i<8;i++)
     {
         ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET+i, 0x01 ) ;
-        //vTaskDelay( 50 / portTICK_RATE_MS ) ;
+        //vTaskDelay( 50 / portTICK_PERIOD_MS ) ;
     }
-    vTaskDelay( 50 / portTICK_RATE_MS ) ;
+    vTaskDelay( 50 / portTICK_PERIOD_MS ) ;
 
     // Activate Conversion
     // After This Point DRDY Toggles at
     // fCLK / 8192
     gpio_set_level(AD1299_START_PIN, 1 ) ;
-    vTaskDelay( 50 / portTICK_RATE_MS ) ;
+    vTaskDelay( 50 / portTICK_PERIOD_MS ) ;
 
     // Put the Device Back in RDATAC Mode
     // RDATAC
     ad1299_send_cmd8( spi_dev, AD1299_CMD_RDATAC ) ;
-    vTaskDelay( 50 / portTICK_RATE_MS ) ;
+    vTaskDelay( 50 / portTICK_PERIOD_MS ) ;
 
     // Capture data and check for noise level
     for(int nSample=0;nSample<CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK;nSample++)
@@ -844,7 +846,7 @@ static void emg8x_app_start(void)
 
         ESP_LOGI(TAG, "DATA: STAT:0x%02X%02X%02X DATA1:0x%02X%02X%02X",  rxDataBuf[0],rxDataBuf[1],rxDataBuf[2], rxDataBuf[3],rxDataBuf[4],rxDataBuf[5] ) ;
 
-        // Place here code to collect samples and analyse noise level for 
+        // Place here code to collect samples and analyse noise level for
         // shorted analog inputs
 
         vTaskDelay( 1 ) ;
@@ -853,7 +855,7 @@ static void emg8x_app_start(void)
 
     // Stop all the channels
     ad1299_send_cmd8( spi_dev, AD1299_CMD_SDATAC ) ;
-    vTaskDelay( 100 / portTICK_RATE_MS ) ;
+    vTaskDelay( 100 / portTICK_PERIOD_MS ) ;
 
     // Configure channels
     ad1299_wreg( spi_dev, AD1299_ADDR_CH1SET, 0x40 ) ;      // CH1: Test signal,    PGA_Gain=1
@@ -864,15 +866,15 @@ static void emg8x_app_start(void)
     ad1299_wreg( spi_dev, AD1299_ADDR_CH6SET, 0x50 ) ;      // CH6: Normal,         PGA_Gain=24
     ad1299_wreg( spi_dev, AD1299_ADDR_CH7SET, 0x30 ) ;      // CH7: Normal,         PGA_Gain=24
     ad1299_wreg( spi_dev, AD1299_ADDR_CH8SET, 0x30 ) ;      // CH8: Normal,         PGA_Gain=24
-    vTaskDelay( 50 / portTICK_RATE_MS ) ;
+    vTaskDelay( 50 / portTICK_PERIOD_MS ) ;
 
     ESP_LOGI(TAG, "Put device in RDATAC mode" ) ;
 
     // Put the Device Back in RDATAC Mode
     // RDATAC
     ad1299_send_cmd8( spi_dev, AD1299_CMD_RDATAC ) ;
-    vTaskDelay( 50 / portTICK_RATE_MS ) ;
-    
+    vTaskDelay( 50 / portTICK_PERIOD_MS ) ;
+
 #endif // Emulation
 
     // Initialize drdy_thread_context
@@ -882,11 +884,11 @@ static void emg8x_app_start(void)
     drdy_thread_context.blockCounter                = 0 ;
 
     // Initialize counting semaphore which represents number of queued blocks
-    drdy_thread_context.xDataQueueSemaphore         = xSemaphoreCreateCounting( CONFIG_EMG8X_TRANSPORT_QUE_SIZE, 0 ) ; 
+    drdy_thread_context.xDataQueueSemaphore         = xSemaphoreCreateCounting( CONFIG_EMG8X_TRANSPORT_QUE_SIZE, 0 ) ;
 
     for (int iQue=0;iQue<CONFIG_EMG8X_TRANSPORT_QUE_SIZE;iQue++)
     {
-        
+
         unsigned char* pTransportBlockHeader        = (unsigned char*) drdy_thread_context.adcDataQue[iQue] ;
 
         // Fill in each header
@@ -931,7 +933,7 @@ static void emg8x_app_start(void)
 
 #endif
 
-    
+
 }
 
 #if CONFIG_EMG8X_BOARD_EMULATION
@@ -948,7 +950,7 @@ int numSamplesToMilliseconds(int numSamples)
 IRAM_ATTR void spi_data_pump_task( void* pvParameter )
 {
     ESP_LOGI(TAG,"spi_data_pump_task started at CpuCore%1d\n", xPortGetCoreID() ) ;
-    
+
     // Queue full flag
     int queueFull                                   = 0 ;
 
@@ -964,7 +966,7 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
             vTaskDelay( numSamplesToMilliseconds(60)/ portTICK_PERIOD_MS ) ;
         }
 #else
-        
+
         // Wait for DRDY signal becomes low
         if (gpio_get_level(AD1299_DRDY_PIN)!=0)
         {
@@ -979,7 +981,7 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
         //if( gpio_get_level(AD1299_DRDY_PIN)==0 xSemaphoreTake( drdy_isr_context.xSemaphore, 0xffff )==pdTRUE )
 
 #endif
-            
+
         //gpio_set_level( DEBUG_PIN1,     1 ) ;
 #if CONFIG_EMG8X_BOARD_EMULATION
         drdy_thread_context.spiReadBuffer[0] = 0xc0 ;
@@ -995,13 +997,13 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
             ESP_LOGE(TAG, "raw_REad:[%6d][%6d] 0xc0 not found!", drdy_thread_context.blockCounter, drdy_thread_context.sampleCount ) ;
             continue ;
         }
-        
+
         //gpio_set_level( DEBUG_PIN1,     1 ) ;
         // get STAT field
         // transform 24 bit field to 32 bit integer
         drdy_thread_context.adcStat32   = (uint32_t) (
-                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[0])<<16) | 
-                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[1])<<8) | 
+                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[0])<<16) |
+                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[1])<<8) |
                                                         ((uint32_t) drdy_thread_context.spiReadBuffer[2])
                                                     ) ;
 
@@ -1010,7 +1012,7 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
             (CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE)/sizeof(int32_t) +
             drdy_thread_context.sampleCount ] = drdy_thread_context.adcStat32 ;
 
-        // transform 24 bit twos-complement samples to 32 bit signed integers 
+        // transform 24 bit twos-complement samples to 32 bit signed integers
         // save 32 bit samples into thread queue drdy_thread_context
         for(int chNum=0;chNum<AD1299_NUM_CH;chNum++)
         {
@@ -1025,11 +1027,11 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
                 signExtBits             = 0xff000000 ;
             }
 
-            int32_t value_i32           = 
+            int32_t value_i32           =
                                         (int32_t) (
                                                         signExtBits |
-                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh])<<16) | 
-                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh+1])<<8) | 
+                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh])<<16) |
+                                                        (((uint32_t)drdy_thread_context.spiReadBuffer[byteOffsetCh+1])<<8) |
                                                         ((uint32_t) drdy_thread_context.spiReadBuffer[byteOffsetCh+2])
                                                     ) ;
 #if CONFIG_EMG8X_BOARD_EMULATION
@@ -1073,10 +1075,10 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
                 else
                 {
                     // There is empty space in the queue
-                    // move queue head forward 
+                    // move queue head forward
                     drdy_thread_context.head        = (drdy_thread_context.head+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
                 }
-                
+
             }
             else
             {
@@ -1089,13 +1091,13 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
                     queueFull = 0 ;
                 }
             }
-            
+
 /*
             //if (xSemaphoreGive( drdy_thread_context.xDataQueueSemaphore )==pdTRUE)
             if ( !queueFull )
             {
 
-                // move queue head forward 
+                // move queue head forward
                 drdy_thread_context.head        = (drdy_thread_context.head+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
 
                 if (queueFull)
@@ -1164,7 +1166,7 @@ void app_main()
 
     //Initialize NVS
     esp_err_t ret = nvs_flash_init() ;
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) 
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {
       ESP_ERROR_CHECK(nvs_flash_erase()) ;
       ret = nvs_flash_init() ;
@@ -1190,10 +1192,10 @@ void app_main()
     gpio_set_level( ESP_LED1,     0 ) ;
 
 
-#if CONFIG_WIFI_MODE_SOFTAP    
+#if CONFIG_WIFI_MODE_SOFTAP
     wifi_init_softap() ;
 #else
     wifi_init() ;
-#endif    
+#endif
     emg8x_app_start() ;
 }
