@@ -537,7 +537,7 @@ void tcp_server_task( void* pvParameter )
     tcpServerAddr.sin_port                              = htons( CONFIG_EMG8X_TCP_SERVER_PORT ) ;
     int s ;
     static struct sockaddr_in remote_addr ;
-    static unsigned int socklen ;
+    static long unsigned int socklen ;
     socklen = sizeof(remote_addr) ;
     int cs ; //client socket
 
@@ -603,7 +603,7 @@ void tcp_server_task( void* pvParameter )
 #if CONFIG_EMG8X_BOARD_REV == 4
                     gpio_set_level( BOARD_LED3,     0 ) ;
 #endif
-                    ESP_LOGI(TAG, "TCP_SERVER: Block %d Sent.", drdy_thread_context.adcDataQue[drdy_thread_context.tail][CONFIG_EMG8X_PKT_COUNT_OFFSET] ) ;
+                    ESP_LOGI(TAG, "TCP_SERVER: Block %d Sent.", (int)drdy_thread_context.adcDataQue[drdy_thread_context.tail][CONFIG_EMG8X_PKT_COUNT_OFFSET] ) ;
 
                     // move queue tail forward
                     drdy_thread_context.tail        = (drdy_thread_context.tail+1)%(CONFIG_EMG8X_TRANSPORT_QUE_SIZE) ;
@@ -723,7 +723,7 @@ static void emg8x_app_start(void)
     //Attach the LCD to the SPI bus
     ret                     = spi_bus_add_device(VSPI_HOST, &devcfg, &spi_dev ) ;
     ESP_ERROR_CHECK(ret) ;
-    ESP_LOGI(TAG, "SPI driver initialized, Freq limit is:%dHz", spi_get_freq_limit( false, 0 ) ) ;
+    ESP_LOGI(TAG, "SPI driver initialized, Freq limit is:%dHz", (int)spi_get_freq_limit( false, 0 ) ) ;
 
 
     // Send SDATAC / Stop Read Data Continuously Mode
@@ -994,7 +994,7 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
         // Check for stat 0xCx presence
         if ((drdy_thread_context.spiReadBuffer[0]&0xf0)!=0xc0)
         {
-            ESP_LOGE(TAG, "raw_REad:[%6d][%6d] 0xc0 not found!", drdy_thread_context.blockCounter, drdy_thread_context.sampleCount ) ;
+            ESP_LOGE(TAG, "raw_REad:[%6d][%6d] 0xc0 not found!", (int)drdy_thread_context.blockCounter, (int)drdy_thread_context.sampleCount ) ;
             continue ;
         }
 
@@ -1069,7 +1069,7 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
                 {
                     // Queue is over!
                     // Do not move head forward - wait for TCP server sends data to host
-                    ESP_LOGE(TAG, "ADC_READ_CYCLE: TCP FIFO Full @ block %d\n", drdy_thread_context.blockCounter ) ;
+                    ESP_LOGE(TAG, "ADC_READ_CYCLE: TCP FIFO Full @ block %d\n", (int)drdy_thread_context.blockCounter ) ;
                     queueFull = 1 ;
                 }
                 else
@@ -1087,7 +1087,7 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
                 xTaskNotifyAndQuery( tcpTaskHandle, 0, eNoAction, &taskCounterValue ) ;
                 if ((taskCounterValue+1)<CONFIG_EMG8X_TRANSPORT_QUE_SIZE)
                 {
-                    ESP_LOGI(TAG, "ADC_READ_CYCLE: TCP FIFO ok @ block %d\n", drdy_thread_context.blockCounter ) ;
+                    ESP_LOGI(TAG, "ADC_READ_CYCLE: TCP FIFO ok @ block %d\n", (int)drdy_thread_context.blockCounter ) ;
                     queueFull = 0 ;
                 }
             }
@@ -1130,7 +1130,7 @@ IRAM_ATTR void spi_data_pump_task( void* pvParameter )
 void app_main()
 {
     ESP_LOGI(TAG, "[APP] Startup..") ;
-    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size()) ;
+    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", (int)esp_get_free_heap_size()) ;
     ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version()) ;
 
     esp_chip_info_t chip_info ;
@@ -1153,10 +1153,10 @@ void app_main()
             break ;
 */
         default:
-            ESP_LOGI(TAG, "[APP] Processor model: Unknown(%d)",chip_info.model) ;
+            ESP_LOGI(TAG, "[APP] Processor model: Unknown(%d)",(int)chip_info.model) ;
             break ;
     }
-    ESP_LOGI(TAG, "[APP] Processor num cores: %d",chip_info.cores) ;
+    ESP_LOGI(TAG, "[APP] Processor num cores: %d",(int)chip_info.cores) ;
 
     //esp_log_level_set("*", ESP_LOG_INFO);
     //esp_log_level_set("TRANSPORT_TCP", ESP_LOG_VERBOSE);
