@@ -328,6 +328,10 @@
     [
       "adcc530f-e51c-4d0d-b7eb-9600be86d7d0",
       "analog_frontend_2"
+    ],
+    [
+      "46ace08d-eb32-49ac-809d-2e61e71dabf9",
+      "power_supply"
     ]
   ],
   "text_variables": {}
