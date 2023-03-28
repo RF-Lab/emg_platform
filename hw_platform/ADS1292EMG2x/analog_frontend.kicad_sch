@@ -4,6 +4,13 @@
 
   (paper "A4")
 
+  (title_block
+    (title "EMG-2x: Two channel EMG board")
+    (date "2022-02-11")
+    (rev "1")
+    (company "Developed by Rf-lab.org")
+  )
+
   (lib_symbols
     (symbol "ADS1299EMG8xR2-rescue:INA331-Amplifier_Instrumentation" (pin_names (offset 0.127)) (in_bom yes) (on_board yes)
       (property "Reference" "U" (id 0) (at 3.81 3.81 0)
