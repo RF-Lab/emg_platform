@@ -1,4 +1,7 @@
 #pragma once
+
+#include "include\tensorflow\c\c_api.h"
+
 const int MaxCNumlasses = 16 ;
 class ClassificationModel
 {
@@ -16,7 +19,12 @@ public:
 	TensorflowModel() = default ;
 	virtual bool Load(void*) ;
 	virtual bool Predict() ;
+
 private:
-	float predProb[MaxCNumlasses];
-};
+	TF_Graph* m_Graph ;
+	TF_Status* m_Status ;
+	TF_SessionOptions* m_SessionOpts ;
+	TF_Buffer* m_RunOpts ;
+
+} ;
 

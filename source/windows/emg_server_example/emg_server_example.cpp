@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <iostream>
 #include "Controller.h"
+#include "EmgController.h"
 #include "ApplicationConnection.h"
 
 Controller* gameController = NULL ;
@@ -13,8 +14,12 @@ int main()
 {
     std::wcout << L"Server initialization..."  << std::endl ;
 
-    gameController = new KeyboardController() ;
+    gameController = new EmgController() ;//new KeyboardController() ;
     appConnection = new ConnectionToUnity() ;
+    if (!gameController->Connect())
+    {
+        return (-1) ;
+    }
     if (appConnection->Connect()<0)
     {
         return (-1) ;
