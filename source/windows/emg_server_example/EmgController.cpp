@@ -6,6 +6,7 @@
 int EmgController::Connect()
 {
 	TensorflowModel model ;
-	model.Load(NULL) ;
+	model.Load("C:\\userdata\\projects\\models\\model") ;
+	model.Predict() ;
 	return 0 ;
 }
