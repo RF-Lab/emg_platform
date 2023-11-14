@@ -9,10 +9,18 @@
 
 Controller* gameController = NULL ;
 ApplicationConnection* appConnection = NULL ;
+WSADATA wsd ;
 
 int main()
 {
     std::wcout << L"Server initialization..."  << std::endl ;
+
+    std::wcout << L"Initialize networking..." << std::endl ;
+    if (WSAStartup(MAKEWORD(2, 1), &wsd) != 0)
+    {
+        std::wcout << L"Error WSAStartup" << std::endl ;
+        return (-1) ;
+    }
 
     gameController = new EmgController() ;//new KeyboardController() ;
     appConnection = new ConnectionToUnity() ;
@@ -30,7 +38,8 @@ int main()
         int controllerCode = -1 ;
         if (gameController)
         {
-            controllerCode = gameController->readSingleCode() ;
+            //controllerCode = gameController->readSingleCode() ;
+            gameController->readProbVector() ;
         }
         if (controllerCode == 27)
         {
@@ -54,6 +63,8 @@ int main()
         appConnection->Release() ;
         delete appConnection ;
     }
+
+    WSACleanup() ;
 
 }
 
