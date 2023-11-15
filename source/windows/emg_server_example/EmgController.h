@@ -1,5 +1,6 @@
 #pragma once
 #include "Controller.h"
+#include "firFilter.h"
 class EmgController : public Controller
 {
 public:
@@ -14,11 +15,14 @@ protected:
 private:
 	SOCKET  m_socket ;
 	unsigned char* m_recvBuf ;
-	int* m_circBuf ;
+	float* m_circBuf ;
 	unsigned int m_packetCounter;
 	int m_head ;
-	int m_maxValue ;
+	float m_maxValue ;
 	int m_maxDelay ;
 	float m_mean;
+	firFilter* m_filter ;
+	float m_sigScale ;
+	float* m_flatBuf ;
 } ;
 

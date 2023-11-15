@@ -10,23 +10,46 @@ const int SAMPLES_PER_BLOCK = 128;
 
 const int PACKET_SIZE = 528; // bytes
 
+const float det_th = 0.02 ;
+
+void save_to_file(const char* szFileName, float* data, int size)
+{
+    FILE* f = nullptr;
+    fopen_s(&f, szFileName, "wt") ;
+    if (nullptr != f)
+    {
+        for (int n = 0; n < size; n++)
+        {
+            fprintf(f, "%16.15f\n", data[n]) ;
+        }
+        fclose(f) ;
+    }
+
+}
+
 EmgController::EmgController()
 {
 	m_socket = INVALID_SOCKET ;
     m_recvBuf = new unsigned char[DATA_BUF_SIZE] ;
-    m_circBuf = new int[CIRC_BUF_SIZE] ;
+    m_circBuf = new float[CIRC_BUF_SIZE] ;
+    m_flatBuf = new float[CIRC_BUF_SIZE] ;
     m_packetCounter = 0 ;
     m_head = 0;
     m_maxValue = 0 ;
     m_maxDelay = 0 ;
-    m_mean = 0.0;
+    m_mean = 0.0 ;
+    m_filter = new firFilter() ;
+    m_filter->load("filter.txt") ;
+    m_sigScale = 0.0000228 ;
 }
 
 EmgController::~EmgController()
 {
     CloseSocket() ;
-    delete[] m_recvBuf; m_recvBuf = NULL ;
-    delete[] m_circBuf; m_circBuf = NULL;
+    delete[] m_recvBuf; m_recvBuf = nullptr ;
+    delete[] m_circBuf; m_circBuf = nullptr ;
+    delete[] m_flatBuf; m_flatBuf = nullptr ;
+    delete m_filter; m_filter = nullptr ;
 }
 
 bool EmgController::CreateSocket()
@@ -141,48 +164,47 @@ float* EmgController::readProbVector()
     }
 
     int* pBlockSamples = (int*)(m_recvBuf + 16) ;
-    int block_sum = 0 ;
     for (int i = 0; i < SAMPLES_PER_BLOCK; i++)
     {
-        block_sum += pBlockSamples[i];
+        m_circBuf[m_head] = (*m_filter)(pBlockSamples[i] * m_sigScale) ;
 
-        pBlockSamples[i] -= int(m_mean) ;
-        m_circBuf[m_head] = pBlockSamples[i];
+        m_mean = m_mean * 0.9 + 0.1 * m_circBuf[m_head] ;
+
+        m_circBuf[m_head] -= m_mean ;
 
 
-        //std::cout << pBlockSamples[i] << std::endl ;
+        //std::cout << m_circBuf[m_head] << std::endl;
 
-        if (abs(pBlockSamples[i]) > 1000)
+        if (abs(m_circBuf[m_head]) > m_maxValue)
         {
-            std::cout << pBlockSamples[i] << std::endl;
-        }
-
-        if (abs(pBlockSamples[i]) > m_maxValue)
-        {
-            m_maxValue = abs(pBlockSamples[i]) ;
+            m_maxValue = abs(m_circBuf[m_head]) ;
             m_maxDelay = 0 ;
+            //std::cout << "maxValue:" << m_maxValue << std::endl;
         }
         else
         {
             m_maxDelay++;
-            if (m_maxDelay == 1000 && m_maxValue > 500000)
+            //std::cout << "maxDelay:" << m_maxDelay << std::endl;
+
+            if (m_maxDelay == 1000 && m_maxValue > det_th)
             {
                 std::cout << "Action potential: max value: " << m_maxValue << std::endl ;
 
                 m_maxValue = 0 ;
                 m_maxDelay = 0 ;
+
+                for (int u = 0; u < CIRC_BUF_SIZE; u++)
+                {
+                    m_flatBuf[u] = m_circBuf[(m_head + 1 + u) % CIRC_BUF_SIZE];
+                }
+                save_to_file("signal.txt", m_flatBuf, CIRC_BUF_SIZE);
             }
         }
 
-        m_head = (m_head + 1) % CIRC_BUF_SIZE;
+        m_head = (m_head + 1) % CIRC_BUF_SIZE ;
     }
 
-    m_mean = (float(block_sum) / SAMPLES_PER_BLOCK)*0.2 + 0.8*m_mean ;
-
-    std::cout << "MEAN>>>>" << m_mean << std::endl;
-
-
-    m_packetCounter++;
+    m_packetCounter++ ;
     return nullptr ;
 }
 
