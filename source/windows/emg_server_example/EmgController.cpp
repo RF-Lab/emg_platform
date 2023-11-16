@@ -10,7 +10,7 @@ const int SAMPLES_PER_BLOCK = 128;
 
 const int PACKET_SIZE = 528; // bytes
 
-const float det_th = 0.02 ;
+const float det_th = 0.01 ;
 
 void save_to_file(const char* szFileName, float* data, int size)
 {
@@ -41,6 +41,7 @@ EmgController::EmgController()
     m_filter = new firFilter() ;
     m_filter->load("filter.txt") ;
     m_sigScale = 0.0000228 ;
+    m_model = new TensorflowModel();
 }
 
 EmgController::~EmgController()
@@ -50,6 +51,7 @@ EmgController::~EmgController()
     delete[] m_circBuf; m_circBuf = nullptr ;
     delete[] m_flatBuf; m_flatBuf = nullptr ;
     delete m_filter; m_filter = nullptr ;
+    delete m_model; m_model = nullptr;
 }
 
 bool EmgController::CreateSocket()
@@ -104,9 +106,7 @@ int EmgController::Connect()
         return (false) ;
     }
 
-	TensorflowModel model ;
-	model.Load("C:\\userdata\\projects\\models\\model") ;
-	model.Predict() ;
+	m_model->Load("C:\\userdata\\projects\\models\\model") ;
 
 	return true ;
 }
@@ -197,7 +197,8 @@ float* EmgController::readProbVector()
                 {
                     m_flatBuf[u] = m_circBuf[(m_head + 1 + u) % CIRC_BUF_SIZE];
                 }
-                save_to_file("signal.txt", m_flatBuf, CIRC_BUF_SIZE);
+                save_to_file("signal.txt", m_flatBuf, CIRC_BUF_SIZE) ;
+                m_model->Predict(m_flatBuf) ;
             }
         }
 

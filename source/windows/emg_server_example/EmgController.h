@@ -1,6 +1,7 @@
 #pragma once
 #include "Controller.h"
 #include "firFilter.h"
+#include "ClassificationModel.h"
 class EmgController : public Controller
 {
 public:
@@ -24,5 +25,7 @@ private:
 	firFilter* m_filter ;
 	float m_sigScale ;
 	float* m_flatBuf ;
+	TensorflowModel* m_model ;
+
 } ;
 
