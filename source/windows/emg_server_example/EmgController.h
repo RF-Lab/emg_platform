@@ -22,10 +22,14 @@ private:
 	float m_maxValue ;
 	int m_maxDelay ;
 	float m_mean;
+	float* m_meanBuf;
 	firFilter* m_filter ;
 	float m_sigScale ;
 	float* m_flatBuf ;
+	float* m_meanFlatBuf ;
 	TensorflowModel* m_model ;
+
+	float* m_rawBuf ;
 
 } ;
 

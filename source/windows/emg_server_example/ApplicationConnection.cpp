@@ -165,3 +165,42 @@ int ConnectionToUnity::Send(int controllerCode)
     ReleaseMutex(m_hMutex) ;
     return (1) ;
 }
+
+int ConnectionToUnity::Send(float* probVector, int size)
+{
+    if (NULL == m_hMutex)
+    {
+        std::wcout << L"[ConnectionToUnity]: Not connected!";
+        return (-1);
+    }
+    DWORD dwWaitResult = WaitForSingleObject(
+        m_hMutex,     // handle to mutex
+        INFINITE);  // no time-out interval
+    __try
+    {
+        mapMemoryDataFormat* pSharedData = (mapMemoryDataFormat*)m_mapView;
+        pSharedData->numGestures = NumGestures;
+        pSharedData->prob[0] = probVector[0] ;
+        pSharedData->prob[1] = probVector[1] ;
+        pSharedData->prob[2] = probVector[2] ;
+        pSharedData->prob[3] = 0.0;
+        pSharedData->prob[4] = 0.0;
+        pSharedData->prob[5] = 0.0;
+        pSharedData->bUpdated = true;
+    }
+    __except (GetExceptionCode() == EXCEPTION_IN_PAGE_ERROR ?
+        EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
+    {
+        // Failed to write to the view.
+        std::wcout << L"[ConnectionToUnity]: Error: failed to write to shared memory.";
+    }
+
+    if (!FlushViewOfFile(m_mapView, 29 + 2000 * 4))
+    {
+        std::wcout << L"[ConnectionToUnity]:Error: failed to flush shared memory.";
+        return (-1);
+    }
+
+    ReleaseMutex(m_hMutex);
+    return (1);
+}

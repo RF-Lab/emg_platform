@@ -9,8 +9,8 @@ public:
 	ClassificationModel() = default ;
 	virtual bool Load(const char*) { return (false); }
 	virtual bool Predict(float*) { return (false); }
-private:
-	float predProb[MaxCNumlasses] ;
+public:
+	float m_probVector[MaxCNumlasses] ;
 } ;
 
 const int numInputSamples = 2000 ;

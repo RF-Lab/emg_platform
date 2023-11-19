@@ -7,6 +7,7 @@ public:
 	virtual int Connect() { return (-1) ; }
 	virtual int Release() { return (-1); }
 	virtual int Send(int controllerCode) { return (-1); }
+	virtual int Send(float* probVector, int size) { return (-1); }
 	~ApplicationConnection() { Release();  }
 } ;
 
@@ -17,6 +18,7 @@ public:
 	virtual int Connect() ;
 	virtual int Release() ;
 	virtual int Send(int controllerCode) ;
+	virtual int Send(float* probVector, int size) ;
 private:
 	HANDLE m_hMutex = NULL ;
 	HANDLE m_hFileMap = NULL ;

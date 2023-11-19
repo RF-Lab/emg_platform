@@ -10,10 +10,11 @@ const int SAMPLES_PER_BLOCK = 128;
 
 const int PACKET_SIZE = 528; // bytes
 
-const float det_th = 0.01 ;
+const float det_th = 0.1 ;
 
 void save_to_file(const char* szFileName, float* data, int size)
 {
+    std::cout << szFileName << std::endl;
     FILE* f = nullptr;
     fopen_s(&f, szFileName, "wt") ;
     if (nullptr != f)
@@ -24,8 +25,24 @@ void save_to_file(const char* szFileName, float* data, int size)
         }
         fclose(f) ;
     }
+}
+
+void append_to_file(const char* szFileName, int* data, int size)
+{
+    //std::cout << szFileName << std::endl;
+    FILE* f = nullptr;
+    fopen_s(&f, szFileName, "at") ;
+    if (nullptr != f)
+    {
+        for (int n = 0; n < size; n++)
+        {
+            fprintf(f, "%d\n", data[n]);
+        }
+        fclose(f);
+    }
 
 }
+
 
 EmgController::EmgController()
 {
@@ -41,7 +58,10 @@ EmgController::EmgController()
     m_filter = new firFilter() ;
     m_filter->load("filter.txt") ;
     m_sigScale = 0.0000228 ;
-    m_model = new TensorflowModel();
+    m_model = new TensorflowModel() ;
+    m_meanBuf = new float[CIRC_BUF_SIZE] ;
+    m_meanFlatBuf = new float[CIRC_BUF_SIZE];
+    m_rawBuf = new float[CIRC_BUF_SIZE] ;
 }
 
 EmgController::~EmgController()
@@ -52,6 +72,9 @@ EmgController::~EmgController()
     delete[] m_flatBuf; m_flatBuf = nullptr ;
     delete m_filter; m_filter = nullptr ;
     delete m_model; m_model = nullptr;
+    delete m_meanBuf; m_meanBuf = nullptr;
+    delete m_meanFlatBuf; m_meanFlatBuf = nullptr;
+    delete m_rawBuf;
 }
 
 bool EmgController::CreateSocket()
@@ -113,7 +136,9 @@ int EmgController::Connect()
 
 float* EmgController::readProbVector()
 {
-    while (1)
+    bool gesture_detected = false;
+
+    while (true)
     {
         // fill exactly PACKET_SIZE bytes in m_recvBuf
         int receivedBytes = 0;
@@ -164,14 +189,17 @@ float* EmgController::readProbVector()
     }
 
     int* pBlockSamples = (int*)(m_recvBuf + 16) ;
+    append_to_file( "data/rawint.txt", pBlockSamples, SAMPLES_PER_BLOCK) ;
     for (int i = 0; i < SAMPLES_PER_BLOCK; i++)
     {
-        m_circBuf[m_head] = (*m_filter)(pBlockSamples[i] * m_sigScale) ;
+        //m_circBuf[m_head] = (*m_filter)(((double)pBlockSamples[i]) * m_sigScale) ;
+        m_circBuf[m_head] = (((float)pBlockSamples[i]) * m_sigScale) ;
+        m_rawBuf[m_head] = (float)pBlockSamples[i] ;
 
-        m_mean = m_mean * 0.9 + 0.1 * m_circBuf[m_head] ;
+        m_mean = m_mean * 0.99 + 0.01 * m_circBuf[m_head] ;
 
         m_circBuf[m_head] -= m_mean ;
-
+        m_meanBuf[m_head] = m_mean ;
 
         //std::cout << m_circBuf[m_head] << std::endl;
 
@@ -195,10 +223,32 @@ float* EmgController::readProbVector()
 
                 for (int u = 0; u < CIRC_BUF_SIZE; u++)
                 {
-                    m_flatBuf[u] = m_circBuf[(m_head + 1 + u) % CIRC_BUF_SIZE];
+                    m_flatBuf[u] = m_circBuf[(m_head + 1 + u) % CIRC_BUF_SIZE] ;
+                    m_meanFlatBuf[u] = m_meanBuf[(m_head + 1 + u) % CIRC_BUF_SIZE] ;
                 }
-                save_to_file("signal.txt", m_flatBuf, CIRC_BUF_SIZE) ;
+
+                //time_t now = time(NULL) ;
+                //struct tm tstruct ;
+                //char buf[80] ;
+                //localtime_s(&tstruct,&now) ;
+
+                //strftime(buf, sizeof(buf), "data/%Y-%m-%d-%H-%M-%S-signal.txt", &tstruct) ;
+                //save_to_file(buf, m_flatBuf, CIRC_BUF_SIZE) ;
+                save_to_file("data/signal.txt", m_flatBuf, CIRC_BUF_SIZE);
+
+                //strftime(buf, sizeof(buf), "data/%Y-%m-%d-%H-%M-%S_mean.txt", &tstruct) ;
+                //save_to_file(buf, m_meanFlatBuf, CIRC_BUF_SIZE) ;
+                //save_to_file("data/mean.txt", m_meanFlatBuf, CIRC_BUF_SIZE) ;
+
+                //save_to_file("data/raw.txt", m_rawBuf, CIRC_BUF_SIZE);
+
                 m_model->Predict(m_flatBuf) ;
+                for (int nn = 0; nn < 3; nn++)
+                {
+                    m_probVector[nn] = m_model->m_probVector[nn] ;
+                }
+                gesture_detected = true;
+
             }
         }
 
@@ -206,6 +256,13 @@ float* EmgController::readProbVector()
     }
 
     m_packetCounter++ ;
-    return nullptr ;
+    if (gesture_detected)
+    {
+        return m_probVector;
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 

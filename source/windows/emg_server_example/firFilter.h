@@ -5,11 +5,11 @@ public:
 	firFilter() ;
 	bool load(const char* szFileName) ;
 	~firFilter() ;
-	float operator()(float sample) ;
+	float operator()(double sample) ;
 private:
-	float* m_circBuf ;
+	double* m_circBuf ;
 	int m_head ;
-	float* m_impResp ;
+	double* m_impResp ;
 	int m_size ;
 } ;
 

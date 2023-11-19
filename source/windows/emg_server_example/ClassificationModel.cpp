@@ -107,7 +107,12 @@ bool TensorflowModel::Predict(float* samples)
     std::cout << "probs[1]: " << pProbs[1] << std::endl ;
     std::cout << "probs[2]: " << pProbs[2] << std::endl ;
     std::cout << "probs[3]: " << pProbs[3] << std::endl ;
-    
+
+    m_probVector[0] = pProbs[0] ;
+    m_probVector[1] = pProbs[1] ;
+    m_probVector[2] = pProbs[3] ;
+    m_probVector[3] = pProbs[2] ;
+
     return true ;
 
 }

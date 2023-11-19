@@ -39,8 +39,13 @@ int main()
         if (gameController)
         {
             //controllerCode = gameController->readSingleCode() ;
-            gameController->readProbVector() ;
+            float* probVector = gameController->readProbVector() ;
+            if (nullptr != probVector)
+            {
+                appConnection->Send(probVector, 3);
+            }
         }
+        /*
         if (controllerCode == 27)
         {
             std::wcout << L"Server terminated." ;
@@ -50,6 +55,7 @@ int main()
         {
             appConnection->Send(controllerCode) ;
         }
+        */
         Sleep(10) ; // Relax CPU usage
     }
 
