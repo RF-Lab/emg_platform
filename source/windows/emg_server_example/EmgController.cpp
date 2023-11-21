@@ -10,7 +10,7 @@ const int SAMPLES_PER_BLOCK = 128;
 
 const int PACKET_SIZE = 528; // bytes
 
-const float det_th = 0.1 ;
+const float det_th = 0.01 ;
 
 void save_to_file(const char* szFileName, float* data, int size)
 {
@@ -57,7 +57,7 @@ EmgController::EmgController()
     m_mean = 0.0 ;
     m_filter = new firFilter() ;
     m_filter->load("filter.txt") ;
-    m_sigScale = 0.0000228 ;
+    m_sigScale = 0.00001;//0.0000228 ;
     m_model = new TensorflowModel() ;
     m_meanBuf = new float[CIRC_BUF_SIZE] ;
     m_meanFlatBuf = new float[CIRC_BUF_SIZE];
@@ -192,8 +192,8 @@ float* EmgController::readProbVector()
     append_to_file( "data/rawint.txt", pBlockSamples, SAMPLES_PER_BLOCK) ;
     for (int i = 0; i < SAMPLES_PER_BLOCK; i++)
     {
-        //m_circBuf[m_head] = (*m_filter)(((double)pBlockSamples[i]) * m_sigScale) ;
-        m_circBuf[m_head] = (((float)pBlockSamples[i]) * m_sigScale) ;
+        m_circBuf[m_head] = (*m_filter)(((double)pBlockSamples[i]) * m_sigScale) ;
+        //m_circBuf[m_head] = (((float)pBlockSamples[i]) * m_sigScale) ;
         m_rawBuf[m_head] = (float)pBlockSamples[i] ;
 
         m_mean = m_mean * 0.99 + 0.01 * m_circBuf[m_head] ;
@@ -227,13 +227,13 @@ float* EmgController::readProbVector()
                     m_meanFlatBuf[u] = m_meanBuf[(m_head + 1 + u) % CIRC_BUF_SIZE] ;
                 }
 
-                //time_t now = time(NULL) ;
-                //struct tm tstruct ;
-                //char buf[80] ;
-                //localtime_s(&tstruct,&now) ;
+                time_t now = time(NULL) ;
+                struct tm tstruct ;
+                char buf[80] ;
+                localtime_s(&tstruct,&now) ;
 
-                //strftime(buf, sizeof(buf), "data/%Y-%m-%d-%H-%M-%S-signal.txt", &tstruct) ;
-                //save_to_file(buf, m_flatBuf, CIRC_BUF_SIZE) ;
+                strftime(buf, sizeof(buf), "data/%Y-%m-%d-%H-%M-%S-signal.txt", &tstruct) ;
+                save_to_file(buf, m_flatBuf, CIRC_BUF_SIZE) ;
                 save_to_file("data/signal.txt", m_flatBuf, CIRC_BUF_SIZE);
 
                 //strftime(buf, sizeof(buf), "data/%Y-%m-%d-%H-%M-%S_mean.txt", &tstruct) ;
