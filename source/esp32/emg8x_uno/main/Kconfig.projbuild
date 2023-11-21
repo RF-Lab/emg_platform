@@ -1,0 +1,92 @@
+menu "WiFi Configuration"
+
+    config WIFI_MODE_SOFTAP
+        bool "WiFi SoftAP"
+        default 0
+        help
+            Software Access point mode.
+
+    config WIFI_SSID
+        string "WiFi SSID"
+        default "Keenetic-0079"
+        help
+            SSID (network name) for the example to connect to.
+
+    config WIFI_PASSWORD
+        string "WiFi Password"
+        default "yoHwLp6B"
+        help
+            WiFi password.
+
+    config WIFI_CHANNEL
+        int "WiFi Channel" if WIFI_MODE_SOFTAP
+        range 1 13
+        default 1
+        help
+            WiFi channel (network channel) for the example to use.
+
+    config MAX_STA_CONN
+        int "Maximal STA connections" if WIFI_MODE_SOFTAP
+        default 4
+        help
+            Max number of the STA connects to AP.
+        
+endmenu
+
+menu "EMG8x Configuration"
+
+    config EMG8X_BOARD_EMULATION
+        bool "ADS1299 Emulation"
+        default 0
+        help
+            Run microcode without ADC.
+
+    config EMG8X_BOARD_REV
+        int "EMG8x Board Revision" if !EMG8X_BOARD_EMULATION
+        default 2
+        help
+            EMG8x Board Major revision number (f.e. 1 for 2020-r1.0)
+
+    config EMG8X_SPI_CLOCK_FREQUENCY
+        int "SPI clock frequency, Hz" if !EMG8X_BOARD_EMULATION
+        default 500000
+        help
+            SPI clock frequency in Hz
+
+    config EMG8X_ADC_SAMPLING_FREQUENCY
+        int "ADC sampling frequency code"
+        default 5
+        help
+            0(16 kSPS),1(8 kSPS),2(4 kSPS),3(2 kSPS),4(1 kSPS),5(500 SPS),6(250 SPS),7(Reserved)
+
+    config EMG8X_TRANSPORT_BLOCK_HEADER_SIZE
+        int "Transport block header size (bytes)"
+        default 16
+        help 
+            Transport block header size in bytes (should be aligned to 4 bytes)
+
+    config EMG8X_PKT_COUNT_OFFSET
+        int "Offset to packet counter in 32 bit words"
+        default 2
+        help 
+            Offset to packet counter from the begining of transport block header in 4bytes words
+
+    config EMG8X_SAMPLES_PER_TRANSPORT_BLOCK
+        int "Number of samples per transport block"
+        default 128
+        help 
+            Number of samples per transport block
+
+    config EMG8X_TRANSPORT_QUE_SIZE
+        int "Transport queue size (blocks)"
+        default 4
+        help 
+            Transport queue size in blocks
+
+    config EMG8X_TCP_SERVER_PORT
+        int "Server TCP port"
+        default 3000
+        help 
+            TCP port to listen
+
+endmenu
