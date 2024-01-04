@@ -142,7 +142,7 @@ F 3 "~" H 2600 2750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:PJ-325-5P U?
+L ADS1299EMG8xR2-rescue:PJ-325-5P-Connector U?
 U 1 1 5FFE47AD
 P 1700 2700
 AR Path="/5FFE47AD" Ref="U?"  Part="1" 
@@ -420,7 +420,7 @@ F 3 "~" H 2600 1200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:PJ-325-5P U?
+L ADS1299EMG8xR2-rescue:PJ-325-5P-Connector U?
 U 1 1 60087200
 P 1700 1150
 AR Path="/60087200" Ref="U?"  Part="1" 
@@ -529,7 +529,7 @@ F 3 "~" H 3300 1650 50  0001 C CNN
 $EndComp
 Connection ~ 3750 1200
 $Comp
-L Amplifier_Instrumentation:INA331 U?
+L ADS1299EMG8xR2-rescue:INA331-Amplifier_Instrumentation U?
 U 1 1 60087258
 P 3450 1200
 AR Path="/60087258" Ref="U?"  Part="1" 
@@ -645,7 +645,7 @@ F 3 "~" H 3250 4300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:PJ-325-5P U?
+L ADS1299EMG8xR2-rescue:PJ-325-5P-Connector U?
 U 1 1 600CBFB0
 P 1850 4250
 AR Path="/600CBFB0" Ref="U?"  Part="1" 
@@ -798,7 +798,7 @@ F 3 "~" H 2850 5900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:PJ-325-5P U?
+L ADS1299EMG8xR2-rescue:PJ-325-5P-Connector U?
 U 1 1 5FFF3AFE
 P 1850 5850
 AR Path="/5FFF3AFE" Ref="U?"  Part="1" 
@@ -1146,7 +1146,7 @@ F 3 "~" H 8050 2700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:PJ-325-5P U?
+L ADS1299EMG8xR2-rescue:PJ-325-5P-Connector U?
 U 1 1 606B6CA2
 P 6950 2650
 AR Path="/606B6CA2" Ref="U?"  Part="1" 
@@ -1243,7 +1243,7 @@ F 3 "~" H 8750 3150 50  0001 C CNN
 $EndComp
 Connection ~ 9200 2700
 $Comp
-L Amplifier_Instrumentation:INA331 U?
+L ADS1299EMG8xR2-rescue:INA331-Amplifier_Instrumentation U?
 U 1 1 606B6CFA
 P 8900 2700
 AR Path="/606B6CFA" Ref="U?"  Part="1" 
@@ -1541,7 +1541,7 @@ F 3 "~" H 8050 1200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:PJ-325-5P U?
+L ADS1299EMG8xR2-rescue:PJ-325-5P-Connector U?
 U 1 1 608BE575
 P 7150 1150
 AR Path="/608BE575" Ref="U?"  Part="1" 
@@ -1650,7 +1650,7 @@ F 3 "~" H 8750 1650 50  0001 C CNN
 $EndComp
 Connection ~ 9200 1200
 $Comp
-L Amplifier_Instrumentation:INA331 U?
+L ADS1299EMG8xR2-rescue:INA331-Amplifier_Instrumentation U?
 U 1 1 608BE5CD
 P 8900 1200
 AR Path="/608BE5CD" Ref="U?"  Part="1" 
@@ -1970,7 +1970,7 @@ Wire Wire Line
 	4450 1200 4600 1200
 Connection ~ 3750 2750
 $Comp
-L Amplifier_Instrumentation:INA331 U?
+L ADS1299EMG8xR2-rescue:INA331-Amplifier_Instrumentation U?
 U 1 1 5FFE47F1
 P 3450 2750
 AR Path="/5FFE47F1" Ref="U?"  Part="1" 
@@ -2094,7 +2094,7 @@ F 3 "" H 3250 4450 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Amplifier_Instrumentation:INA331 U?
+L ADS1299EMG8xR2-rescue:INA331-Amplifier_Instrumentation U?
 U 1 1 6062C446
 P 3950 4450
 AR Path="/6062C446" Ref="U?"  Part="1" 
@@ -2249,7 +2249,7 @@ Wire Wire Line
 Wire Wire Line
 	2250 6350 2450 6350
 $Comp
-L Amplifier_Instrumentation:INA331 U?
+L ADS1299EMG8xR2-rescue:INA331-Amplifier_Instrumentation U?
 U 1 1 608CF427
 P 3950 6050
 AR Path="/608CF427" Ref="U?"  Part="1" 

@@ -14,7 +14,7 @@ Comment3 "Based on 8 channel ADC ADS1299 (2 channel switched off for R4)"
 Comment4 "Wireless EMG acquisition platform"
 $EndDescr
 $Comp
-L MCU_Espressif:ESP32-DevKitC U13
+L ADS1299EMG8xR2-rescue:ESP32-DevKitC-MCU_Espressif U13
 U 1 1 5F7CFF1B
 P 8800 3800
 F 0 "U13" H 8800 4900 50  0000 C CNN
@@ -29,7 +29,7 @@ L Device:R R19
 U 1 1 5F8851C3
 P 3100 950
 F 0 "R19" V 3000 950 50  0000 C CNN
-F 1 "1M" V 3100 950 50  0000 C CNN
+F 1 "390k" V 3100 950 50  0000 C CNN
 F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 3030 950 50  0001 C CNN
 F 3 "~" H 3100 950 50  0001 C CNN
 	1    3100 950 
@@ -39,8 +39,8 @@ $Comp
 L Device:C C14
 U 1 1 5F88666F
 P 3100 1200
-F 0 "C14" V 3050 1100 50  0000 C CNN
-F 1 "1n5" V 3050 1300 50  0000 C CNN
+F 0 "C14" V 3050 1350 50  0000 C CNN
+F 1 "0.01uF" V 3150 1400 50  0000 C CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 3138 1050 50  0001 C CNN
 F 3 "~" H 3100 1200 50  0001 C CNN
 	1    3100 1200
@@ -1523,7 +1523,7 @@ F0 "Analogue interfaces" 50
 F1 "iamp.sch" 50
 $EndSheet
 $Comp
-L Analog_ADC:ADS1299 U9
+L ADS1299EMG8xR2-rescue:ADS1299-Analog_ADC U9
 U 1 1 5F7CED44
 P 4800 3800
 F 0 "U9" H 4750 3950 50  0000 L CNN
