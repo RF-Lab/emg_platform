@@ -467,5 +467,6 @@ void app_main()
 
     wifi_init() ;
     // emg8x_app_start() ;
+    // Запуск задачи (сервер поиска платы в сети
     xTaskCreate(echo_server_task, "udp_server", 4096, (void*)AF_INET, 5, NULL);
 }
