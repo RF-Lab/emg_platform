@@ -2,6 +2,7 @@
 
 [Этот readme на русском](./readme-ru.md).
 
+|  Folder                                                                                         | Description                                                      |
 | ----------------------------------------------------------------------------------------------- |----------------------------------------------------------------- |
 | [ADS1292EMG2x](https://github.com/RF-Lab/emg_platform/tree/master/hw_platform/ADS1292EMG2x)     | Two channel single board project based on ADS1292. Cancelled.    |
 
