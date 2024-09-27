@@ -1,4 +1,6 @@
-tqdm
-====
+2 channel Myoelectric ADC with SPI interface
+============================================
 
-|Py-Versions| |Versions| |Conda-Forge-Status| |Docker| |Snapcraft|
+|Py-Versions| |Versions| |kicad|
+
+
