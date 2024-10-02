@@ -1,5 +1,7 @@
 # EMG Open Source hardware platform
 
+[![KiCad](https://img.shields.io/badge/KiCad-8.0.1-blue.svg)](https://www.kicad.org/)
+
 [Этот readme на русском](./readme-ru.md).
 
 |  Folder                                                                                         | Description                                                      | CAD |
