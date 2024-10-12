@@ -1429,6 +1429,26 @@
 	)
 	(wire
 		(pts
+			(xy 134.62 102.87) (xy 149.86 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3cc38837-814a-4066-8f29-2c0348e85cb6")
+	)
+	(wire
+		(pts
+			(xy 62.23 74.93) (xy 68.58 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "427f66f9-8db1-46a8-ab29-9f46b8638cc6")
+	)
+	(wire
+		(pts
 			(xy 134.62 87.63) (xy 139.7 87.63)
 		)
 		(stroke
@@ -1499,6 +1519,16 @@
 	)
 	(wire
 		(pts
+			(xy 62.23 77.47) (xy 68.58 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "68b5ca5e-9c56-47b4-91c6-ae92c1409d94")
+	)
+	(wire
+		(pts
 			(xy 134.62 92.71) (xy 149.86 92.71)
 		)
 		(stroke
@@ -1506,6 +1536,36 @@
 			(type default)
 		)
 		(uuid "6bd3e514-84b1-4b58-a7da-e758d57d284f")
+	)
+	(wire
+		(pts
+			(xy 134.62 95.25) (xy 149.86 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "71c00a64-537a-4edf-8eee-87ffd9d903cf")
+	)
+	(wire
+		(pts
+			(xy 134.62 97.79) (xy 149.86 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "776cb39e-c45c-4868-8b5c-5c0bd508ea6c")
+	)
+	(wire
+		(pts
+			(xy 134.62 82.55) (xy 149.86 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "87676d0d-7c78-43a7-b936-cec93d42d728")
 	)
 	(wire
 		(pts
@@ -1577,6 +1637,16 @@
 		)
 		(uuid "ea4e454d-dbae-441b-9268-27b27dce8956")
 	)
+	(wire
+		(pts
+			(xy 134.62 110.49) (xy 149.86 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fb5007b9-a1da-485f-9399-5387c37f4176")
+	)
 	(text "RGB Led"
 		(exclude_from_sim no)
 		(at 187.96 67.31 0)
@@ -1599,6 +1669,78 @@
 			(justify left)
 		)
 		(uuid "084c89f1-233d-4b7b-a66e-9a11086d6c5a")
+	)
+	(hierarchical_label "gpio33"
+		(shape input)
+		(at 62.23 77.47 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "08ae4b34-d601-4a31-a083-2b4b26852239")
+	)
+	(hierarchical_label "gpio4"
+		(shape input)
+		(at 149.86 82.55 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0dc44fbd-9184-4219-9fc9-863500a07130")
+	)
+	(hierarchical_label "gpio27"
+		(shape input)
+		(at 149.86 110.49 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1d57251b-09b9-4e88-8545-f795068065e1")
+	)
+	(hierarchical_label "gpio19_vspi_miso"
+		(shape input)
+		(at 149.86 95.25 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3ef7f377-5b39-41c4-bdae-9e528f22e6f1")
+	)
+	(hierarchical_label "gpio21_start"
+		(shape input)
+		(at 149.86 97.79 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "672a88e5-1362-4d5b-b8bb-604a45eb7c07")
+	)
+	(hierarchical_label "gpio32"
+		(shape input)
+		(at 62.23 74.93 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6ad56eb0-04f3-4ef5-85a4-590c1607efd5")
 	)
 	(hierarchical_label "RXD0"
 		(shape input)
@@ -1671,6 +1813,18 @@
 			(justify left)
 		)
 		(uuid "d6e81d8a-8992-4757-8ce2-7db9406b3a96")
+	)
+	(hierarchical_label "gpio23_vspi_mosi"
+		(shape input)
+		(at 149.86 102.87 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d83708dc-808f-49b0-bd1d-325c693a6296")
 	)
 	(hierarchical_label "3.3V"
 		(shape input)
