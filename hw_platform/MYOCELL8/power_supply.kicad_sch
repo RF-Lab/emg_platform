@@ -5,10 +5,10 @@
 	(uuid "67fad4a5-143f-46c8-8cf0-1d04b07ba4d4")
 	(paper "A4")
 	(title_block
-		(title "EMG-2x: Two channel EMG board")
-		(date "2022-02-11")
+		(title "Power supply")
+		(date "2024-10-17")
 		(rev "1")
-		(company "Developed by Rf-lab.org")
+		(company "MIREA/Rf-lab.org")
 	)
 	(lib_symbols
 		(symbol "Battery_Management:MCP73831-2-OT"

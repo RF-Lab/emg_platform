@@ -4,6 +4,11 @@
 	(generator_version "8.0")
 	(uuid "2f73fc87-77b1-44fe-8ecf-e04f8a818d98")
 	(paper "A4")
+	(title_block
+		(title "ESP32 CPU")
+		(date "2024-10-17")
+		(company "MIREA")
+	)
 	(lib_symbols
 		(symbol "Device:C"
 			(pin_numbers hide)

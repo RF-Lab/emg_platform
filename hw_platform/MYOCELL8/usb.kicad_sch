@@ -4,6 +4,12 @@
 	(generator_version "8.0")
 	(uuid "f0ae437b-666b-4946-a380-f4c7ca0ed1f9")
 	(paper "A4")
+	(title_block
+		(title "USB Interface")
+		(date "2024-10-17")
+		(rev "01")
+		(company "MIREA")
+	)
 	(lib_symbols
 		(symbol "Device:C"
 			(pin_numbers hide)
