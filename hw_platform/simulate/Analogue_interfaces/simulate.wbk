@@ -2,9 +2,19 @@
   "last_sch_text_sim_command": "",
   "tabs": [
     {
-      "analysis": "TRAN",
+      "analysis": "OP",
       "commands": [
-        ".tran 1m 200m",
+        ".op",
+        ".kicad adjustpaths",
+        ".save all",
+        ".probe alli",
+        ".probe allp"
+      ]
+    },
+    {
+      "analysis": "AC",
+      "commands": [
+        ".ac dec 10 1 2k",
         ".kicad adjustpaths",
         ".save all",
         ".probe alli",
@@ -21,21 +31,21 @@
       "showGrid": true,
       "traces": [
         {
-          "color": "rgb(55, 126, 184)",
-          "signal": "V(/TO_ADC_INP_P)",
-          "trace_type": 257
+          "color": "rgb(228, 26, 28)",
+          "signal": "V(/TO_ADC_INP_P) (фаза)",
+          "trace_type": 517
         },
         {
-          "color": "rgb(77, 175, 74)",
-          "signal": "V(Net-_C4-Pad1_)",
-          "trace_type": 257
+          "color": "rgb(228, 26, 28)",
+          "signal": "V(/TO_ADC_INP_P) (сила)",
+          "trace_type": 521
         }
       ]
     },
     {
-      "analysis": "AC",
+      "analysis": "TRAN",
       "commands": [
-        ".ac dec 10 10 1k",
+        ".tran 10m 100m",
         ".kicad adjustpaths",
         ".save all",
         ".probe alli",
@@ -50,7 +60,23 @@
       },
       "measurements": [],
       "showGrid": true,
-      "traces": []
+      "traces": [
+        {
+          "color": "rgb(77, 175, 74)",
+          "signal": "V(/GREEN)",
+          "trace_type": 257
+        },
+        {
+          "color": "rgb(55, 126, 184)",
+          "signal": "V(/RED)",
+          "trace_type": 257
+        },
+        {
+          "color": "rgb(228, 26, 28)",
+          "signal": "V(/TO_ADC_INP_P)",
+          "trace_type": 257
+        }
+      ]
     }
   ],
   "user_defined_signals": [],
