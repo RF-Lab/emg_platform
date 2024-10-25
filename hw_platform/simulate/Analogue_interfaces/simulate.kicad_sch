@@ -2701,7 +2701,7 @@
 				(hide yes)
 			)
 		)
-		(property "Sim.Library" "sboc014a\\INA331_PSPICE_AIO\\INA331.LIB"
+		(property "Sim.Library" "libs\\INA331.LIB"
 			(at 170.18 67.31 0)
 			(effects
 				(font
@@ -2721,6 +2721,15 @@
 		)
 		(property "Sim.Pins" "1=1 2=2 3=3 4=4 5=5 6=6 7=7 8=8"
 			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" "SUBCKT"
+			(at 170.18 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
