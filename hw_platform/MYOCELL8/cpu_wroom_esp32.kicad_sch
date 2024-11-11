@@ -2047,6 +2047,16 @@
 		)
 		(uuid "fb5007b9-a1da-485f-9399-5387c37f4176")
 	)
+	(text "Push button:\nPTS645 Series"
+		(exclude_from_sim no)
+		(at 184.404 17.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "89e104a4-b100-446b-bd71-75c999bf1336")
+	)
 	(text "RGB Led"
 		(exclude_from_sim no)
 		(at 191.77 100.33 0)
@@ -2057,6 +2067,16 @@
 			(justify left bottom)
 		)
 		(uuid "c59e40e0-45ae-4948-bb8d-75b557d33ba8")
+	)
+	(text "https://github.com/espressif/kicad-libraries"
+		(exclude_from_sim no)
+		(at 98.806 129.286 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "e5b8d000-f216-43be-95fa-db4a4f826678")
 	)
 	(hierarchical_label "TXD0"
 		(shape input)
@@ -2699,7 +2719,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645"
 			(at 184.15 27.94 0)
 			(effects
 				(font
@@ -3178,7 +3198,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645"
 			(at 237.49 27.94 0)
 			(effects
 				(font
