@@ -661,7 +661,7 @@
 				)
 			)
 		)
-		(symbol "Diode:BAT41"
+		(symbol "Diode:MBR0520"
 			(pin_numbers hide)
 			(pin_names
 				(offset 1.016) hide)
@@ -676,7 +676,7 @@
 					)
 				)
 			)
-			(property "Value" "BAT41"
+			(property "Value" "MBR0520"
 				(at 0 -2.54 0)
 				(effects
 					(font
@@ -684,7 +684,7 @@
 					)
 				)
 			)
-			(property "Footprint" "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal"
+			(property "Footprint" "Diode_SMD:D_SOD-123"
 				(at 0 -4.445 0)
 				(effects
 					(font
@@ -693,7 +693,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "http://www.vishay.com/docs/85659/bat41.pdf"
+			(property "Datasheet" "http://www.mccsemi.com/up_pdf/MBR0520~MBR0580(SOD123).pdf"
 				(at 0 0 0)
 				(effects
 					(font
@@ -702,7 +702,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "100V 0.1A Small Signal Schottky Diode, DO-35"
+			(property "Description" "20V 0.5A Schottky Power Rectifier Diode, SOD-123"
 				(at 0 0 0)
 				(effects
 					(font
@@ -720,7 +720,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "D*DO?35*"
+			(property "ki_fp_filters" "D*SOD?123*"
 				(at 0 0 0)
 				(effects
 					(font
@@ -729,7 +729,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "BAT41_0_1"
+			(symbol "MBR0520_0_1"
 				(polyline
 					(pts
 						(xy 1.27 0) (xy -1.27 0)
@@ -767,7 +767,7 @@
 					)
 				)
 			)
-			(symbol "BAT41_1_1"
+			(symbol "MBR0520_1_1"
 				(pin passive line
 					(at -3.81 0 0)
 					(length 2.54)
@@ -4738,6 +4738,74 @@
 		)
 	)
 	(symbol
+		(lib_id "Diode:MBR0520")
+		(at 138.43 62.23 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "dc4839d7-b4c3-436d-963a-b12953113154")
+		(property "Reference" "D7"
+			(at 138.7475 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "MBR0520"
+			(at 138.7475 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-123"
+			(at 138.43 57.785 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.mccsemi.com/up_pdf/MBR0520~MBR0580(SOD123).pdf"
+			(at 138.43 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "20V 0.5A Schottky Power Rectifier Diode, SOD-123"
+			(at 138.43 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c14b09da-271b-4b60-baf1-d45e491444b5")
+		)
+		(pin "2"
+			(uuid "af231e15-d4eb-482f-bef9-ee0aa7c79967")
+		)
+		(instances
+			(project ""
+				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
+					(reference "D7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Battery_Management:MCP73831-2-OT")
 		(at 85.09 80.01 0)
 		(unit 1)
@@ -4906,86 +4974,6 @@
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
 					(reference "R42")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Diode:BAT41")
-		(at 138.43 62.23 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "eefffbe2-48e9-4e4f-8648-4d8997bc870c")
-		(property "Reference" "D3"
-			(at 138.7475 56.9935 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "BAT41"
-			(at 138.7475 59.7686 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal"
-			(at 138.43 57.785 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "http://www.vishay.com/docs/85659/bat41.pdf"
-			(at 138.43 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 138.43 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "08dfc9ec-e72f-46d7-82cc-f3bbbec03af8")
-		)
-		(pin "2"
-			(uuid "5533596c-bd51-4c91-bd91-4e04b1f3598b")
-		)
-		(instances
-			(project "myocell2"
-				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "D3")
-					(unit 1)
-				)
-			)
-			(project "myocell2"
-				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "D3")
-					(unit 1)
-				)
-			)
-			(project "ADS1292EMG2x"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "D3")
 					(unit 1)
 				)
 			)

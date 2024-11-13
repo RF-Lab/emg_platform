@@ -1006,14 +1006,14 @@
 				)
 			)
 		)
-		(symbol "Transistor_BJT:MBT3904DW1"
+		(symbol "Transistor_BJT:MMBT2222A"
 			(pin_names
 				(offset 0) hide)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(property "Reference" "Q"
-				(at 5.08 1.27 0)
+				(at 5.08 1.905 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -1021,8 +1021,8 @@
 					(justify left)
 				)
 			)
-			(property "Value" "MBT3904DW1"
-				(at 5.08 -1.27 0)
+			(property "Value" "MMBT2222A"
+				(at 5.08 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -1030,16 +1030,28 @@
 					(justify left)
 				)
 			)
-			(property "Footprint" "Package_TO_SOT_SMD:SOT-363_SC-70-6"
-				(at 5.08 2.54 0)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+				(at 5.08 -1.905 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/MMBT2222A.pdf"
+				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(justify left)
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "http://www.onsemi.com/pub_link/Collateral/MBT3904DW1T1-D.PDF"
+			(property "Description" "600mA Ic, 40V Vce, NPN Transistor, SOT-23"
 				(at 0 0 0)
 				(effects
 					(font
@@ -1048,7 +1060,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "200mA IC, 40V Vce, Dual NPN/NPN Transistors, SOT-363"
+			(property "ki_keywords" "NPN Transistor"
 				(at 0 0 0)
 				(effects
 					(font
@@ -1057,15 +1069,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_locked" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "NPN/NPN Transistor"
+			(property "ki_fp_filters" "SOT?23*"
 				(at 0 0 0)
 				(effects
 					(font
@@ -1074,28 +1078,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "SOT?363*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "MBT3904DW1_0_1"
-				(polyline
-					(pts
-						(xy 0.635 0) (xy -2.54 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
+			(symbol "MMBT2222A_0_1"
 				(polyline
 					(pts
 						(xy 0.635 0.635) (xy 2.54 2.54)
@@ -1156,11 +1139,11 @@
 					)
 				)
 			)
-			(symbol "MBT3904DW1_1_1"
-				(pin passive line
-					(at 2.54 -5.08 90)
-					(length 2.54)
-					(name "E1"
+			(symbol "MMBT2222A_1_1"
+				(pin input line
+					(at -5.08 0 0)
+					(length 5.715)
+					(name "B"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1175,10 +1158,10 @@
 						)
 					)
 				)
-				(pin input line
-					(at -5.08 0 0)
+				(pin passive line
+					(at 2.54 -5.08 90)
 					(length 2.54)
-					(name "B1"
+					(name "E"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1196,27 +1179,7 @@
 				(pin passive line
 					(at 2.54 5.08 270)
 					(length 2.54)
-					(name "C1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(symbol "MBT3904DW1_2_1"
-				(pin passive line
-					(at 2.54 5.08 270)
-					(length 2.54)
-					(name "C2"
+					(name "C"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1224,42 +1187,6 @@
 						)
 					)
 					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 2.54 -5.08 90)
-					(length 2.54)
-					(name "E2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -5.08 0 0)
-					(length 2.54)
-					(name "B2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2576,6 +2503,83 @@
 		)
 	)
 	(symbol
+		(lib_id "Transistor_BJT:MMBT2222A")
+		(at 162.56 68.58 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "244426bc-8ca2-430a-850f-02fc1b8cd1f1")
+		(property "Reference" "Q1"
+			(at 167.64 69.8501 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MMBT2222A"
+			(at 167.64 67.3101 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 167.64 66.675 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/MMBT2222A.pdf"
+			(at 162.56 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "600mA Ic, 40V Vce, NPN Transistor, SOT-23"
+			(at 162.56 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cc88f44e-0fdc-430d-97bd-67f862085a61")
+		)
+		(pin "2"
+			(uuid "92cbf036-66fa-4777-beb2-b440f4ff942b")
+		)
+		(pin "3"
+			(uuid "c69263ca-0aec-4803-b8ff-a56c43ac3f2f")
+		)
+		(instances
+			(project "MYOCELL8"
+				(path "/871ff10b-bde5-471c-b91a-de58aa271388/68d5f31f-ae3e-4b0c-9a19-0dd24ead5b66"
+					(reference "Q1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R_US")
 		(at 102.87 40.64 270)
 		(unit 1)
@@ -3112,6 +3116,82 @@
 		)
 	)
 	(symbol
+		(lib_id "Transistor_BJT:MMBT2222A")
+		(at 162.56 50.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8fa68418-d597-4321-9d55-ab737e01996e")
+		(property "Reference" "Q3"
+			(at 167.64 49.5299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MMBT2222A"
+			(at 167.64 52.0699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 167.64 52.705 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/MMBT2222A.pdf"
+			(at 162.56 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "600mA Ic, 40V Vce, NPN Transistor, SOT-23"
+			(at 162.56 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e591c525-2982-4a07-af2f-37cd607f4966")
+		)
+		(pin "2"
+			(uuid "2230884b-bfed-4d10-9ba7-d4a65d63c407")
+		)
+		(pin "3"
+			(uuid "fcd030e5-ada3-47ae-8ff9-ead3f16f028f")
+		)
+		(instances
+			(project ""
+				(path "/871ff10b-bde5-471c-b91a-de58aa271388/68d5f31f-ae3e-4b0c-9a19-0dd24ead5b66"
+					(reference "Q3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 83.82 90.17 0)
 		(unit 1)
@@ -3332,101 +3412,6 @@
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/68d5f31f-ae3e-4b0c-9a19-0dd24ead5b66"
 					(reference "D5")
 					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Transistor_BJT:MBT3904DW1")
-		(at 162.56 68.58 0)
-		(mirror x)
-		(unit 2)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d5654cca-9071-40b2-9275-d0192c28eab1")
-		(property "Reference" "Q1"
-			(at 167.4114 67.6715 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MBT3904DW1"
-			(at 167.4114 70.4466 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_USB:USB_Micro-B_Amphenol_10103594-0001LF_Horizontal"
-			(at 167.64 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "http://www.onsemi.com/pub_link/Collateral/MBT3904DW1T1-D.PDF"
-			(at 162.56 68.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 162.56 68.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "3"
-			(uuid "46af93c6-4db2-4ff3-b472-8feb59ab9b4e")
-		)
-		(pin "4"
-			(uuid "a27ce1e4-5569-474c-8076-fa9e7039f7ff")
-		)
-		(pin "5"
-			(uuid "4ca428c2-6984-44a2-bcb9-1f4ccb1e1b68")
-		)
-		(pin "1"
-			(uuid "f3d00de3-f41e-4775-89a9-5aa68812e5ba")
-		)
-		(pin "2"
-			(uuid "569ece66-b4fd-46a9-90c1-5ae54547fac0")
-		)
-		(pin "6"
-			(uuid "9472d45a-1473-486c-8e6a-a5b4e270eccc")
-		)
-		(instances
-			(project "myocell2"
-				(path "/871ff10b-bde5-471c-b91a-de58aa271388/68d5f31f-ae3e-4b0c-9a19-0dd24ead5b66"
-					(reference "Q1")
-					(unit 2)
-				)
-			)
-			(project "myocell2"
-				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/e5941361-303a-4375-996a-5e6584d222dc"
-					(reference "Q1")
-					(unit 2)
-				)
-			)
-			(project "ADS1292EMG2x"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "Q1")
-					(unit 2)
 				)
 			)
 		)
@@ -3667,100 +3652,6 @@
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "C1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Transistor_BJT:MBT3904DW1")
-		(at 162.56 50.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "f2225a28-ec9b-4d22-8f31-cab85e5c919a")
-		(property "Reference" "Q1"
-			(at 167.4114 49.8915 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MBT3904DW1"
-			(at 167.4114 52.6666 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_USB:USB_Micro-B_Amphenol_10103594-0001LF_Horizontal"
-			(at 167.64 48.26 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "http://www.onsemi.com/pub_link/Collateral/MBT3904DW1T1-D.PDF"
-			(at 162.56 50.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 162.56 50.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "591eb45d-4633-485b-a88a-65d9c1da720c")
-		)
-		(pin "2"
-			(uuid "c1654910-7a87-46c6-9cb4-e36327e14838")
-		)
-		(pin "6"
-			(uuid "ad8d78eb-b74c-49d2-b918-13ccc14b8d73")
-		)
-		(pin "5"
-			(uuid "00e3cef8-4a75-4ee3-8511-fa7a2059c36f")
-		)
-		(pin "3"
-			(uuid "ed5a6cf5-e9a6-4fe9-9097-ab518bb94ada")
-		)
-		(pin "4"
-			(uuid "a5d65d1d-e4ce-4d2b-9024-04e7c80f2532")
-		)
-		(instances
-			(project "myocell2"
-				(path "/871ff10b-bde5-471c-b91a-de58aa271388/68d5f31f-ae3e-4b0c-9a19-0dd24ead5b66"
-					(reference "Q1")
-					(unit 1)
-				)
-			)
-			(project "myocell2"
-				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/e5941361-303a-4375-996a-5e6584d222dc"
-					(reference "Q1")
-					(unit 1)
-				)
-			)
-			(project "ADS1292EMG2x"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "Q1")
 					(unit 1)
 				)
 			)
