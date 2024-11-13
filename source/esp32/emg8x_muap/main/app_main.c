@@ -201,38 +201,44 @@ typedef struct
 DRAM_ATTR type_tcp_server_thread_context tcp_server_thread_context ;
 
 // EMG processing channel
+#define EMG_INPUT_CIRCBUF_LEN 1000
+#define EMG_ENV_CIRCBUF_LEN 1000
 typedef int emg_sample_type ;
-#define EMG_CIRCBUF_LEN 1000
+emg_sample_type emg_input_mem[EMG_INPUT_CIRCBUF_LEN] ;
+emg_sample_type emg_env_mem[EMG_INPUT_CIRCBUF_LEN] ;
 typedef struct
 {
-    emg_sample_type buf[EMG_CIRCBUF_LEN] ; // circular preprocessing buffer
+    emg_sample_type* buf ; // pointer to circular preprocessing buffer
     int head ; // offset to head
-} type_emg_beffer ;
+    int size ; // buffer size (number of emg_sample_type samples)
+} type_emg_buffer ;
 
-type_emg_beffer emg_input_buf = {.head=0} ;
-type_emg_beffer emg_filt_out_buf = { .head = 0 } ;
-type_emg_beffer emg_env_out_buf = { .head = 0 } ;
+type_emg_buffer emg_input_buf = { .buf=emg_input_mem,.head=0,.size=sizeof(emg_input_mem )/sizeof(emg_sample_type)} ;
+type_emg_buffer emg_env_buf = { .buf = emg_env_mem,.head = 0,.size = sizeof(emg_env_mem) / sizeof(emg_sample_type) };
 
-emg_sample_type filter[] = {0.1,1,0.1} 
+emg_sample_type filter[] = {0.1,1,0.1} // Load filter from python
+int filter_len = sizeof(filter) / sizeof(emg_sample_type) ;
 
-emg_sample_type on_filter_input_sample(emg_sample_type sample, type_emg_beffer* inp_buf)
+// Function gets one input sample and returns one filtered sample
+emg_sample_type on_filter_input_sample(emg_sample_type sample, type_emg_buffer* inp_buf)
 {
-    // Function get one input sample and returns one filtered sample
+    // put input sample to circular buffer
     inp_buf->buf[inp_buf->head] = sample ;
-    inp_buf->head = (inp_buf->head + 1) % EMG_CIRCBUF_LEN ;
+    inp_buf->head = (inp_buf->head + 1) % inp_buf->size ;
     emg_sample_type out_sample = 0 ;
-    for (int nTap = 0; nTap < sizeof(filter)/sizeof(emg_sample_type); nTap++)
+    for (int nTap = 0; nTap < filter_len; nTap++)
     {
-        out_sample += filter[sizeof(filter) / sizeof(emg_sample_type) - nTap - 1] * inp_buf->buf[(inp_buf->head + nTap) % EMG_CIRCBUF_LEN] ;
+        out_sample += filter[filter_len - nTap - 1] * inp_buf->buf[(inp_buf->head + nTap) % inp_buf->size] ;
     }
     return out_sample ;
 }
 
-emg_sample_type on_emg_env_input_sample(emg_sample_type sample, type_emg_beffer* env_buf)
+// Function gets one filtered sample and apply normalization and envelop estimation
+emg_sample_type on_env_input_sample(emg_sample_type sample, type_emg_buffer* inp_buf)
 {
-    // Function get one input sample and returns one filtered sample
-    env_buf->buf[env_buf->head] = sample ;
-    env_buf->head = (env_buf->head + 1) % EMG_CIRCBUF_LEN ;
+    // put input sample to circular buffer
+    inp_buf->buf[inp_buf->head] = sample ;
+    inp_buf->head = (inp_buf->head + 1) % inp_buf->size ;
     // Add code here
     return out_sample ;
 }
