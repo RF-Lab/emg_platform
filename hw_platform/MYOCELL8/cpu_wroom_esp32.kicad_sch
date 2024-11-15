@@ -1486,10 +1486,16 @@
 		(uuid "1e1219db-8aeb-41a2-b5ba-748aab0dc0fe")
 	)
 	(junction
-		(at 213.36 99.06)
+		(at 213.36 97.79)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "3f1da3f3-b8fb-475a-be9b-37dd43321f91")
+		(uuid "41c75627-5569-4c01-b73b-2f2d02f9aa4e")
+	)
+	(junction
+		(at 237.49 97.79)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "586ef3b0-9513-4f6a-82bd-e8156d62a013")
 	)
 	(junction
 		(at 101.6 116.84)
@@ -1546,16 +1552,6 @@
 			(type default)
 		)
 		(uuid "097aad61-166e-4ec4-b870-d142acca8365")
-	)
-	(wire
-		(pts
-			(xy 213.36 99.06) (xy 213.36 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0cbc91dc-5654-4e4e-98b8-57fc98819e71")
 	)
 	(wire
 		(pts
@@ -1639,16 +1635,6 @@
 	)
 	(wire
 		(pts
-			(xy 227.33 100.33) (xy 227.33 99.06)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "224dadb6-2b01-4609-89a1-d55b04c2cad4")
-	)
-	(wire
-		(pts
 			(xy 175.26 33.02) (xy 175.26 38.1)
 		)
 		(stroke
@@ -1656,16 +1642,6 @@
 			(type default)
 		)
 		(uuid "2c4ba708-697d-47f6-9e1b-ca5e00921330")
-	)
-	(wire
-		(pts
-			(xy 227.33 110.49) (xy 227.33 107.95)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2d29af1c-3335-4e2e-86c0-05f8269f0c61")
 	)
 	(wire
 		(pts
@@ -1899,6 +1875,16 @@
 	)
 	(wire
 		(pts
+			(xy 220.98 107.95) (xy 229.87 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "892c05ac-0f86-4fb3-a4a5-953482cdf10a")
+	)
+	(wire
+		(pts
 			(xy 106.68 35.56) (xy 106.68 38.1)
 		)
 		(stroke
@@ -1919,7 +1905,7 @@
 	)
 	(wire
 		(pts
-			(xy 213.36 95.25) (xy 213.36 99.06)
+			(xy 213.36 91.44) (xy 213.36 97.79)
 		)
 		(stroke
 			(width 0)
@@ -1969,6 +1955,16 @@
 	)
 	(wire
 		(pts
+			(xy 213.36 97.79) (xy 213.36 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bf00a7d5-b29e-449d-8a7c-de59387f4ae8")
+	)
+	(wire
+		(pts
 			(xy 241.3 38.1) (xy 245.11 38.1)
 		)
 		(stroke
@@ -1989,16 +1985,6 @@
 	)
 	(wire
 		(pts
-			(xy 227.33 99.06) (xy 213.36 99.06)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cabef060-593b-4e40-a9d1-9598cf5d0a1b")
-	)
-	(wire
-		(pts
 			(xy 106.68 35.56) (xy 119.38 35.56)
 		)
 		(stroke
@@ -2006,6 +1992,16 @@
 			(type default)
 		)
 		(uuid "d9834fb6-7ac9-4a63-8aca-a77516bdfeba")
+	)
+	(wire
+		(pts
+			(xy 237.49 91.44) (xy 237.49 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "de416851-f015-4fea-8565-6335476753e9")
 	)
 	(wire
 		(pts
@@ -2046,6 +2042,16 @@
 			(type default)
 		)
 		(uuid "fb5007b9-a1da-485f-9399-5387c37f4176")
+	)
+	(wire
+		(pts
+			(xy 237.49 97.79) (xy 237.49 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fdd8dca4-33a4-424d-b7d0-32a05aee406f")
 	)
 	(text "Push button:\nPTS645 Series"
 		(exclude_from_sim no)
@@ -2149,6 +2155,18 @@
 			(justify left)
 		)
 		(uuid "3ef7f377-5b39-41c4-bdae-9e528f22e6f1")
+	)
+	(hierarchical_label "3.3V"
+		(shape input)
+		(at 237.49 91.44 90)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5db025b4-ea08-404f-b91b-dfb8d7db9d2b")
 	)
 	(hierarchical_label "gpio21_start"
 		(shape input)
@@ -2284,7 +2302,7 @@
 	)
 	(hierarchical_label "3.3V"
 		(shape input)
-		(at 213.36 95.25 90)
+		(at 213.36 91.44 90)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -3317,6 +3335,141 @@
 	)
 	(symbol
 		(lib_id "Device:C")
+		(at 241.3 97.79 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "851e5ed0-18f8-4d7f-8906-467fe9a603e4")
+		(property "Reference" "C37"
+			(at 241.3 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "0.1uF"
+			(at 238.76 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 237.49 98.7552 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 241.3 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 241.3 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a84bf5a9-fb35-4f93-a55d-895935ca7e1d")
+		)
+		(pin "2"
+			(uuid "3fe10593-8099-4d18-b7cf-bc094d414f62")
+		)
+		(instances
+			(project "MYOCELL8"
+				(path "/871ff10b-bde5-471c-b91a-de58aa271388/1fb257a1-4b3b-418e-bb46-683d94c5ed44"
+					(reference "C37")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 237.49 115.57 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "865a12b5-825b-43f8-bdd8-18ee546f8dc2")
+		(property "Reference" "#PWR068"
+			(at 237.49 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 237.49 120.1325 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 237.49 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 237.49 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 237.49 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c4c57db8-70c6-4a31-bf67-923a047ea490")
+		)
+		(instances
+			(project "MYOCELL8"
+				(path "/871ff10b-bde5-471c-b91a-de58aa271388/1fb257a1-4b3b-418e-bb46-683d94c5ed44"
+					(reference "#PWR068")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
 		(at 119.38 31.75 180)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3386,7 +3539,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 227.33 104.14 180)
+		(at 217.17 97.79 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3394,7 +3547,7 @@
 		(dnp no)
 		(uuid "a1b65fd9-72d6-4291-9e44-cded93754191")
 		(property "Reference" "C6"
-			(at 232.41 104.14 0)
+			(at 217.17 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3403,7 +3556,7 @@
 			)
 		)
 		(property "Value" "0.1uF"
-			(at 233.68 101.6 0)
+			(at 214.63 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3412,7 +3565,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-			(at 226.3648 100.33 0)
+			(at 213.36 98.7552 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3421,7 +3574,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 227.33 104.14 0)
+			(at 217.17 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3430,7 +3583,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 227.33 104.14 0)
+			(at 217.17 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3521,7 +3674,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 227.33 110.49 0)
+		(at 220.98 97.79 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3530,7 +3683,7 @@
 		(fields_autoplaced yes)
 		(uuid "badbfa2f-8de8-4ff3-a523-e345e3ad4185")
 		(property "Reference" "#PWR012"
-			(at 227.33 116.84 0)
+			(at 227.33 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3539,15 +3692,16 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 227.33 115.0525 0)
+			(at 224.79 97.7899 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Footprint" ""
-			(at 227.33 110.49 0)
+			(at 220.98 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3556,7 +3710,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 227.33 110.49 0)
+			(at 220.98 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3565,7 +3719,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 227.33 110.49 0)
+			(at 220.98 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3580,6 +3734,81 @@
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/1fb257a1-4b3b-418e-bb46-683d94c5ed44"
 					(reference "#PWR012")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "LED:WS2812B")
+		(at 237.49 107.95 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c79c5ec2-8304-4b5b-8a50-23e47fb56a15")
+		(property "Reference" "D3"
+			(at 233.68 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "WS2812B"
+			(at 242.57 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm"
+			(at 238.76 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf"
+			(at 240.03 117.475 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 237.49 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c9a3bc44-c4dd-4e25-9c53-6410e3ab981e")
+		)
+		(pin "2"
+			(uuid "740943b3-862d-42b5-b4ea-100008ca34a6")
+		)
+		(pin "3"
+			(uuid "758877a6-221a-43f5-834f-70cac859a349")
+		)
+		(pin "4"
+			(uuid "a45c0607-0881-4f77-bab5-096ec61be24e")
+		)
+		(instances
+			(project "MYOCELL8"
+				(path "/871ff10b-bde5-471c-b91a-de58aa271388/1fb257a1-4b3b-418e-bb46-683d94c5ed44"
+					(reference "D3")
 					(unit 1)
 				)
 			)
@@ -3778,6 +4007,73 @@
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/1fb257a1-4b3b-418e-bb46-683d94c5ed44"
 					(reference "#PWR067")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 245.11 97.79 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f98ddf5d-0a1b-46a5-8391-b7ecc61069eb")
+		(property "Reference" "#PWR069"
+			(at 251.46 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 248.92 97.7899 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 245.11 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 245.11 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "12bab75e-699f-40a6-b38a-bd8f34d3f5ec")
+		)
+		(instances
+			(project "MYOCELL8"
+				(path "/871ff10b-bde5-471c-b91a-de58aa271388/1fb257a1-4b3b-418e-bb46-683d94c5ed44"
+					(reference "#PWR069")
 					(unit 1)
 				)
 			)
