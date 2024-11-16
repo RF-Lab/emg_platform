@@ -228,7 +228,7 @@ emg_sample_type on_filter_input_sample(emg_sample_type sample, type_emg_buffer* 
     emg_sample_type out_sample = 0 ;
     for (int nTap = 0; nTap < filter_len; nTap++)
     {
-        out_sample += filter[filter_len - nTap - 1] * inp_buf->buf[(inp_buf->head + nTap) % inp_buf->size] ;
+        out_sample += filter [nTap] * inp_buf->buf[(inp_buf->head + inp_buf->size - nTap) % inp_buf->size] ;
     }
     return out_sample ;
 }
