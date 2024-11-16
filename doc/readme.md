@@ -20,5 +20,3 @@
 1. Васильев А.В., Мельников А.О., Лесько. С.А. Применение робастной нейросетевой фильтрации в задачах построения интеллектуальных интерфейсов, Российский технологический журнал, 2022
 1. Васильев А.В., Мельников А.О. Application LSTM Neural Networks for Biological Signal Classification, 2022 IEEE International Multi-Conference on Engineering, Computer and Information Sciences (SIBIRCON)
 1. Романов А.М., Васильев А.В., Хальясмаа А.И. An Algorithm for FPGA-based Segmentation of Binary Images, 2022 IEEE International Multi-Conference on Engineering, Computer and Information Sciences (SIBIRCON)
-
-проба
