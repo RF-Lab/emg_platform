@@ -2494,7 +2494,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "022d6a78-132a-497b-bdd2-2373cf73d377")
-		(property "Reference" "R44"
+		(property "Reference" "R28"
 			(at 121.92 83.82 0)
 			(effects
 				(font
@@ -2548,19 +2548,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "R44")
+					(reference "R28")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "R44")
+					(reference "R?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "R44")
+					(reference "R?")
 					(unit 1)
 				)
 			)
@@ -2576,7 +2576,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "05a13d44-9e48-4da2-a1a3-75b78c2472ff")
-		(property "Reference" "U7"
+		(property "Reference" "U8"
 			(at 134.62 138.9085 0)
 			(effects
 				(font
@@ -2637,19 +2637,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "U7")
+					(reference "U8")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "U7")
+					(reference "U?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "U9")
+					(reference "U?")
 					(unit 1)
 				)
 			)
@@ -2664,7 +2664,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "084c92c3-a5e3-44d1-82f2-d60dadb2cc99")
-		(property "Reference" "#PWR089"
+		(property "Reference" "#PWR066"
 			(at 73.66 97.79 0)
 			(effects
 				(font
@@ -2715,19 +2715,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR089")
+					(reference "#PWR066")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR089")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "#PWR089")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -2743,7 +2743,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0d44eaf9-a0c8-43b4-a607-55aa510fbbda")
-		(property "Reference" "C51"
+		(property "Reference" "C37"
 			(at 108.331 81.6415 0)
 			(effects
 				(font
@@ -2797,19 +2797,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "C51")
+					(reference "C37")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "C51")
+					(reference "C?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "C51")
+					(reference "C?")
 					(unit 1)
 				)
 			)
@@ -2824,7 +2824,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "22e80662-2325-4e70-bafa-fba75a0bc69a")
-		(property "Reference" "#PWR096"
+		(property "Reference" "#PWR077"
 			(at 162.56 77.47 0)
 			(effects
 				(font
@@ -2875,19 +2875,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR096")
+					(reference "#PWR077")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR096")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "#PWR096")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -2903,7 +2903,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "27e7fe27-0c2f-45f7-9c67-d11064cbe004")
-		(property "Reference" "#PWR033"
+		(property "Reference" "#PWR067"
 			(at 78.74 161.29 0)
 			(effects
 				(font
@@ -2953,19 +2953,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR033")
+					(reference "#PWR067")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR033")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "#PWR071")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -2980,7 +2980,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "36da26fa-ba74-4cfe-be3c-980d2fc178ae")
-		(property "Reference" "R45"
+		(property "Reference" "R29"
 			(at 121.92 93.98 0)
 			(effects
 				(font
@@ -3034,19 +3034,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "R45")
+					(reference "R29")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "R45")
+					(reference "R?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "R45")
+					(reference "R?")
 					(unit 1)
 				)
 			)
@@ -3062,7 +3062,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3d9f845a-ca2c-41be-870e-d9159d29be8b")
-		(property "Reference" "#PWR032"
+		(property "Reference" "#PWR064"
 			(at 64.77 161.29 0)
 			(effects
 				(font
@@ -3112,19 +3112,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR032")
+					(reference "#PWR064")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR032")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "#PWR067")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -3139,7 +3139,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4199998a-d878-4926-8865-c4be074171bb")
-		(property "Reference" "#PWR090"
+		(property "Reference" "#PWR068"
 			(at 85.09 97.79 0)
 			(effects
 				(font
@@ -3190,19 +3190,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR090")
+					(reference "#PWR068")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR090")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "#PWR090")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -3218,7 +3218,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "42c0736a-8e7f-4fa9-8e66-a8315d111362")
-		(property "Reference" "SW1"
+		(property "Reference" "SW3"
 			(at 171.3865 43.18 0)
 			(effects
 				(font
@@ -3273,19 +3273,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "SW1")
+					(reference "SW3")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "SW1")
+					(reference "SW?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "SW1")
+					(reference "SW?")
 					(unit 1)
 				)
 			)
@@ -3301,7 +3301,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4958245b-2225-4a97-8fa1-caaf33004218")
-		(property "Reference" "#PWR035"
+		(property "Reference" "#PWR069"
 			(at 91.44 161.29 0)
 			(effects
 				(font
@@ -3351,19 +3351,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR035")
+					(reference "#PWR069")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR035")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "#PWR077")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -3378,7 +3378,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4b41745e-7b0b-4b2b-90df-878e1b84dad9")
-		(property "Reference" "R43"
+		(property "Reference" "R27"
 			(at 116.84 66.04 0)
 			(effects
 				(font
@@ -3432,19 +3432,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "R43")
+					(reference "R27")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "R43")
+					(reference "R?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "R43")
+					(reference "R?")
 					(unit 1)
 				)
 			)
@@ -3459,7 +3459,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "75ff4347-0c39-43ad-a10e-cbe700d4c26d")
-		(property "Reference" "Q2"
+		(property "Reference" "Q3"
 			(at 137.16 67.31 90)
 			(effects
 				(font
@@ -3517,19 +3517,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "Q2")
+					(reference "Q3")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "Q2")
+					(reference "Q?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "Q2")
+					(reference "Q?")
 					(unit 1)
 				)
 			)
@@ -3545,7 +3545,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7e58ad81-8c9a-4992-8bcf-70efc252c6ef")
-		(property "Reference" "#PWR092"
+		(property "Reference" "#PWR072"
 			(at 121.92 77.47 0)
 			(effects
 				(font
@@ -3595,19 +3595,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR092")
+					(reference "#PWR072")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR092")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "#PWR092")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -3623,7 +3623,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7f04230a-6cd5-4891-980f-cc3371433f98")
-		(property "Reference" "#PWR036"
+		(property "Reference" "#PWR071"
 			(at 119.38 162.56 0)
 			(effects
 				(font
@@ -3673,19 +3673,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR036")
+					(reference "#PWR071")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR036")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "#PWR066")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -3768,13 +3768,13 @@
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "U6")
+					(reference "U?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "U10")
+					(reference "U?")
 					(unit 1)
 				)
 			)
@@ -3789,7 +3789,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8d81091d-71e4-4bd8-ad69-78cbaef4cfd2")
-		(property "Reference" "C20"
+		(property "Reference" "C39"
 			(at 147.32 147.32 0)
 			(effects
 				(font
@@ -3843,19 +3843,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "C20")
+					(reference "C39")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "C20")
+					(reference "C?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "C38")
+					(reference "C?")
 					(unit 1)
 				)
 			)
@@ -3870,7 +3870,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "959049d5-8131-4d90-90cb-f74b567fc392")
-		(property "Reference" "#PWR093"
+		(property "Reference" "#PWR073"
 			(at 127 106.68 0)
 			(effects
 				(font
@@ -3921,19 +3921,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR093")
+					(reference "#PWR073")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR093")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "#PWR093")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -3948,7 +3948,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "9aa6ce1e-ec96-431d-ac5a-fe77e20abf64")
-		(property "Reference" "#PWR088"
+		(property "Reference" "#PWR065"
 			(at 68.58 82.55 0)
 			(effects
 				(font
@@ -3999,19 +3999,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR088")
+					(reference "#PWR065")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR088")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "#PWR088")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -4027,7 +4027,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9bff25d0-f86c-4b3a-b81c-1967967d9d28")
-		(property "Reference" "C52"
+		(property "Reference" "C40"
 			(at 165.481 66.4015 0)
 			(effects
 				(font
@@ -4081,19 +4081,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "C52")
+					(reference "C40")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "C52")
+					(reference "C?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "C52")
+					(reference "C?")
 					(unit 1)
 				)
 			)
@@ -4109,7 +4109,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9c26575b-a568-4b6a-a826-7b0949eea83d")
-		(property "Reference" "#PWR037"
+		(property "Reference" "#PWR074"
 			(at 134.62 162.56 0)
 			(effects
 				(font
@@ -4159,19 +4159,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR037")
+					(reference "#PWR074")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR037")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "#PWR070")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -4186,7 +4186,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a297bfad-e54e-4687-90a3-8b9244ba11e9")
-		(property "Reference" "#PWR095"
+		(property "Reference" "#PWR076"
 			(at 152.4 48.26 0)
 			(effects
 				(font
@@ -4237,19 +4237,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR095")
+					(reference "#PWR076")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR095")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "#PWR095")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -4265,7 +4265,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a40e846b-0db2-43ba-a8ca-44c64c0c4b08")
-		(property "Reference" "D2"
+		(property "Reference" "D6"
 			(at 99.822 86.404 90)
 			(effects
 				(font
@@ -4319,19 +4319,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "D2")
+					(reference "D6")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "D2")
+					(reference "D?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "D2")
+					(reference "D?")
 					(unit 1)
 				)
 			)
@@ -4347,7 +4347,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a593fca6-fcc1-4892-81c7-ba11b711a2d0")
-		(property "Reference" "C50"
+		(property "Reference" "C35"
 			(at 71.501 68.9415 0)
 			(effects
 				(font
@@ -4401,19 +4401,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "C50")
+					(reference "C35")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "C50")
+					(reference "C?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "C50")
+					(reference "C?")
 					(unit 1)
 				)
 			)
@@ -4428,7 +4428,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a7b61260-2573-4c7d-8861-383a2ff248ad")
-		(property "Reference" "R41"
+		(property "Reference" "R25"
 			(at 68.58 86.36 0)
 			(effects
 				(font
@@ -4482,19 +4482,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "R41")
+					(reference "R25")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "R41")
+					(reference "R?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "R41")
+					(reference "R?")
 					(unit 1)
 				)
 			)
@@ -4509,7 +4509,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c3874769-b338-4322-912f-1c9c7882fe56")
-		(property "Reference" "C17"
+		(property "Reference" "C34"
 			(at 58.42 148.59 0)
 			(effects
 				(font
@@ -4563,19 +4563,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "C17")
+					(reference "C34")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "C17")
+					(reference "C?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "C35")
+					(reference "C?")
 					(unit 1)
 				)
 			)
@@ -4590,7 +4590,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c3952dff-7bd1-42be-8328-9bc6858d6807")
-		(property "Reference" "#PWR091"
+		(property "Reference" "#PWR070"
 			(at 105.41 97.79 0)
 			(effects
 				(font
@@ -4641,19 +4641,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR091")
+					(reference "#PWR070")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR091")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "#PWR091")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -4669,7 +4669,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d64b13d4-6792-4fbe-bde4-16a514a9dc24")
-		(property "Reference" "#PWR039"
+		(property "Reference" "#PWR075"
 			(at 147.32 162.56 0)
 			(effects
 				(font
@@ -4719,19 +4719,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "#PWR039")
+					(reference "#PWR075")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "#PWR039")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "#PWR076")
+					(reference "#PWR?")
 					(unit 1)
 				)
 			)
@@ -4815,7 +4815,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ebef7746-6a9f-4967-8a20-44b7121089e9")
-		(property "Reference" "U17"
+		(property "Reference" "U7"
 			(at 87.1094 70.9635 0)
 			(effects
 				(font
@@ -4880,19 +4880,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "U17")
+					(reference "U7")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "U17")
+					(reference "U?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "U18")
+					(reference "U?")
 					(unit 1)
 				)
 			)
@@ -4907,7 +4907,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ed2f63f0-0223-4aad-b886-26272ccd572e")
-		(property "Reference" "R42"
+		(property "Reference" "R26"
 			(at 92.71 96.52 0)
 			(effects
 				(font
@@ -4961,19 +4961,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "R42")
+					(reference "R26")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "R42")
+					(reference "R?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/46ace08d-eb32-49ac-809d-2e61e71dabf9"
-					(reference "R42")
+					(reference "R?")
 					(unit 1)
 				)
 			)
@@ -4988,7 +4988,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f5cc1120-96d0-4af0-8780-956c17968f98")
-		(property "Reference" "C18"
+		(property "Reference" "C36"
 			(at 91.44 147.32 0)
 			(effects
 				(font
@@ -5042,19 +5042,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "C18")
+					(reference "C36")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "C18")
+					(reference "C?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "C39")
+					(reference "C?")
 					(unit 1)
 				)
 			)
@@ -5069,7 +5069,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "fd5e9564-cc52-4375-a2dd-1833e32991e8")
-		(property "Reference" "C19"
+		(property "Reference" "C38"
 			(at 113.03 148.59 0)
 			(effects
 				(font
@@ -5123,19 +5123,19 @@
 		(instances
 			(project "myocell2"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/e36bfe9c-db3d-4e13-afda-f7f295377ecb"
-					(reference "C19")
+					(reference "C38")
 					(unit 1)
 				)
 			)
 			(project "myocell2"
 				(path "/e513cd5e-988e-4071-93cd-c2c2c010dd7c/eca13eb4-a680-4456-b37c-b91993f488a3"
-					(reference "C19")
+					(reference "C?")
 					(unit 1)
 				)
 			)
 			(project "ADS1292EMG2x"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "C34")
+					(reference "C?")
 					(unit 1)
 				)
 			)

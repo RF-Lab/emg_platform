@@ -2651,7 +2651,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "1379da89-a846-47d7-a25b-533146b3e4ea")
-		(property "Reference" "#PWR06"
+		(property "Reference" "#PWR022"
 			(at 224.79 97.79 0)
 			(effects
 				(font
@@ -2702,7 +2702,7 @@
 		(instances
 			(project ""
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR06")
+					(reference "#PWR022")
 					(unit 1)
 				)
 			)
@@ -2718,7 +2718,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "1569f7ee-d16a-45f7-bdd4-398ed6521de7")
-		(property "Reference" "J5"
+		(property "Reference" "J4"
 			(at 30.48 119.38 0)
 			(effects
 				(font
@@ -2788,7 +2788,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "J5")
+					(reference "J4")
 					(unit 1)
 				)
 			)
@@ -2803,7 +2803,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4112a8d3-7f1c-4c0d-8e25-e034fac5f21c")
-		(property "Reference" "#PWR049"
+		(property "Reference" "#PWR015"
 			(at 35.56 135.89 0)
 			(effects
 				(font
@@ -2854,7 +2854,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR049")
+					(reference "#PWR015")
 					(unit 1)
 				)
 			)
@@ -2870,7 +2870,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "44451ad2-50b8-4b88-a1c5-1d8ed8497df6")
-		(property "Reference" "#PWR023"
+		(property "Reference" "#PWR024"
 			(at 255.27 30.48 0)
 			(effects
 				(font
@@ -2920,7 +2920,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR023")
+					(reference "#PWR024")
 					(unit 1)
 				)
 			)
@@ -2936,7 +2936,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4b0bd18a-abe9-4250-970f-eabbc8a522ae")
-		(property "Reference" "#PWR044"
+		(property "Reference" "#PWR010"
 			(at 45.72 101.6 0)
 			(effects
 				(font
@@ -2987,7 +2987,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR044")
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
@@ -3003,7 +3003,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4e8a2f31-7351-4146-abc9-e2fddd3fe4dc")
-		(property "Reference" "#PWR046"
+		(property "Reference" "#PWR012"
 			(at 45.72 111.76 0)
 			(effects
 				(font
@@ -3054,7 +3054,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR046")
+					(reference "#PWR012")
 					(unit 1)
 				)
 			)
@@ -3070,7 +3070,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5e4967dc-db55-4339-86e2-0cf55d9d0829")
-		(property "Reference" "#PWR040"
+		(property "Reference" "#PWR06"
 			(at 45.72 71.12 0)
 			(effects
 				(font
@@ -3121,7 +3121,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR040")
+					(reference "#PWR06")
 					(unit 1)
 				)
 			)
@@ -3137,7 +3137,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "66aea17b-9b93-47a2-afd7-1108b7b3bb17")
-		(property "Reference" "#PWR043"
+		(property "Reference" "#PWR09"
 			(at 45.72 93.98 0)
 			(effects
 				(font
@@ -3188,7 +3188,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR043")
+					(reference "#PWR09")
 					(unit 1)
 				)
 			)
@@ -3204,7 +3204,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "66e8743f-9ff4-4e51-b0f8-460db920dc9a")
-		(property "Reference" "#PWR028"
+		(property "Reference" "#PWR020"
 			(at 176.53 120.65 0)
 			(effects
 				(font
@@ -3254,7 +3254,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR028")
+					(reference "#PWR020")
 					(unit 1)
 				)
 			)
@@ -3352,7 +3352,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7404aee3-d546-4b72-aa71-1cab7454f1a5")
-		(property "Reference" "#PWR01"
+		(property "Reference" "#PWR023"
 			(at 224.79 102.87 0)
 			(effects
 				(font
@@ -3403,7 +3403,7 @@
 		(instances
 			(project ""
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR01")
+					(reference "#PWR023")
 					(unit 1)
 				)
 			)
@@ -3419,7 +3419,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "797e938b-c082-41a1-845a-416077d66a7d")
-		(property "Reference" "#PWR034"
+		(property "Reference" "#PWR04"
 			(at 45.72 50.8 0)
 			(effects
 				(font
@@ -3470,7 +3470,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR034")
+					(reference "#PWR04")
 					(unit 1)
 				)
 			)
@@ -3486,7 +3486,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "82197a78-4461-4545-bac2-fc958b01720b")
-		(property "Reference" "#PWR048"
+		(property "Reference" "#PWR014"
 			(at 45.72 133.35 0)
 			(effects
 				(font
@@ -3537,7 +3537,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR048")
+					(reference "#PWR014")
 					(unit 1)
 				)
 			)
@@ -3553,7 +3553,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "83e8959f-5625-4b2f-92b2-0dc586354a24")
-		(property "Reference" "#PWR030"
+		(property "Reference" "#PWR02"
 			(at 45.72 40.64 0)
 			(effects
 				(font
@@ -3604,7 +3604,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR030")
+					(reference "#PWR02")
 					(unit 1)
 				)
 			)
@@ -3619,7 +3619,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "88145d22-ada0-4cae-ad8d-c9f89c0564e2")
-		(property "Reference" "#PWR041"
+		(property "Reference" "#PWR07"
 			(at 35.56 73.66 0)
 			(effects
 				(font
@@ -3670,7 +3670,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR041")
+					(reference "#PWR07")
 					(unit 1)
 				)
 			)
@@ -3685,7 +3685,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8f2da078-3ede-4a81-8b65-3c2bcc79f9cb")
-		(property "Reference" "J1"
+		(property "Reference" "J5"
 			(at 167.64 106.68 0)
 			(effects
 				(font
@@ -3737,7 +3737,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "J1")
+					(reference "J5")
 					(unit 1)
 				)
 			)
@@ -3753,7 +3753,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9a864c0c-ab4b-48a5-9541-fecd19cc04ff")
-		(property "Reference" "#PWR014"
+		(property "Reference" "#PWR018"
 			(at 114.3 43.18 0)
 			(effects
 				(font
@@ -3803,7 +3803,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR014")
+					(reference "#PWR018")
 					(unit 1)
 				)
 			)
@@ -3819,7 +3819,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a69138ce-c6b5-4339-99d9-661afeea4a65")
-		(property "Reference" "J4"
+		(property "Reference" "J3"
 			(at 30.48 87.63 0)
 			(effects
 				(font
@@ -3889,7 +3889,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "J4")
+					(reference "J3")
 					(unit 1)
 				)
 			)
@@ -3905,7 +3905,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ac108a6a-32e6-4bab-8be9-cbe13f61e0e0")
-		(property "Reference" "#PWR013"
+		(property "Reference" "#PWR017"
 			(at 100.33 43.18 0)
 			(effects
 				(font
@@ -3955,7 +3955,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR013")
+					(reference "#PWR017")
 					(unit 1)
 				)
 			)
@@ -3971,7 +3971,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "aed80714-0b4f-41ab-b113-73a261166add")
-		(property "Reference" "#PWR038"
+		(property "Reference" "#PWR05"
 			(at 45.72 63.5 0)
 			(effects
 				(font
@@ -4022,7 +4022,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR038")
+					(reference "#PWR05")
 					(unit 1)
 				)
 			)
@@ -4038,7 +4038,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "aee8469c-c18c-4b78-91ef-06ede7789ae0")
-		(property "Reference" "J3"
+		(property "Reference" "J1"
 			(at 30.48 26.67 0)
 			(effects
 				(font
@@ -4108,7 +4108,7 @@
 		(instances
 			(project ""
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "J3")
+					(reference "J1")
 					(unit 1)
 				)
 			)
@@ -4124,7 +4124,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c13bc98a-2a05-42fe-ac71-2103d6ef7d39")
-		(property "Reference" "#PWR027"
+		(property "Reference" "#PWR019"
 			(at 160.02 43.18 0)
 			(effects
 				(font
@@ -4174,7 +4174,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR027")
+					(reference "#PWR019")
 					(unit 1)
 				)
 			)
@@ -4190,7 +4190,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c3134c67-036b-476a-bf1b-0b24cbbbe063")
-		(property "Reference" "#PWR050"
+		(property "Reference" "#PWR016"
 			(at 45.72 143.51 0)
 			(effects
 				(font
@@ -4241,7 +4241,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR050")
+					(reference "#PWR016")
 					(unit 1)
 				)
 			)
@@ -4256,7 +4256,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "cd889f18-90f5-4a4b-bd92-b25b142440f3")
-		(property "Reference" "#PWR045"
+		(property "Reference" "#PWR011"
 			(at 35.56 104.14 0)
 			(effects
 				(font
@@ -4307,7 +4307,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR045")
+					(reference "#PWR011")
 					(unit 1)
 				)
 			)
@@ -4323,7 +4323,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d2b5f4e2-7310-46b8-ae2f-d7e883a1a179")
-		(property "Reference" "#PWR042"
+		(property "Reference" "#PWR08"
 			(at 45.72 81.28 0)
 			(effects
 				(font
@@ -4374,7 +4374,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR042")
+					(reference "#PWR08")
 					(unit 1)
 				)
 			)
@@ -4390,7 +4390,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e5d33a8a-dad8-42ac-aea2-ed7b742758b6")
-		(property "Reference" "#PWR07"
+		(property "Reference" "#PWR021"
 			(at 207.01 40.64 0)
 			(effects
 				(font
@@ -4440,7 +4440,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR07")
+					(reference "#PWR021")
 					(unit 1)
 				)
 			)
@@ -4542,7 +4542,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f62acaf3-3d7f-4cc0-9900-f3d5e22132a6")
-		(property "Reference" "#PWR047"
+		(property "Reference" "#PWR013"
 			(at 45.72 125.73 0)
 			(effects
 				(font
@@ -4593,7 +4593,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR047")
+					(reference "#PWR013")
 					(unit 1)
 				)
 			)
@@ -4608,7 +4608,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f7b52a6c-6ef5-457c-a698-4aaebfd9830a")
-		(property "Reference" "#PWR031"
+		(property "Reference" "#PWR03"
 			(at 35.56 43.18 0)
 			(effects
 				(font
@@ -4659,7 +4659,7 @@
 		(instances
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR031")
+					(reference "#PWR03")
 					(unit 1)
 				)
 			)
@@ -4675,7 +4675,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ff7e5909-bc64-4957-9f73-eb9e330f3dd7")
-		(property "Reference" "#PWR029"
+		(property "Reference" "#PWR01"
 			(at 45.72 33.02 0)
 			(effects
 				(font
@@ -4726,7 +4726,7 @@
 		(instances
 			(project ""
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388"
-					(reference "#PWR029")
+					(reference "#PWR01")
 					(unit 1)
 				)
 			)
