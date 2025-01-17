@@ -1643,12 +1643,6 @@
 		)
 	)
 	(junction
-		(at 191.77 33.02)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "0e359b37-0518-4f14-bbb5-f000c1956c72")
-	)
-	(junction
 		(at 106.68 27.94)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1685,12 +1679,6 @@
 		(uuid "824ab876-111f-4afb-b49a-33f6496aa649")
 	)
 	(junction
-		(at 175.26 38.1)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "8851f75c-bbd6-436d-94d4-e02cfd221221")
-	)
-	(junction
 		(at 106.68 35.56)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1724,7 +1712,7 @@
 	)
 	(wire
 		(pts
-			(xy 189.23 33.02) (xy 191.77 33.02)
+			(xy 189.23 33.02) (xy 194.31 33.02)
 		)
 		(stroke
 			(width 0)
@@ -1794,16 +1782,6 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 38.1) (xy 180.34 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1c0d363a-fcab-4438-bac9-9d1d02a6c033")
-	)
-	(wire
-		(pts
 			(xy 179.07 33.02) (xy 175.26 33.02)
 		)
 		(stroke
@@ -1814,7 +1792,7 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 33.02) (xy 175.26 38.1)
+			(xy 175.26 33.02) (xy 175.26 40.64)
 		)
 		(stroke
 			(width 0)
@@ -1844,16 +1822,6 @@
 	)
 	(wire
 		(pts
-			(xy 187.96 38.1) (xy 191.77 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3c03e3d8-45b1-4fcb-bfad-e209afa819ff")
-	)
-	(wire
-		(pts
 			(xy 134.62 102.87) (xy 149.86 102.87)
 		)
 		(stroke
@@ -1861,16 +1829,6 @@
 			(type default)
 		)
 		(uuid "3cc38837-814a-4066-8f29-2c0348e85cb6")
-	)
-	(wire
-		(pts
-			(xy 191.77 38.1) (xy 191.77 33.02)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4024fbc5-cfe0-43d7-bc41-eaf484e397f8")
 	)
 	(wire
 		(pts
@@ -1941,16 +1899,6 @@
 			(type default)
 		)
 		(uuid "4cde6011-2284-4295-ab38-61669cb492c9")
-	)
-	(wire
-		(pts
-			(xy 191.77 33.02) (xy 194.31 33.02)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "524a9dda-3875-4cb2-906d-b9b7ecb5eb84")
 	)
 	(wire
 		(pts
@@ -2221,16 +2169,6 @@
 			(type default)
 		)
 		(uuid "ea4e454d-dbae-441b-9268-27b27dce8956")
-	)
-	(wire
-		(pts
-			(xy 175.26 38.1) (xy 175.26 40.64)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f357fc00-67e1-4e3e-b86b-19649c22a0cb")
 	)
 	(wire
 		(pts
@@ -3117,75 +3055,6 @@
 			(project "MYOCELL8"
 				(path "/871ff10b-bde5-471c-b91a-de58aa271388/1fb257a1-4b3b-418e-bb46-683d94c5ed44"
 					(reference "#PWR052")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 184.15 38.1 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "3924f83f-32cb-4e49-a335-c125e1260057")
-		(property "Reference" "C27"
-			(at 182.88 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "0.1uF"
-			(at 185.42 45.974 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-			(at 180.34 39.0652 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 184.15 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 184.15 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "f5d06e2d-640c-4478-a604-ff62da70eeb7")
-		)
-		(pin "2"
-			(uuid "36e41cf5-2105-41d7-91db-809b962451a0")
-		)
-		(instances
-			(project "MYOCELL8"
-				(path "/871ff10b-bde5-471c-b91a-de58aa271388/1fb257a1-4b3b-418e-bb46-683d94c5ed44"
-					(reference "C27")
 					(unit 1)
 				)
 			)
