@@ -6,7 +6,13 @@ ADC + CPU board for multiboard MYOCELL design. Includes [ADS1298(4)](https://sta
 
 ![-](MYOCELL8.png)
 
+## Gerbers
+
 ![-](MYOCELL8-gerber-top.png)
+
+![-](MYOCELL8-gerber-ins.png)
+
+![-](MYOCELL8-gerber-bottom.png)
 
 * [ESP32-WROOM-32E Datasheet Version 1.7](https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf) 
 * [ESP32-DevKitC-V4 Reference Design r2.1](https://www.espressif.com/en/products/devkits/esp32-devkitc/resources)
