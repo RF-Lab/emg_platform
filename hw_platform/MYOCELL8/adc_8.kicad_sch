@@ -4458,6 +4458,18 @@
 		)
 		(uuid "31848dc9-66ce-4f1f-9d9f-e29b43d987cc")
 	)
+	(hierarchical_label "3.3V"
+		(shape input)
+		(at 166.37 104.14 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "31b66c82-cc6b-40e6-946d-9bb6b8f9619e")
+	)
 	(hierarchical_label "3.3VA"
 		(shape input)
 		(at 157.48 68.58 0)
@@ -4637,18 +4649,6 @@
 			(justify left)
 		)
 		(uuid "a2ceec84-6d97-42a9-bac9-1785f9d3db86")
-	)
-	(hierarchical_label "clksel"
-		(shape input)
-		(at 166.37 104.14 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "b016b25c-5965-4c4c-a267-25489c42d331")
 	)
 	(hierarchical_label "IN2N"
 		(shape input)

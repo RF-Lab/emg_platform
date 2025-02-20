@@ -1782,6 +1782,16 @@
 	)
 	(wire
 		(pts
+			(xy 134.62 100.33) (xy 149.86 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1da515e2-2fa6-4d3e-b995-3b4e2b9e75cc")
+	)
+	(wire
+		(pts
 			(xy 179.07 33.02) (xy 175.26 33.02)
 		)
 		(stroke
@@ -2254,6 +2264,18 @@
 			(justify right)
 		)
 		(uuid "08ae4b34-d601-4a31-a083-2b4b26852239")
+	)
+	(hierarchical_label "gpio22_pwdn"
+		(shape input)
+		(at 149.86 100.33 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0c007aba-ca41-449f-af2b-727e61a75cdc")
 	)
 	(hierarchical_label "gpio4"
 		(shape input)

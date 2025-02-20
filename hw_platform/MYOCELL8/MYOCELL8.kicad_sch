@@ -1267,6 +1267,16 @@
 	)
 	(wire
 		(pts
+			(xy 125.73 68.58) (xy 138.43 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "05097477-9145-4830-adc2-4ae12295ec0d")
+	)
+	(wire
+		(pts
 			(xy 114.3 39.37) (xy 114.3 43.18)
 		)
 		(stroke
@@ -4734,7 +4744,7 @@
 	)
 	(sheet
 		(at 138.43 43.18)
-		(size 33.02 26.67)
+		(size 33.02 29.21)
 		(fields_autoplaced yes)
 		(stroke
 			(width 0.254)
@@ -4745,7 +4755,7 @@
 		)
 		(uuid "1fb257a1-4b3b-418e-bb46-683d94c5ed44")
 		(property "Sheetname" "cpu_wroom_esp32"
-			(at 138.43 42.4684 0)
+			(at 138.43 42.4176 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4754,7 +4764,7 @@
 			)
 		)
 		(property "Sheetfile" "cpu_wroom_esp32.kicad_sch"
-			(at 138.43 70.4346 0)
+			(at 138.43 73.0254 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4863,7 +4873,7 @@
 			(uuid "38c6fb7d-d5dd-4f23-b89c-1c6db1d65282")
 		)
 		(pin "gpio27" input
-			(at 160.02 69.85 270)
+			(at 160.02 72.39 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4901,6 +4911,16 @@
 				(justify left)
 			)
 			(uuid "6713ce94-1bdc-4dfd-ab55-da1106c20cad")
+		)
+		(pin "gpio22_pwdn" input
+			(at 138.43 68.58 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "ea68c4b3-e218-46fb-add6-36996be20690")
 		)
 		(instances
 			(project "MYOCELL8"
