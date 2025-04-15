@@ -2,7 +2,7 @@
 
 [![KiCad](https://img.shields.io/badge/KiCad-8.0.1-blue.svg)](https://www.kicad.org/)
 
-ADC + CPU board for multiboard MYOCELL design. Includes [ADS1298(4)](https://static.chipdip.ru/lib/395/DOC009395274.pdf) and [ESP32-WROOM-32E](https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf). Design based on ideas from [HeartyPatch](https://hackaday.io/project/21046-heartypatch-a-single-lead-ecg-hr-patch-with-esp32), [Adafruit ESP32 Feather boards](https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/downloads), etc.
+ADC + CPU board for multiboard MYOCELL design. Includes [ADS1298(4)](https://static.chipdip.ru/lib/395/DOC009395274.pdf) and [ESP32-WROOM-32E](https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf). Design based on ideas from [HeartyPatch](https://hackaday.io/project/21046-heartypatch-a-single-lead-ecg-hr-patch-with-esp32), [Adafruit ESP32 Feather boards](https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/downloads), [Adafruit HUZZAH32](https://learn.adafruit.com/assets/41630) etc.
 
 * BOM: [Interactive BOM ()](https://htmlpreview.github.io/?https://github.com/RF-Lab/emg_platform/blob/master/hw_platform/MYOCELL8/bom/ibom.html)
 
