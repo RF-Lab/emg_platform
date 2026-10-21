@@ -14,7 +14,7 @@ ESP_PORT = 3000
 # Параметры из app_main.c
 HEADER_SIZE = 16          # CONFIG_EMG8X_TRANSPORT_BLOCK_HEADER_SIZE
 SAMPLES_PER_BLOCK = 128    # CONFIG_EMG8X_SAMPLES_PER_TRANSPORT_BLOCK
-NUM_CHANNELS = 8          # AD1299_NUM_CH
+NUM_CHANNELS = 4          # AD1299_NUM_CH
 VALUES_PER_SAMPLE = NUM_CHANNELS + 1  # STAT + 8 каналов
 
 # Общий размер одного ожидаемого TCP-пакета в байтах
@@ -95,6 +95,7 @@ class WifiEMGViewer(QtWidgets.QMainWindow):
                 self.tcp_buffer.extend(chunk)
         except BlockingIOError:
             # Данные в буфере ОС закончились — переходим к обработке накопленного
+            # print(f'Считали {len(self.tcp_buffer)}')
             pass
         except Exception as e:
             print(f"Ошибка сети: {e}")
@@ -105,21 +106,38 @@ class WifiEMGViewer(QtWidgets.QMainWindow):
         updated = False
         while len(self.tcp_buffer) >= BLOCK_SIZE_BYTES:
             # Извлекаем один блок данных
+            # block = self.tcp_buffer[:BLOCK_SIZE_BYTES]
+            # del self.tcp_buffer[:BLOCK_SIZE_BYTES]
+
+            # print(f'Анализ {self.tcp_buffer.find(b"EMG8x", 1)}')
+
+            # Валидация заголовка (проверяем сигнатуру "EMG8x")
+            if self.tcp_buffer[0:5] != b"EMG8x":
+                # Если синхронизация нарушена, ищем следующий заголовок
+                print('Синхронизация...')
+                idx = self.tcp_buffer.find(b"EMG8x", 0)
+                if idx != -1:
+                    print('Ok')
+                    del self.tcp_buffer[:idx]
+                else:
+                    print('Не найдена сигнатура')
+                    self.tcp_buffer.clear()
+                    continue
+
+            if len(self.tcp_buffer)< BLOCK_SIZE_BYTES:
+                break
+
             block = self.tcp_buffer[:BLOCK_SIZE_BYTES]
             del self.tcp_buffer[:BLOCK_SIZE_BYTES]
 
-            # Валидация заголовка (проверяем сигнатуру "EMG8x")
-            if block[0:5] != b"EMG8x":
-                # Если синхронизация нарушена, ищем следующий заголовок
-                idx = block.find(b"EMG8x", 1)
-                if idx != -1:
-                    del self.tcp_buffer[:idx]
-                else:
-                    self.tcp_buffer.clear()
-                continue
+            # print(len(self.tcp_buffer))
+
+            if self.tcp_buffer[0:5] != b"EMG8x":
+                print(f'Err1 {self.tcp_buffer.find(b"EMG8x", 0)}')
 
             # Парсим счетчик пакетов (находится по смещению 8 байт, uint32)
             pkt_count = struct.unpack("<I", block[8:12])[0]
+            print(f'Пакет: {pkt_count}')
             
             # Полезная нагрузка начинается после 16 байт заголовка
             payload = block[HEADER_SIZE:]
@@ -130,7 +148,7 @@ class WifiEMGViewer(QtWidgets.QMainWindow):
             raw_values = struct.unpack(f"<{num_elements}i", payload)
             
             # Превращаем в матрицу (64 строки, 9 колонок)
-            matrix = np.array(raw_values).reshape((SAMPLES_PER_BLOCK, VALUES_PER_SAMPLE))
+            matrix = np.array(raw_values).reshape((SAMPLES_PER_BLOCK, VALUES_PER_SAMPLE),order='F')
             
             # Выделяем только каналы ЭМГ (пропуская колонку 0, которая является STAT)
             channels_data = matrix[:, 1:].T  # Результат: форма (8, 64)
